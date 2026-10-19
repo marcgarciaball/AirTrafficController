@@ -3,10 +3,9 @@
 import { useState, useTransition } from "react"
 import { SourceLink } from "@/components/source-link"
 import { Button } from "@/components/ui/button"
-import { FlightStrip } from "@/components/atc/flight-strip"
-import { SectionLabel } from "@/components/atc/section-label"
-import { UtcClock } from "@/components/atc/utc-clock"
-import { cn } from "@/lib/utils"
+import { Annunciator } from "@/components/cockpit/annunciator"
+import { Tape } from "@/components/cockpit/tape"
+import { UtcClock } from "@/components/cockpit/utc-clock"
 import { saveOnboarding } from "@/app/bienvenida/actions"
 import { onboardingActionSchema, type OnboardingAnswers } from "@/lib/onboarding/schema"
 import { todayISO } from "@/lib/onboarding/schema"
@@ -95,45 +94,21 @@ export function OnboardingWizard({
   const shown = Math.min(step + 1, TOTAL)
 
   return (
-    <div className="mx-auto w-full max-w-xl space-y-7 px-4 pt-4 pb-10 md:pt-10">
-      <div className="flex h-10 items-center justify-between">
-        <span className="font-mono text-sm font-medium tracking-[0.42em]">TORRE</span>
-        <UtcClock />
+    <div className="mx-auto w-full max-w-xl space-y-6 px-4 pt-3 pb-10 md:pt-10">
+      <div className="flex h-10 items-center justify-between border-b border-line font-mono text-sm">
+        <span className="tracking-wider text-foreground">TORRE</span>
+        <UtcClock className="text-foreground tabular-nums" />
       </div>
 
-      <FlightStrip
-        kind="neutral"
-        title={<SectionLabel as="span">Cuestionario · Fase 0 · Viabilidad</SectionLabel>}
-        code={<span aria-hidden="true">{step < TOTAL ? `${shown}/${TOTAL}` : "RES"}</span>}
-      >
-        <div className="space-y-3">
-          <p className="text-sm text-foreground" aria-live="polite">
-            {step < TOTAL ? `Pregunta ${shown} de ${TOTAL}` : "Resultado"}
-          </p>
-          <div
-            role="progressbar"
-            aria-label={`Progreso del cuestionario, paso ${shown} de ${TOTAL}`}
-            aria-valuemin={0}
-            aria-valuemax={TOTAL}
-            aria-valuenow={shown}
-            className="grid grid-cols-8 gap-1"
-          >
-            {Array.from({ length: TOTAL }, (_, i) => {
-              const done = i < step
-              const current = i === step
-              return (
-                <span
-                  key={i}
-                  className={cn(
-                    "h-1 rounded-[1px]",
-                    done ? "bg-primary" : current ? "animate-pulse bg-primary motion-reduce:animate-none" : "bg-border"
-                  )}
-                />
-              )
-            })}
-          </div>
-        </div>
-      </FlightStrip>
+      <div className="space-y-2">
+        <p className="flex items-baseline justify-between font-mono text-sm uppercase tracking-wide" aria-live="polite">
+          <span className="text-foreground">Preflight</span>
+          <span className="sr-only">{step < TOTAL ? `Pregunta ${shown} de ${TOTAL}` : "Resultado"}</span>
+          <span aria-hidden="true" className="text-foreground tabular-nums">{step < TOTAL ? `${shown}/${TOTAL}` : "RES"}</span>
+        </p>
+        <Tape value={(Math.min(step, TOTAL) / TOTAL) * 100} tone="green" label={`Progreso del cuestionario, paso ${shown} de ${TOTAL}`} />
+        <p className="text-xs uppercase tracking-wide text-muted-foreground">Cuestionario · F0 Viabilidad</p>
+      </div>
 
       {step === 0 && <StepNationality {...stepProps} />}
       {step === 1 && <StepAge {...stepProps} />}
@@ -146,42 +121,50 @@ export function OnboardingWizard({
 
       {step === TOTAL && (
         <section className="space-y-5" aria-labelledby="resultado">
-          <h1 id="resultado" className="text-xl leading-tight font-semibold tracking-tight">Resultado</h1>
+          {/* Página ECAM: título subrayado, bloqueos en red y avisos en amber. */}
+          <h1 id="resultado" className="w-fit border-b border-foreground text-sm uppercase tracking-wide text-foreground">
+            Resultado · Viabilidad
+          </h1>
           {!parsed?.success && (
-            <p role="alert" className="border-l-2 border-destructive pl-3 text-destructive">
+            <p role="alert" className="text-red">
               Faltan o no son válidas algunas respuestas. Vuelve atrás y revísalas.
             </p>
           )}
           {result && result.blockers.length > 0 && (
-            <div role="alert" className="space-y-2">
-              <SectionLabel className="text-destructive">Bloqueos · {result.blockers.length}</SectionLabel>
+            <div role="alert" className="space-y-3">
+              <p className="flex items-center gap-2">
+                <Annunciator tone="red">Bloqueo</Annunciator>
+                <span className="font-mono text-sm text-red tabular-nums">{result.blockers.length}</span>
+              </p>
               <ul className="space-y-2">
                 {result.blockers.map((b) => (
-                  <li key={b.code}>
-                    <FlightStrip kind="destructive" meta="Bloquea">
-                      <p className="text-[15px] text-foreground">{b.message}</p>
-                    </FlightStrip>
+                  <li key={b.code} className="flex max-w-[68ch] gap-3 leading-relaxed text-red">
+                    <span aria-hidden="true" className="font-mono">■</span>
+                    <span>{b.message}</span>
                   </li>
                 ))}
               </ul>
               {basesSource && <SourceLink source={basesSource} />}
-              <p className="pt-1 font-medium">Te quedarás en la fase 0 hasta resolverlo.</p>
+              <p className="text-foreground">Te quedarás en la fase 0 hasta resolverlo.</p>
             </div>
           )}
           {result && result.blockers.length === 0 && (
-            <FlightStrip kind="ok" meta="Fase 1">
-              <p className="text-[15px] text-foreground">Cumples los requisitos declarados. Empezarás en la fase 1.</p>
-            </FlightStrip>
+            <p className="flex max-w-[68ch] items-start gap-3 leading-relaxed text-green">
+              <span aria-hidden="true" className="font-mono">✓</span>
+              <span>Cumples los requisitos declarados. Empezarás en la fase 1.</span>
+            </p>
           )}
           {result && result.warnings.length > 0 && (
-            <div role="status" className="space-y-2">
-              <SectionLabel>Avisos (no bloquean) · {result.warnings.length}</SectionLabel>
+            <div role="status" className="space-y-3">
+              <p className="flex items-center gap-2">
+                <Annunciator tone="amber">Aviso</Annunciator>
+                <span className="text-xs uppercase tracking-wide text-muted-foreground">No bloquea · {result.warnings.length}</span>
+              </p>
               <ul className="space-y-2">
                 {result.warnings.map((w) => (
-                  <li key={w.code}>
-                    <FlightStrip kind="warning" meta="Aviso">
-                      <p className="text-[15px] text-foreground">{w.message}</p>
-                    </FlightStrip>
+                  <li key={w.code} className="flex max-w-[68ch] gap-3 leading-relaxed text-amber">
+                    <span aria-hidden="true" className="font-mono">△</span>
+                    <span>{w.message}</span>
                   </li>
                 ))}
               </ul>
@@ -191,9 +174,9 @@ export function OnboardingWizard({
         </section>
       )}
 
-      {error && <p role="alert" className="border-l-2 border-destructive pl-3 text-destructive">{error}</p>}
+      {error && <p role="alert" className="text-sm text-red">{error}</p>}
 
-      <div className="flex justify-between gap-3 border-t pt-5">
+      <div className="flex justify-between gap-3 border-t border-line pt-5">
         <Button type="button" variant="outline" size="lg" disabled={step === 0 || pending} onClick={() => { setError(null); setStep((s) => s - 1) }}>
           Atrás
         </Button>

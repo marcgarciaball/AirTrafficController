@@ -15,7 +15,7 @@ function UrlError() {
   const code = useSearchParams().get("error");
   const message = code ? URL_ERRORS[code] : undefined;
   return message ? (
-    <p role="alert" className="text-sm text-destructive">
+    <p role="alert" className="text-sm text-red">
       {message}
     </p>
   ) : null;
@@ -32,8 +32,8 @@ export default function LoginPage() {
         <Field id="email" label="Email" type="email" autoComplete="email" />
         <Field id="password" label="Contraseña" type="password" autoComplete="current-password" />
         <FormMessages state={state} />
-        <Button type="submit" size="lg" className="mt-1" disabled={pending}>
-          {pending ? "Entrando..." : "Entrar"}
+        <Button type="submit" size="lg" className="mt-2 w-full" disabled={pending}>
+          {pending ? "Entrando…" : "Entrar"}
         </Button>
       </form>
       <GoogleButton />

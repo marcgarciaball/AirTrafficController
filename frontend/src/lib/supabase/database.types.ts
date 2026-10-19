@@ -267,6 +267,100 @@ export type Database = {
           },
         ]
       }
+      questions: {
+        Row: {
+          correct_index: number
+          difficulty: number
+          explanation: string
+          id: string
+          options: Json
+          reviewed: boolean
+          source_pages: string
+          stem: string
+          topic_id: string
+        }
+        Insert: {
+          correct_index: number
+          difficulty?: number
+          explanation: string
+          id: string
+          options: Json
+          reviewed?: boolean
+          source_pages: string
+          stem: string
+          topic_id: string
+        }
+        Update: {
+          correct_index?: number
+          difficulty?: number
+          explanation?: string
+          id?: string
+          options?: Json
+          reviewed?: boolean
+          source_pages?: string
+          stem?: string
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_attempts: {
+        Row: {
+          answers: Json
+          blank: number
+          correct: number
+          finished_at: string | null
+          id: string
+          mode: string
+          started_at: string
+          topic_id: string | null
+          total: number
+          user_id: string
+          wrong: number
+        }
+        Insert: {
+          answers?: Json
+          blank?: number
+          correct?: number
+          finished_at?: string | null
+          id?: string
+          mode: string
+          started_at?: string
+          topic_id?: string | null
+          total: number
+          user_id?: string
+          wrong?: number
+        }
+        Update: {
+          answers?: Json
+          blank?: number
+          correct?: number
+          finished_at?: string | null
+          id?: string
+          mode?: string
+          started_at?: string
+          topic_id?: string | null
+          total?: number
+          user_id?: string
+          wrong?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sources: {
         Row: {
           consulted_on: string
@@ -451,6 +545,44 @@ export type Database = {
           },
           {
             foreignKeyName: "tasks_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topic_sections: {
+        Row: {
+          body_md: string
+          id: string
+          reviewed: boolean
+          sort: number
+          source_pages: string
+          title: string
+          topic_id: string
+        }
+        Insert: {
+          body_md: string
+          id: string
+          reviewed?: boolean
+          sort: number
+          source_pages: string
+          title: string
+          topic_id: string
+        }
+        Update: {
+          body_md?: string
+          id?: string
+          reviewed?: boolean
+          sort?: number
+          source_pages?: string
+          title?: string
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topic_sections_topic_id_fkey"
             columns: ["topic_id"]
             isOneToOne: false
             referencedRelation: "topics"

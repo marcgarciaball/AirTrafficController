@@ -1,19 +1,19 @@
-import { FlightStrip } from "@/components/atc/flight-strip"
-import { PageHeader } from "@/components/atc/page-header"
-import { SectionLabel } from "@/components/atc/section-label"
+import { Annunciator } from "@/components/cockpit/annunciator"
+import { Memo, MemoItem } from "@/components/cockpit/memo"
+import { PageTitle } from "@/components/cockpit/page-title"
+import { Panel } from "@/components/cockpit/panel"
 
 export default function Page() {
   return (
     <section className="space-y-6">
-      <PageHeader label="04 · Inglés" title="Inglés" />
-      <FlightStrip
-        kind="arr"
-        title={<SectionLabel as="span">Próximo incremento</SectionLabel>}
-        meta="Inglés"
-        code="INC 3"
-      >
-        <p className="text-[15px] text-foreground">Llega en el incremento 3.</p>
-      </FlightStrip>
+      <PageTitle code="ENG" title="Inglés" />
+      <Panel title="Próximo incremento" flush>
+        <Memo>
+          <MemoItem state="bloqueado" reason="Llega en el incremento 3." meta={<Annunciator tone="dim">INC 3</Annunciator>}>
+            Módulo de inglés
+          </MemoItem>
+        </Memo>
+      </Panel>
     </section>
   )
 }

@@ -1,50 +1,27 @@
-import { PageHeader } from "@/components/atc/page-header"
-import { SectionLabel } from "@/components/atc/section-label"
-import { PhaseStrip } from "@/components/roadmap/phase-strip"
+import { Gauge } from "@/components/cockpit/gauge"
+import { PageTitle } from "@/components/cockpit/page-title"
+import { Panel } from "@/components/cockpit/panel"
+import { FlightPlan } from "@/components/roadmap/flight-plan"
 import { loadRoadmap } from "@/lib/roadmap/load"
 
 export default async function Page() {
   const { roadmap } = await loadRoadmap()
-  const solo = roadmap.phases.filter((p) => ![2, 3, 4].includes(p.number))
-  const parallel = roadmap.phases.filter((p) => [2, 3, 4].includes(p.number))
-  const before = solo.filter((p) => p.number < 2)
-  const after = solo.filter((p) => p.number > 4)
-  const strip = (p: (typeof roadmap.phases)[number]) => (
-    <li key={p.id}>
-      <PhaseStrip phase={p} current={p.number === roadmap.currentPhase} />
-    </li>
-  )
+  const done = roadmap.phases.filter((p) => p.status === "hecha").length
   return (
     <section className="space-y-6">
-      <PageHeader label="02 · Ruta" title="Ruta" />
-      <div className="space-y-2">
-        <div className="flex items-baseline justify-between">
-          <SectionLabel>Progreso global</SectionLabel>
-          <span className="font-mono text-lg tabular-nums">{roadmap.globalPct}%</span>
-        </div>
-        <div
-          role="progressbar"
-          aria-label="Progreso global"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={roadmap.globalPct}
-          className="h-2 w-full overflow-hidden rounded-sm bg-border"
-        >
-          <div className="h-full bg-primary" style={{ width: `${roadmap.globalPct}%` }} />
-        </div>
+      <PageTitle code="RUTA · F0–F8" title="Ruta" />
+      <div className="flex items-end gap-6 border-y border-line py-4">
+        <Gauge value={roadmap.globalPct} label="Global" tone="green" />
+        <dl className="grid flex-1 grid-cols-[1fr_auto] gap-x-4 gap-y-1 text-sm">
+          <dt className="uppercase tracking-wide text-muted-foreground">Fases hechas</dt>
+          <dd className="text-right font-mono text-green tabular-nums">{done}/{roadmap.phases.length}</dd>
+          <dt className="uppercase tracking-wide text-muted-foreground">Fase actual</dt>
+          <dd className="text-right font-mono text-magenta tabular-nums">{roadmap.currentPhase != null ? `F${roadmap.currentPhase}` : "—"}</dd>
+        </dl>
       </div>
-      <ol className="space-y-3">
-        {before.map(strip)}
-        {parallel.length > 0 ? (
-          <li>
-            <div className="space-y-2 border-l-2 border-dashed border-primary/50 pl-3">
-              <SectionLabel>En paralelo</SectionLabel>
-              <ol className="space-y-3">{parallel.map(strip)}</ol>
-            </div>
-          </li>
-        ) : null}
-        {after.map(strip)}
-      </ol>
+      <Panel title="Plan de vuelo" flush>
+        <FlightPlan phases={roadmap.phases} currentPhase={roadmap.currentPhase} />
+      </Panel>
     </section>
   )
 }

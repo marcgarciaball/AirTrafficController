@@ -1,12 +1,12 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
-import { Separator } from "@/components/ui/separator"
+import { PageTitle } from "@/components/cockpit/page-title"
+import { Panel } from "@/components/cockpit/panel"
+import { buttonVariants } from "@/components/ui/button"
 import { formatDate } from "@/lib/format"
 import type { OnboardingAnswers } from "@/lib/onboarding/schema"
 import { ProfileEditForm } from "./profile-edit-form"
-import { PageHeader } from "@/components/atc/page-header"
-import { SectionLabel } from "@/components/atc/section-label"
 
 const LABELS: Record<string, string> = {
   espanola: "Española", ue: "UE o libre circulación", residente: "Extranjera con residencia legal", ninguna: "Ninguna",
@@ -50,23 +50,22 @@ export default async function PerfilPage() {
   ]
 
   return (
-    <section className="space-y-8">
-      <PageHeader label="05 · Más · Perfil" title="Perfil" />
-      <div className="space-y-2">
-        <SectionLabel as="h2">Respuestas del cuestionario</SectionLabel>
-        <dl className="divide-y overflow-hidden rounded-sm border bg-card">
+    <section className="space-y-6">
+      <PageTitle code="MÁS · Perfil" title="Perfil" back={{ href: "/mas", label: "Más" }} />
+      <Panel title="Respuestas del cuestionario" flush>
+        <dl className="divide-y divide-line">
           {rows.map(([k, v]) => (
-            <div key={k} className="grid grid-cols-1 gap-1 px-3.5 py-2.5 sm:grid-cols-[11rem_minmax(0,1fr)] sm:items-baseline sm:gap-4">
-              <dt className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{k}</dt>
-              <dd className="text-sm tabular-nums">{v}</dd>
+            <div key={k} className="flex items-baseline justify-between gap-4 px-3 py-2 sm:px-4">
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">{k}</dt>
+              <dd className="text-right font-mono text-sm text-foreground tabular-nums">{v}</dd>
             </div>
           ))}
         </dl>
-      </div>
-      <Separator />
-      <ProfileEditForm answers={answers} />
-      <Separator />
-      <Link href="/bienvenida" className="inline-flex h-9 items-center rounded-md border px-3.5 text-sm font-medium outline-none transition-colors hover:border-muted-foreground/50 hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+      </Panel>
+      <Panel title="Editar plan">
+        <ProfileEditForm answers={answers} />
+      </Panel>
+      <Link href="/bienvenida" className={buttonVariants({ variant: "outline" })}>
         Repetir cuestionario
       </Link>
     </section>

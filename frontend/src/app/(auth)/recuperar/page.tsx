@@ -12,8 +12,8 @@ export default function RecuperarPage() {
       <form action={action} className="flex flex-col gap-4">
         <Field id="email" label="Email" type="email" autoComplete="email" />
         <FormMessages state={state} />
-        <Button type="submit" size="lg" className="mt-1" disabled={pending}>
-          {pending ? "Enviando..." : "Enviar enlace"}
+        <Button type="submit" size="lg" className="mt-2 w-full" disabled={pending}>
+          {pending ? "Enviando…" : "Enviar enlace"}
         </Button>
       </form>
       <p className="text-sm text-muted-foreground">Abre el enlace en este mismo navegador.</p>

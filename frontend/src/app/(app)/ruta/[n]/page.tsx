@@ -1,6 +1,9 @@
-import Link from "next/link"
 import { notFound } from "next/navigation"
-import { PageHeader } from "@/components/atc/page-header"
+import { Annunciator } from "@/components/cockpit/annunciator"
+import { Gauge } from "@/components/cockpit/gauge"
+import { Memo } from "@/components/cockpit/memo"
+import { PageTitle, Prose } from "@/components/cockpit/page-title"
+import { Panel } from "@/components/cockpit/panel"
 import { TaskItem } from "@/components/roadmap/task-item"
 import { loadRoadmap } from "@/lib/roadmap/load"
 
@@ -12,35 +15,50 @@ export default async function Page({ params }: { params: Promise<{ n: string }> 
   const phase = roadmap.phases.find((p) => p.number === num)
   if (!phase) notFound()
   const roots = phase.tasks.filter((t) => !t.parent_id)
-  const weeks =
-    phase.est_weeks_min != null && phase.est_weeks_max != null
-      ? `estimación: ${phase.est_weeks_min}–${phase.est_weeks_max} semanas`
-      : null
+  const nextId = roadmap.next[0]?.id ?? null
+  const locked = phase.status === "bloqueada"
+  const done = phase.tasks.filter((t) => t.status === "hecha").length
   return (
     <section className="space-y-6">
-      <Link
-        href="/ruta"
-        className="inline-block rounded-sm font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground underline underline-offset-2 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-      >
-        ← Ruta
-      </Link>
-      <PageHeader label={`Fase ${phase.number} · ${phase.pct}%`} title={phase.title} />
-      <p className="text-[15px] leading-relaxed text-muted-foreground">{phase.summary}</p>
-      {weeks ? <p className="font-mono text-xs text-muted-foreground">{weeks}</p> : null}
-      {phase.status === "bloqueada" ? (
-        <p className="text-sm text-muted-foreground">
-          Fase bloqueada hasta completar: {phase.unlock_after.map((u) => `Fase ${u}`).join(", ")}.
-        </p>
-      ) : null}
-      {roots.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Esta fase aún no tiene tareas.</p>
-      ) : (
-        <ul className="space-y-2">
-          {roots.map((t) => (
-            <TaskItem key={t.id} task={t} sources={sources} links={links} />
-          ))}
-        </ul>
-      )}
+      <PageTitle code={`Fase F${phase.number}`} title={phase.title} back={{ href: "/ruta", label: "Ruta" }}>
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          {phase.number === roadmap.currentPhase ? <Annunciator tone="magenta">Actual</Annunciator> : null}
+          {phase.status === "hecha" ? <Annunciator tone="green">Hecha</Annunciator> : null}
+          {locked ? <Annunciator tone="red">Bloqueada</Annunciator> : null}
+          {phase.est_weeks_min != null && phase.est_weeks_max != null ? (
+            <>
+              <Annunciator tone="amber">Estimación</Annunciator>
+              <span className="font-mono text-sm text-muted-foreground tabular-nums">
+                {phase.est_weeks_min}–{phase.est_weeks_max} SEM
+              </span>
+            </>
+          ) : null}
+        </div>
+      </PageTitle>
+
+      <div className="flex flex-col gap-4 border-y border-line py-4 sm:flex-row sm:items-start sm:gap-6">
+        <Gauge value={phase.pct} label={`F${phase.number}`} tone="green" className="shrink-0" />
+        <div className="space-y-3">
+          <Prose>{phase.summary}</Prose>
+          {locked ? (
+            <p className="text-sm text-amber">
+              Hasta completar: {phase.unlock_after.map((u) => `F${u}`).join(", ")}.
+            </p>
+          ) : null}
+        </div>
+      </div>
+
+      <Panel title="Tareas" aside={`${done}/${phase.tasks.length}`} flush>
+        {roots.length === 0 ? (
+          <p className="px-3 py-2.5 text-sm text-muted-foreground sm:px-4">Esta fase aún no tiene tareas.</p>
+        ) : (
+          <Memo>
+            {roots.map((t) => (
+              <TaskItem key={t.id} task={t} sources={sources} links={links} nextId={nextId} />
+            ))}
+          </Memo>
+        )}
+      </Panel>
     </section>
   )
 }

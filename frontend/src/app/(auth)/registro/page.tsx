@@ -13,8 +13,8 @@ export default function RegistroPage() {
         <Field id="email" label="Email" type="email" autoComplete="email" />
         <Field id="password" label="Contraseña (mínimo 8 caracteres)" type="password" autoComplete="new-password" minLength={8} />
         <FormMessages state={state} />
-        <Button type="submit" size="lg" className="mt-1" disabled={pending}>
-          {pending ? "Creando..." : "Crear cuenta"}
+        <Button type="submit" size="lg" className="mt-2 w-full" disabled={pending}>
+          {pending ? "Creando…" : "Crear cuenta"}
         </Button>
       </form>
       <GoogleButton />

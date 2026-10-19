@@ -41,7 +41,7 @@ export function StepTarget({ draft, set, calls }: StepProps & { calls: ExamCallO
     <StepFieldset legend="Convocatoria objetivo">
       <OptionList name="target" options={options} value={draft.target_choice} onChange={(v) => set({ target_choice: v })} />
       {draft.target_choice === CUSTOM ? (
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label htmlFor="target_date">Fecha del examen</Label>
           <Input id="target_date" type="date" min={nextDay(today)} value={draft.target_date} onChange={(e) => set({ target_date: e.target.value })} required />
         </div>

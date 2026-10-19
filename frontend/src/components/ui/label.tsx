@@ -3,12 +3,13 @@
 import * as React from "react"
 import { cn } from "cn"
 
+// Etiqueta de la MCDU: pequeña, en mayúsculas y en cyan.
 function Label({ className, ...props }: React.ComponentProps<"label">) {
   return (
     <label
       data-slot="label"
       className={cn(
-        "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+        "flex items-center gap-2 text-xs leading-4 font-normal uppercase tracking-wide text-cyan select-none peer-disabled:cursor-not-allowed peer-disabled:text-muted-foreground",
         className
       )}
       {...props}
