@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-set local search_path = public, extensions;
+select set_config('search_path', 'public, ' || quote_ident(n.nspname), true) from pg_extension e join pg_namespace n on n.oid = e.extnamespace where e.extname = 'pgtap';
 select plan(12);
 
 select has_table('public', 'sources', 'existe sources');

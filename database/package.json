@@ -5,7 +5,8 @@
   "scripts": {
     "db:push": "supabase db push --linked --include-seed",
     "db:test": "supabase test db --linked",
-    "db:types": "supabase gen types typescript --linked > ../frontend/src/lib/supabase/database.types.ts"
+    "db:types": "supabase gen types typescript --linked > ../frontend/src/lib/supabase/database.types.ts",
+    "db:test:url": "set -a && . ./.env && set +a && supabase test db --db-url \"$SUPABASE_DB_URL\""
   },
   "devDependencies": {
     "supabase": "2.121.0"

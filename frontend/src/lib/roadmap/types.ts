@@ -1,0 +1,9 @@
+export type TaskStatus = "pendiente" | "en_curso" | "hecha"
+export type PhaseRow = { id: string; number: number; title: string; summary: string; est_weeks_min: number | null; est_weeks_max: number | null; track: string; unlock_after: number[] }
+export type TaskRow = { id: string; phase_id: string; parent_id: string | null; title: string; explanation: string; est_minutes: number | null; kind: string; topic_id: string | null; source_id: string | null; verified: boolean; recommended: boolean; onboarding_key: string | null; sort: number }
+export type DependencyRow = { task_id: string; depends_on_id: string }
+export type ProgressRow = { task_id: string; status: TaskStatus }
+export type TaskView = TaskRow & { status: TaskStatus; blocked: boolean; blockedBy: string[]; children: TaskView[] }
+export type PhaseStatus = "bloqueada" | "disponible" | "en_curso" | "hecha"
+export type PhaseView = PhaseRow & { status: PhaseStatus; pct: number; tasks: TaskView[] }
+export type Roadmap = { phases: PhaseView[]; globalPct: number; currentPhase: number | null; next: TaskView[] }

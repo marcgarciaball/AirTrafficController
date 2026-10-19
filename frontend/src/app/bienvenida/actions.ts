@@ -2,7 +2,10 @@
 
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
-import { onboardingActionSchema, type OnboardingAnswers } from "@/lib/onboarding/schema"
+import type { SupabaseClient } from "@supabase/supabase-js"
+import { evaluateEligibility } from "@/lib/onboarding/eligibility"
+import { onboardingTaskUpdates } from "@/lib/roadmap/onboarding"
+import { onboardingActionSchema, todayISO, type OnboardingAnswers } from "@/lib/onboarding/schema"
 
 export async function saveOnboarding(
   answers: OnboardingAnswers
@@ -34,5 +37,30 @@ export async function saveOnboarding(
     })
     .eq("id", data.user.id)
   if (error) return { error: "No se han podido guardar las respuestas. Inténtalo de nuevo." }
+
+  // Marca como hechas las tareas de la fase 0 que el cuestionario ya acredita (no borra nada).
+  const updates = onboardingTaskUpdates(a, evaluateEligibility(a, todayISO()).eligible)
+  if (updates.length > 0) {
+    const db = supabase as unknown as SupabaseClient
+    const { data: tasks } = await db
+      .from("tasks")
+      .select("id, onboarding_key")
+      .in("onboarding_key", updates.map((u) => u.onboarding_key))
+    const now = new Date().toISOString()
+    const rows = (tasks ?? []).flatMap((t: { id: string; onboarding_key: string }) => {
+      const u = updates.find((x) => x.onboarding_key === t.onboarding_key)
+      return u
+        ? [{
+            user_id: data.user!.id,
+            task_id: t.id,
+            status: u.status,
+            started_at: u.status === "pendiente" ? null : now,
+            completed_at: u.status === "hecha" ? now : null,
+            updated_at: now,
+          }]
+        : []
+    })
+    if (rows.length > 0) await db.from("user_task_progress").upsert(rows, { onConflict: "user_id,task_id" })
+  }
   redirect("/hoy")
 }

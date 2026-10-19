@@ -122,6 +122,77 @@ export type Database = {
           },
         ]
       }
+      facts: {
+        Row: {
+          id: string
+          key: string
+          label: string
+          sort: number
+          source_id: string
+          value: string | null
+          verified: boolean
+        }
+        Insert: {
+          id: string
+          key: string
+          label: string
+          sort?: number
+          source_id: string
+          value?: string | null
+          verified?: boolean
+        }
+        Update: {
+          id?: string
+          key?: string
+          label?: string
+          sort?: number
+          source_id?: string
+          value?: string | null
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facts_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      phases: {
+        Row: {
+          est_weeks_max: number | null
+          est_weeks_min: number | null
+          id: string
+          number: number
+          summary: string
+          title: string
+          track: string
+          unlock_after: number[]
+        }
+        Insert: {
+          est_weeks_max?: number | null
+          est_weeks_min?: number | null
+          id: string
+          number: number
+          summary: string
+          title: string
+          track: string
+          unlock_after?: number[]
+        }
+        Update: {
+          est_weeks_max?: number | null
+          est_weeks_min?: number | null
+          id?: string
+          number?: number
+          summary?: string
+          title?: string
+          track?: string
+          unlock_after?: number[]
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           birth_date: string | null
@@ -225,6 +296,247 @@ export type Database = {
           url?: string
         }
         Relationships: []
+      }
+      subjects: {
+        Row: {
+          code: string
+          id: string
+          title: string
+          track: string
+        }
+        Insert: {
+          code: string
+          id: string
+          title: string
+          track: string
+        }
+        Update: {
+          code?: string
+          id?: string
+          title?: string
+          track?: string
+        }
+        Relationships: []
+      }
+      task_dependencies: {
+        Row: {
+          depends_on_id: string
+          task_id: string
+        }
+        Insert: {
+          depends_on_id: string
+          task_id: string
+        }
+        Update: {
+          depends_on_id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_dependencies_depends_on_id_fkey"
+            columns: ["depends_on_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_dependencies_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_links: {
+        Row: {
+          role: string
+          source_id: string
+          task_id: string
+        }
+        Insert: {
+          role: string
+          source_id: string
+          task_id: string
+        }
+        Update: {
+          role?: string
+          source_id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_links_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_links_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          est_minutes: number | null
+          explanation: string
+          id: string
+          kind: string
+          onboarding_key: string | null
+          parent_id: string | null
+          phase_id: string
+          recommended: boolean
+          sort: number
+          source_id: string | null
+          title: string
+          topic_id: string | null
+          verified: boolean
+        }
+        Insert: {
+          est_minutes?: number | null
+          explanation: string
+          id: string
+          kind: string
+          onboarding_key?: string | null
+          parent_id?: string | null
+          phase_id: string
+          recommended?: boolean
+          sort?: number
+          source_id?: string | null
+          title: string
+          topic_id?: string | null
+          verified?: boolean
+        }
+        Update: {
+          est_minutes?: number | null
+          explanation?: string
+          id?: string
+          kind?: string
+          onboarding_key?: string | null
+          parent_id?: string | null
+          phase_id?: string
+          recommended?: boolean
+          sort?: number
+          source_id?: string | null
+          title?: string
+          topic_id?: string | null
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_phase_id_fkey"
+            columns: ["phase_id"]
+            isOneToOne: false
+            referencedRelation: "phases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      topics: {
+        Row: {
+          id: string
+          number: number
+          source_id: string
+          subject_id: string
+          title: string
+          verified: boolean
+        }
+        Insert: {
+          id: string
+          number: number
+          source_id: string
+          subject_id: string
+          title: string
+          verified?: boolean
+        }
+        Update: {
+          id?: string
+          number?: number
+          source_id?: string
+          subject_id?: string
+          title?: string
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "topics_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "topics_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_task_progress: {
+        Row: {
+          completed_at: string | null
+          notes: string | null
+          started_at: string | null
+          status: string
+          task_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          notes?: string | null
+          started_at?: string | null
+          status?: string
+          task_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          notes?: string | null
+          started_at?: string | null
+          status?: string
+          task_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_task_progress_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
