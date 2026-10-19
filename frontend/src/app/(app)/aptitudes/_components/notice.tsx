@@ -1,18 +1,13 @@
-import { Annunciator } from "@/components/cockpit/annunciator"
-
 export const FEAST_TRAINING_URL = "https://feast-training.eurocontrol.int/"
 
 export function AptNotice() {
   return (
-    <div className="space-y-1.5 border border-line px-3 py-2.5 text-sm text-muted-foreground">
-      <Annunciator tone="amber">Aviso</Annunciator>
-      <p className="max-w-[68ch] leading-relaxed">
-        Ejercicios propios de entrenamiento. No reproducen las pruebas oficiales. Para FEAST, usa también la{" "}
-        <a href={FEAST_TRAINING_URL} target="_blank" rel="noopener noreferrer" className="text-cyan underline underline-offset-2">
-          plataforma oficial gratuita (feast-training)
-        </a>
-        .
-      </p>
-    </div>
+    <p className="max-w-prose rounded-lg border border-warning/40 bg-card px-5 py-4 leading-relaxed text-muted-foreground">
+      <span className="font-bold text-warning">Ejercicios propios de entrenamiento.</span> No reproducen las pruebas oficiales. Para FEAST, usa también la{" "}
+      <a href={FEAST_TRAINING_URL} target="_blank" rel="noopener noreferrer" className="text-primary underline decoration-primary/40 hover:decoration-primary">
+        plataforma oficial gratuita (feast-training)
+      </a>
+      .
+    </p>
   )
 }

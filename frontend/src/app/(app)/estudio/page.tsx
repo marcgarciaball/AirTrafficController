@@ -1,9 +1,11 @@
 import Link from "next/link"
-import { Annunciator } from "@/components/cockpit/annunciator"
-import { Memo, MemoItem } from "@/components/cockpit/memo"
-import { PageTitle } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
+import { StatusChip } from "@/components/ui-torre/status-chip"
+import { ChevronRight } from "lucide-react"
+import { CHECKLIST_ROW, ROW_HOVER } from "@/components/ui-torre/checklist"
+import { PageHeader } from "@/components/ui-torre/page-header"
+import { Section } from "@/components/ui-torre/section"
 import { createClient } from "@/lib/supabase/server"
+import { cn } from "@/lib/utils"
 
 export default async function Page() {
   const supabase = await createClient()
@@ -30,42 +32,52 @@ export default async function Page() {
 
   const list = topics ?? []
   return (
-    <section className="space-y-6">
-      <PageTitle code="ESTD · Temario" title="Estudio" />
-      <Panel title="Simulacro" flush>
-        <Memo>
-          <MemoItem state="disponible" href="/estudio/simulacro" detail="Preguntas de todos los temas, con cronómetro opcional." meta={<span className="font-mono">50 PREG</span>}>
-            Simulacro de examen
-          </MemoItem>
-        </Memo>
-      </Panel>
-      <Panel title="Aptitudes" flush>
-        <Memo>
-          <MemoItem state="disponible" href="/aptitudes" detail="Atención, razonamiento espacial y abstracto, memoria, cálculo y multitarea.">
-            APTITUDES
-          </MemoItem>
-        </Memo>
-      </Panel>
-      <Panel title="Temas" aside={`${list.length}`} flush>
-        <ul className="divide-y divide-line">
+    <div className="space-y-12">
+      <PageHeader title="Estudio" description="Lee cada tema con calma y comprueba lo aprendido con su test." />
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Link href="/estudio/simulacro" className="group rounded-lg border bg-card p-5 shadow-sm transition-colors hover:border-primary/50 sm:p-6">
+          <span className="flex items-center justify-between gap-3">
+            <span className="text-lg font-bold">Simulacro de examen</span>
+            <ChevronRight aria-hidden="true" className="size-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+          </span>
+          <span className="mt-1.5 block text-muted-foreground">50 preguntas de todos los temas, con cronómetro opcional.</span>
+        </Link>
+        <Link href="/aptitudes" className="group rounded-lg border bg-card p-5 shadow-sm transition-colors hover:border-primary/50 sm:p-6">
+          <span className="flex items-center justify-between gap-3">
+            <span className="text-lg font-bold">Aptitudes</span>
+            <ChevronRight aria-hidden="true" className="size-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+          </span>
+          <span className="mt-1.5 block text-muted-foreground">Atención, razonamiento espacial y abstracto, memoria, cálculo y multitarea.</span>
+        </Link>
+      </div>
+
+      <Section title="Temario" aside={`${list.length} temas`} flush>
+        <ol className="divide-y divide-line">
           {list.map((t) => {
             const nq = qCount.get(t.id) ?? 0
             const ns = sCount.get(t.id) ?? 0
             const l = last.get(t.id)
             const hasContent = nq > 0 || ns > 0
             const pdf = t.sources?.url
-            const row = "flex items-start gap-3 px-3 py-2.5 sm:px-4"
-            const num = <span className="w-7 shrink-0 font-mono text-sm tabular-nums">T{t.number}</span>
+            const num = (
+              <span aria-hidden="true" className="w-8 shrink-0 pt-px text-lg font-bold text-muted-foreground">
+                {t.number}
+              </span>
+            )
             if (!hasContent) {
               return (
-                <li key={t.id} className={`${row} text-muted-foreground`}>
+                <li key={t.id} className={CHECKLIST_ROW}>
                   {num}
-                  <span className="min-w-0 flex-1 space-y-1">
-                    <span className="block leading-snug">{t.title}</span>
-                    <span className="flex flex-wrap items-center gap-2 text-sm">
-                      <Annunciator tone="dim">En preparación</Annunciator>
+                  <span className="min-w-0 flex-1 space-y-2">
+                    <span className="block leading-snug text-muted-foreground">
+                      <span className="sr-only">Tema {t.number}. </span>
+                      {t.title}
+                    </span>
+                    <span className="flex flex-wrap items-center gap-3 text-sm">
+                      <StatusChip tone="muted">en preparación</StatusChip>
                       {pdf ? (
-                        <a href={pdf} target="_blank" rel="noopener noreferrer" className="text-cyan underline decoration-line underline-offset-2 hover:decoration-cyan">
+                        <a href={pdf} target="_blank" rel="noopener noreferrer" className="text-primary underline decoration-primary/40 hover:decoration-primary">
                           PDF oficial
                         </a>
                       ) : null}
@@ -76,25 +88,25 @@ export default async function Page() {
             }
             return (
               <li key={t.id}>
-                <Link href={`/estudio/${t.number}`} className={`${row} hover:bg-surface`}>
-                  <span className="text-cyan">{num}</span>
-                  <span className="min-w-0 flex-1 space-y-0.5">
-                    <span className="block leading-snug text-cyan">{t.title}</span>
-                    <span className="block font-mono text-xs text-muted-foreground tabular-nums">
-                      {ns} SECC · {nq} PREG
+                <Link href={`/estudio/${t.number}`} className={cn(CHECKLIST_ROW, ROW_HOVER)}>
+                  {num}
+                  <span className="min-w-0 flex-1 space-y-1">
+                    <span className="block leading-snug font-bold text-foreground">
+                      <span className="sr-only">Tema {t.number}. </span>
+                      {t.title}
+                    </span>
+                    <span className="block text-sm text-muted-foreground">
+                      {ns} {ns === 1 ? "sección" : "secciones"} · {nq} {nq === 1 ? "pregunta" : "preguntas"}
+                      {l ? ` · último test: ${l.correct} de ${l.total}` : ""}
                     </span>
                   </span>
-                  <span className="shrink-0 self-center text-right">
-                    <span className="block text-xs uppercase tracking-wide text-muted-foreground">Último</span>
-                    <span className="block font-mono text-sm text-foreground tabular-nums">{l ? `${l.correct}/${l.total}` : "—"}</span>
-                  </span>
-                  <span aria-hidden="true" className="shrink-0 self-center font-mono text-cyan">›</span>
+                  <ChevronRight aria-hidden="true" className="size-5 shrink-0 self-center text-muted-foreground" />
                 </Link>
               </li>
             )
           })}
-        </ul>
-      </Panel>
-    </section>
+        </ol>
+      </Section>
+    </div>
   )
 }

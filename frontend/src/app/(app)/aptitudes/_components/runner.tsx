@@ -2,10 +2,11 @@
 
 import Link from "next/link"
 import { useCallback, useEffect, useRef, useState, useTransition, type ReactNode } from "react"
-import { Annunciator } from "@/components/cockpit/annunciator"
-import { Gauge } from "@/components/cockpit/gauge"
-import { Panel } from "@/components/cockpit/panel"
-import { Tape } from "@/components/cockpit/tape"
+import { Check, X } from "lucide-react"
+import { FIELD_LABEL } from "@/components/ui-torre/field"
+import { ProgressBar } from "@/components/ui-torre/progress-bar"
+import { Section } from "@/components/ui-torre/section"
+import { StatusChip } from "@/components/ui-torre/status-chip"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { checkCalculo } from "@/lib/aptitudes/calculo"
@@ -91,11 +92,11 @@ function NumericStep({ prompt, unit, onSubmit }: { prompt: ReactNode; unit?: str
     >
       {prompt}
       <div className="flex items-end gap-3">
-        <label className="flex-1 space-y-1">
-          <span className="text-xs uppercase tracking-wide text-cyan">Respuesta{unit ? ` (${unit})` : ""}</span>
+        <label className="flex-1 space-y-2">
+          <span className={FIELD_LABEL}>Respuesta{unit ? ` (${unit})` : ""}</span>
           <Input autoFocus inputMode="numeric" value={v} onChange={(e) => setV(e.target.value)} className="text-right" />
         </label>
-        <Button type="submit">Siguiente</Button>
+        <Button type="submit" size="lg">Siguiente</Button>
       </div>
     </form>
   )
@@ -109,9 +110,9 @@ function ChoiceStep({ options, onPick }: { options: ReactNode[]; onPick: (i: num
           <button
             type="button"
             onClick={() => onPick(i)}
-            className="flex min-h-24 w-full items-center justify-center gap-3 border border-line px-3 py-2 hover:border-cyan focus-visible:outline-1 focus-visible:outline-cyan"
+            className="flex min-h-24 w-full items-center justify-center gap-4 rounded-lg border bg-card px-4 py-3 shadow-sm transition-colors hover:border-primary/60 hover:bg-subtle"
           >
-            <span className="font-mono text-sm text-cyan">[{LETTERS[i]}]</span>
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-md border bg-subtle font-bold text-muted-foreground">{LETTERS[i]}</span>
             {o}
           </button>
         </li>
@@ -130,7 +131,7 @@ function PosGrid({ cols, lit, onPick }: { cols: number; lit?: number; onPick?: (
           disabled={!onPick}
           onClick={() => onPick?.(i)}
           aria-label={`Casilla ${i + 1}`}
-          className={cn("aspect-square border font-mono text-xs", lit === i ? "border-cyan bg-cyan text-background" : "border-line text-muted-foreground", onPick && "hover:border-cyan")}
+          className={cn("aspect-square min-h-11 rounded-md border text-sm transition-colors", lit === i ? "border-primary bg-primary text-primary-foreground" : "bg-card text-muted-foreground", onPick && "hover:border-primary")}
         >
           {onPick ? i + 1 : ""}
         </button>
@@ -170,8 +171,8 @@ function MemoriaStep({ item, onSubmit }: { item: MemoriaItem; onSubmit: (a: numb
     >
       <p className="text-sm text-muted-foreground">Reproduce la secuencia ({len} elementos).</p>
       {digits ? (
-        <label className="block space-y-1">
-          <span className="text-xs uppercase tracking-wide text-cyan">Dígitos</span>
+        <label className="block space-y-2">
+          <span className={FIELD_LABEL}>Dígitos</span>
           <Input autoFocus inputMode="numeric" value={text} onChange={(e) => setText(e.target.value)} className="tracking-[0.3em]" />
         </label>
       ) : (
@@ -220,7 +221,7 @@ function MultiStep({ item, remaining, onSample, onAnswer, onAllAnswered }: { ite
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <div className="space-y-2">
-        <p className="text-xs uppercase tracking-wide text-cyan">Seguimiento · mantén el cursor sobre el objetivo</p>
+        <p className="text-sm font-bold">Seguimiento: mantén el cursor sobre el objetivo</p>
         <div
           ref={area}
           onPointerMove={(e) => {
@@ -229,26 +230,26 @@ function MultiStep({ item, remaining, onSample, onAnswer, onAllAnswered }: { ite
           }}
           onPointerLeave={() => (pointer.current = null)}
           style={{ touchAction: "none" }}
-          className="relative aspect-square w-full border border-line"
+          className="relative aspect-square w-full rounded-lg border bg-card"
         >
           <span
             aria-hidden="true"
-            className={cn("absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2", hit ? "border-green" : "border-amber")}
+            className={cn("absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2", hit ? "border-success" : "border-warning")}
             style={{ left: `${pos.x * 100}%`, top: `${pos.y * 100}%`, width: `${item.radius * 200}%`, height: `${item.radius * 200}%` }}
           />
         </div>
-        <p className="font-mono text-xs text-muted-foreground">{fmt(remaining)}</p>
+        <p className="font-mono text-sm text-muted-foreground">{fmt(remaining)}</p>
       </div>
       <form onSubmit={submit} className="space-y-3">
-        <p className="text-xs uppercase tracking-wide text-cyan tabular-nums">
-          Cálculo {idx + 1}/{item.calc.length}
+        <p className="text-sm text-muted-foreground">
+          Cálculo {idx + 1} de {item.calc.length}
         </p>
         <p className="leading-relaxed">{cur.prompt}</p>
         <label className="block space-y-1">
-          <span className="text-xs uppercase tracking-wide text-cyan">Respuesta ({cur.unit})</span>
+          <span className={FIELD_LABEL}>Respuesta ({cur.unit})</span>
           <Input inputMode="numeric" value={v} onChange={(e) => setV(e.target.value)} className="text-right" />
         </label>
-        <Button type="submit">Siguiente</Button>
+        <Button type="submit" size="lg">Siguiente</Button>
       </form>
     </div>
   )
@@ -351,17 +352,17 @@ export function Runner({ kind, level, bestPct }: { kind: Kind; level: number; be
 
   if (phase === "intro") {
     return (
-      <Panel title="Ejecución">
-        <div className="space-y-4">
-          <dl className="grid grid-cols-3 gap-3 font-mono text-sm tabular-nums">
-            <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Nivel</dt><dd>{lvl}/5</dd></div>
-            <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Tiempo</dt><dd>{fmt(totalS)}</dd></div>
-            <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">Mejor</dt><dd>{bestPct === null ? "—" : `${bestPct} %`}</dd></div>
+      <Section title="Antes de empezar">
+        <div className="space-y-6">
+          <dl className="grid grid-cols-3 gap-4">
+            <div className="space-y-0.5"><dd className="text-2xl font-bold">{lvl} <span className="text-base font-normal text-muted-foreground">de 5</span></dd><dt className="text-sm text-muted-foreground">nivel</dt></div>
+            <div className="space-y-0.5"><dd className="text-2xl font-bold">{fmt(totalS)}</dd><dt className="text-sm text-muted-foreground">tiempo</dt></div>
+            <div className="space-y-0.5"><dd className="text-2xl font-bold">{bestPct === null ? "—" : `${bestPct} %`}</dd><dt className="text-sm text-muted-foreground">mejor marca</dt></div>
           </dl>
-          <Tape value={(lvl / 5) * 100} label="Nivel" tone="cyan" />
-          <Button onClick={start}>Empezar</Button>
+          <ProgressBar value={(lvl / 5) * 100} label="Nivel" tone="primary" />
+          <Button size="lg" onClick={start}>Empezar</Button>
         </div>
-      </Panel>
+      </Section>
     )
   }
 
@@ -371,43 +372,46 @@ export function Runner({ kind, level, bestPct }: { kind: Kind; level: number; be
     const shown = saved && "next" in saved ? saved.next : next
     return (
       <div className="space-y-6">
-        <Panel title="Resultado">
+        <Section title="Resultado">
           <div className="flex flex-wrap items-center gap-6">
-            <Gauge value={pct} label="Acierto" tone={pct >= 80 ? "green" : pct >= 50 ? "cyan" : "amber"} />
-            <div className="space-y-2 font-mono text-sm tabular-nums">
-              <p>{outcome.score}/{outcome.total} · {fmt(outcome.durationS)}</p>
-              <p className="flex items-center gap-2">
-                <Annunciator tone={pct >= 80 ? "green" : pct < 50 ? "amber" : "white"}>
-                  {pct >= 80 ? "Nivel sube" : pct < 50 ? "Nivel baja" : "Nivel se mantiene"}
-                </Annunciator>
-                <span>{shown}/5</span>
+            <p className="text-4xl font-bold">
+              {pct}
+              <span className="ml-1 text-xl font-normal text-muted-foreground">% de acierto</span>
+            </p>
+            <div className="space-y-2">
+              <p className="text-muted-foreground">{outcome.score} de {outcome.total} · {fmt(outcome.durationS)}</p>
+              <p className="flex items-center gap-2 text-muted-foreground">
+                <StatusChip tone={pct >= 80 ? "success" : pct < 50 ? "warning" : "muted"}>
+                  {pct >= 80 ? "el nivel sube" : pct < 50 ? "el nivel baja" : "el nivel se mantiene"}
+                </StatusChip>
+                <span>nivel {shown} de 5</span>
               </p>
-              {saved && "error" in saved ? <p className="text-red">{saved.error}</p> : null}
+              {saved && "error" in saved ? <p className="text-danger">{saved.error}</p> : null}
             </div>
           </div>
-          <div className="mt-4 flex gap-3">
-            <Button onClick={() => setPhase("intro")}>Repetir</Button>
-            <Link href="/aptitudes" className={buttonVariants({ variant: "outline" })}>Aptitudes</Link>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Button size="lg" onClick={() => setPhase("intro")}>Repetir</Button>
+            <Link href="/aptitudes" className={buttonVariants({ variant: "outline", size: "lg" })}>Volver a aptitudes</Link>
           </div>
-        </Panel>
-        <Panel title="Revisión" aside={`${reviews.length}`} flush>
+        </Section>
+        <Section title="Revisión" aside={`${reviews.length} ejercicios`} flush>
           <ul className="divide-y divide-line">
             {reviews.map((r, i) => (
-              <li key={i} className="flex gap-3 px-3 py-2.5 sm:px-4">
-                <span aria-hidden="true" className={cn("w-4 shrink-0 text-center font-mono", r.ok ? "text-green" : "text-red")}>{r.ok ? "✓" : "✗"}</span>
-                <span className="min-w-0 flex-1 space-y-0.5 text-sm">
+              <li key={i} className="flex gap-4 px-5 py-4 sm:px-6">
+                <span aria-hidden="true" className={cn("mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full text-card", r.ok ? "bg-success" : "bg-danger")}>{r.ok ? <Check className="size-3.5" strokeWidth={3} /> : <X className="size-3.5" strokeWidth={3} />}</span>
+                <span className="min-w-0 flex-1 space-y-1">
                   <span className="sr-only">{r.ok ? "Correcta: " : "Incorrecta: "}</span>
                   <span className="block">{r.title}</span>
-                  <span className="block font-mono text-xs text-muted-foreground">
-                    Tu respuesta: <span className={r.ok ? "text-green" : "text-red"}>{r.given}</span>
-                    {r.ok ? null : <> · Correcta: <span className="text-green">{r.expected}</span></>}
+                  <span className="block text-sm text-muted-foreground">
+                    Tu respuesta: <span className={r.ok ? "text-success" : "text-danger"}>{r.given}</span>
+                    {r.ok ? null : <> · Correcta: <span className="text-success">{r.expected}</span></>}
                   </span>
-                  {r.note ? <span className="block text-xs text-muted-foreground">{r.note}</span> : null}
+                  {r.note ? <span className="block text-sm text-muted-foreground">{r.note}</span> : null}
                 </span>
               </li>
             ))}
           </ul>
-        </Panel>
+        </Section>
       </div>
     )
   }
@@ -415,16 +419,16 @@ export function Runner({ kind, level, bestPct }: { kind: Kind; level: number; be
   const cur = items[idx]
   if (!cur) return null
   return (
-    <Panel title={`Ejercicio ${cur.kind === "multitarea" ? "doble" : `${idx + 1}/${items.length}`}`} aside={<span className={remaining <= 10 ? "text-amber" : ""}>{fmt(remaining)}</span>}>
-      <div className="space-y-4">
-        <Tape value={((totalS - remaining) / totalS) * 100} label="Tiempo transcurrido" tone={remaining <= 10 ? "amber" : "cyan"} />
+    <Section title={cur.kind === "multitarea" ? "Ejercicio doble" : `Ejercicio ${idx + 1} de ${items.length}`} aside={<span className={cn("font-mono", remaining <= 10 && "text-warning")}>{fmt(remaining)}</span>}>
+      <div className="space-y-6">
+        <ProgressBar value={((totalS - remaining) / totalS) * 100} label="Tiempo transcurrido" tone={remaining <= 10 ? "warning" : "primary"} />
         {cur.kind === "atencion" ? (
           <NumericStep
             key={idx}
             onSubmit={submit}
             prompt={
               <div className="space-y-3">
-                <p>Cuenta cuántas veces aparece <span className="font-mono text-lg text-cyan">{cur.item.target}</span></p>
+                <p>Cuenta cuántas veces aparece <span className="font-mono text-xl font-bold text-primary">{cur.item.target}</span></p>
                 <div className="inline-grid gap-1 font-mono text-lg" role="img" aria-label={`Cuadrícula de ${cur.item.grid.length} por ${cur.item.grid.length}`} style={{ gridTemplateColumns: `repeat(${cur.item.grid.length}, 1.75rem)` }}>
                   {cur.item.grid.flat().map((c, i) => <span key={i} className="text-center">{c}</span>)}
                 </div>
@@ -436,16 +440,16 @@ export function Runner({ kind, level, bestPct }: { kind: Kind; level: number; be
         {cur.kind === "espacial" ? (
           <div key={idx} className="space-y-4">
             <p>¿Cuál es la misma figura, solo girada?</p>
-            <div className="flex justify-center border border-line py-3"><PolyShape cells={cur.item.base} label="Figura original" /></div>
+            <div className="flex justify-center rounded-lg border bg-subtle py-4"><PolyShape cells={cur.item.base} label="Figura original" /></div>
             <ChoiceStep onPick={submit} options={cur.item.options.map((o, i) => <PolyShape key={i} cells={o} label={`Opción ${LETTERS[i]}`} />)} />
           </div>
         ) : null}
         {cur.kind === "abstracto" ? (
           <div key={idx} className="space-y-4">
             <p>¿Qué elemento continúa la serie?</p>
-            <div className="flex flex-wrap items-center gap-3 border border-line px-3 py-3">
+            <div className="flex flex-wrap items-center gap-3 rounded-lg border bg-subtle px-4 py-4">
               {cur.item.series.map((t, i) => <FigureView key={i} term={t} label={`Elemento ${i + 1}: ${describeTerm(t)}`} />)}
-              <span className="flex h-14 w-14 items-center justify-center border border-cyan font-mono text-xl text-cyan">?</span>
+              <span className="flex h-14 w-14 items-center justify-center rounded-md border-2 border-dashed border-primary text-xl font-bold text-primary">?</span>
             </div>
             <ChoiceStep onPick={submit} options={cur.item.options.map((o, i) => <FigureView key={i} term={o} label={`Opción ${LETTERS[i]}: ${describeTerm(o)}`} />)} />
           </div>
@@ -453,6 +457,6 @@ export function Runner({ kind, level, bestPct }: { kind: Kind; level: number; be
         {cur.kind === "memoria" ? <MemoriaStep key={idx} item={cur.item} onSubmit={submit} /> : null}
         {cur.kind === "multitarea" ? <MultiStep item={cur.item} onSample={onSample} onAnswer={onAnswer} remaining={remaining} onAllAnswered={finish} /> : null}
       </div>
-    </Panel>
+    </Section>
   )
 }

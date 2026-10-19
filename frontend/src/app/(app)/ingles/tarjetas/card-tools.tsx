@@ -23,7 +23,7 @@ export function Reviewer({ cards, today }: { cards: Due[]; today: string }) {
   const [skipped, setSkipped] = useState<string[]>([])
   const queue = cards.filter((c) => !skipped.includes(c.id))
   const card = queue[0]
-  if (!card) return <p className="text-sm text-muted-foreground">No hay tarjetas pendientes hoy.</p>
+  if (!card) return <p className="text-muted-foreground">No hay tarjetas pendientes hoy. Buen trabajo.</p>
   function grade(g: number) {
     setError(null)
     start(async () => {
@@ -36,24 +36,24 @@ export function Reviewer({ cards, today }: { cards: Due[]; today: string }) {
     })
   }
   return (
-    <div className="space-y-4">
-      <p className="text-xs uppercase tracking-wide text-muted-foreground">{card.deck}</p>
-      <p className="text-lg">{card.front}</p>
+    <div className="space-y-5">
+      <p className="text-sm text-muted-foreground">{card.deck}</p>
+      <p className="text-xl leading-relaxed font-bold">{card.front}</p>
       {shown ? (
         <>
-          <p className="border-t border-line pt-3 text-green">{card.back}</p>
+          <p className="border-t pt-5 text-lg leading-relaxed">{card.back}</p>
           <div className="flex flex-wrap gap-2">
             {GRADES.map(([g, t]) => (
-              <Button key={g} type="button" variant={g === 0 ? "destructive" : "outline"} disabled={pending} onClick={() => grade(g)}>
+              <Button key={g} type="button" size="lg" variant={g === 0 ? "destructive" : "outline"} disabled={pending} onClick={() => grade(g)}>
                 {t}
               </Button>
             ))}
           </div>
         </>
       ) : (
-        <Button type="button" onClick={() => setShown(true)}>[ Mostrar respuesta ]</Button>
+        <Button type="button" size="lg" onClick={() => setShown(true)}>Mostrar respuesta</Button>
       )}
-      {error ? <p role="alert" className="text-sm text-red">{error}</p> : null}
+      {error ? <p role="alert" className="text-danger">{error}</p> : null}
     </div>
   )
 }
@@ -73,7 +73,7 @@ export function CardForm() {
     })
   }
   return (
-    <form action={submit} className="space-y-4">
+    <form action={submit} className="space-y-5">
       <label className={LABEL}>
         <span className={CAP}>Mazo</span>
         <select name="deck" className={SELECT}>
@@ -89,8 +89,8 @@ export function CardForm() {
         <span className={CAP}>Reverso</span>
         <Input name="back" required maxLength={1000} />
       </label>
-      <Button type="submit" disabled={pending}>[ Crear tarjeta ]</Button>
-      {error ? <p role="alert" className="text-sm text-red">{error}</p> : null}
+      <Button type="submit" disabled={pending}>Crear tarjeta</Button>
+      {error ? <p role="alert" className="text-danger">{error}</p> : null}
     </form>
   )
 }
@@ -98,13 +98,13 @@ export function CardForm() {
 export function CardList({ cards }: { cards: { id: string; deck: string; front: string; due_on: string }[] }) {
   const [confirm, setConfirm] = useState<string | null>(null)
   const [pending, start] = useTransition()
-  if (!cards.length) return <p className="text-sm text-muted-foreground">Aún no has creado tarjetas.</p>
+  if (!cards.length) return <p className="text-muted-foreground">Aún no has creado tarjetas.</p>
   return (
-    <ul className="divide-y divide-line border-y border-line">
+    <ul className="divide-y divide-line">
       {cards.map((c) => (
-        <li key={c.id} className="flex items-center gap-3 py-2 text-sm">
+        <li key={c.id} className="flex min-h-12 items-center gap-4 py-2.5">
           <span className="min-w-0 flex-1 truncate">{c.front}</span>
-          <span className="shrink-0 font-mono text-muted-foreground tabular-nums">{formatDate(c.due_on)}</span>
+          <span className="shrink-0 text-sm text-muted-foreground">vuelve el {formatDate(c.due_on)}</span>
           <Button
             type="button"
             size="xs"

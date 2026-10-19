@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation"
-import { Annunciator } from "@/components/cockpit/annunciator"
-import { Gauge } from "@/components/cockpit/gauge"
-import { Memo } from "@/components/cockpit/memo"
-import { PageTitle, Prose } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
+import { StatusChip } from "@/components/ui-torre/status-chip"
+import { ProgressBar } from "@/components/ui-torre/progress-bar"
+import { Checklist } from "@/components/ui-torre/checklist"
+import { PageHeader, Prose } from "@/components/ui-torre/page-header"
+import { Section } from "@/components/ui-torre/section"
 import { TaskItem } from "@/components/roadmap/task-item"
 import { loadRoadmap } from "@/lib/roadmap/load"
 
@@ -19,46 +19,45 @@ export default async function Page({ params }: { params: Promise<{ n: string }> 
   const locked = phase.status === "bloqueada"
   const done = phase.tasks.filter((t) => t.status === "hecha").length
   return (
-    <section className="space-y-6">
-      <PageTitle code={`Fase F${phase.number}`} title={phase.title} back={{ href: "/ruta", label: "Ruta" }}>
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          {phase.number === roadmap.currentPhase ? <Annunciator tone="magenta">Actual</Annunciator> : null}
-          {phase.status === "hecha" ? <Annunciator tone="green">Hecha</Annunciator> : null}
-          {locked ? <Annunciator tone="red">Bloqueada</Annunciator> : null}
+    <div className="space-y-10">
+      <PageHeader title={phase.title} back={{ href: "/ruta", label: "Ruta" }}>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-muted-foreground">Fase {phase.number}</span>
+          {phase.number === roadmap.currentPhase ? <StatusChip tone="guide">fase actual</StatusChip> : null}
+          {phase.status === "hecha" ? <StatusChip tone="success">hecha</StatusChip> : null}
+          {locked ? <StatusChip tone="danger">bloqueada</StatusChip> : null}
           {phase.est_weeks_min != null && phase.est_weeks_max != null ? (
-            <>
-              <Annunciator tone="amber">Estimación</Annunciator>
-              <span className="font-mono text-sm text-muted-foreground tabular-nums">
-                {phase.est_weeks_min}–{phase.est_weeks_max} SEM
-              </span>
-            </>
+            <StatusChip tone="warning">
+              estimación: {phase.est_weeks_min}–{phase.est_weeks_max} semanas
+            </StatusChip>
           ) : null}
         </div>
-      </PageTitle>
+      </PageHeader>
 
-      <div className="flex flex-col gap-4 border-y border-line py-4 sm:flex-row sm:items-start sm:gap-6">
-        <Gauge value={phase.pct} label={`F${phase.number}`} tone="green" className="shrink-0" />
-        <div className="space-y-3">
-          <Prose>{phase.summary}</Prose>
-          {locked ? (
-            <p className="text-sm text-amber">
-              Hasta completar: {phase.unlock_after.map((u) => `F${u}`).join(", ")}.
-            </p>
-          ) : null}
+      <div className="space-y-6">
+        <Prose>{phase.summary}</Prose>
+        <div className="flex max-w-prose items-center gap-4">
+          <ProgressBar value={phase.pct} label={`Progreso de la fase ${phase.number}`} tone={phase.number === roadmap.currentPhase ? "guide" : "success"} className="flex-1" />
+          <span className="shrink-0 text-muted-foreground">{phase.pct} % hecho</span>
         </div>
+        {locked ? (
+          <p className="text-warning">
+            Se desbloquea al completar {phase.unlock_after.length === 1 ? "la fase" : "las fases"} {phase.unlock_after.join(", ")}.
+          </p>
+        ) : null}
       </div>
 
-      <Panel title="Tareas" aside={`${done}/${phase.tasks.length}`} flush>
+      <Section title="Tareas" aside={`${done} de ${phase.tasks.length} hechas`} flush>
         {roots.length === 0 ? (
-          <p className="px-3 py-2.5 text-sm text-muted-foreground sm:px-4">Esta fase aún no tiene tareas.</p>
+          <p className="px-5 py-4 text-muted-foreground sm:px-6">Esta fase aún no tiene tareas.</p>
         ) : (
-          <Memo>
+          <Checklist>
             {roots.map((t) => (
               <TaskItem key={t.id} task={t} sources={sources} links={links} nextId={nextId} />
             ))}
-          </Memo>
+          </Checklist>
         )}
-      </Panel>
-    </section>
+      </Section>
+    </div>
   )
 }

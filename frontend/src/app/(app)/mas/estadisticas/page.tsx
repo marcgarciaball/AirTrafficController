@@ -1,8 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js"
-import { Gauge } from "@/components/cockpit/gauge"
-import { PageTitle } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
-import { Tape } from "@/components/cockpit/tape"
+import { PageHeader } from "@/components/ui-torre/page-header"
+import { Section } from "@/components/ui-torre/section"
+import { ProgressBar } from "@/components/ui-torre/progress-bar"
 import { QuizLine, WeeklyBars } from "@/components/stats/charts"
 import { localDay, streak, totals } from "@/lib/plan/time"
 import { quizSeries, subjectDistribution, weeklyGoal, weeklySeries, type Attempt } from "@/lib/stats/aggregate"
@@ -10,10 +9,10 @@ import { formatHM } from "@/lib/sessions/format"
 import { createClient } from "@/lib/supabase/server"
 
 const SUBJECTS = [
-  ["temario", "Temario", "green"],
-  ["aptitudes", "Aptitudes", "cyan"],
-  ["ingles", "Inglés", "amber"],
-  ["otras", "Otras", "dim"],
+  ["temario", "Temario", "success"],
+  ["aptitudes", "Aptitudes", "primary"],
+  ["ingles", "Inglés", "warning"],
+  ["otras", "Otras", "muted"],
 ] as const
 
 export default async function Page() {
@@ -48,76 +47,76 @@ export default async function Page() {
   const points = quizSeries((attempts ?? []) as Attempt[])
 
   return (
-    <section className="space-y-6">
-      <PageTitle code="MÁS · ESTADÍSTICAS" title="Estadísticas" back={{ href: "/mas", label: "Más" }} />
+    <section className="space-y-12">
+      <PageHeader title="Estadísticas" back={{ href: "/mas", label: "Más" }} />
 
-      <Panel title="Resumen">
-        <dl className="grid grid-cols-3 gap-3 text-sm">
+      <Section title="Resumen">
+        <dl className="grid grid-cols-3 gap-4">
           {[
-            ["Total", formatHM(t.total)],
-            ["Esta semana", formatHM(goal.doneHours * 3600)],
-            ["Racha", `${days} ${days === 1 ? "día" : "días"}`],
+            ["en total", formatHM(t.total)],
+            ["esta semana", formatHM(goal.doneHours * 3600)],
+            ["racha", `${days} ${days === 1 ? "día" : "días"}`],
           ].map(([k, v]) => (
-            <div key={k}>
-              <dt className="text-xs uppercase tracking-wide text-muted-foreground">{k}</dt>
-              <dd className="font-mono tabular-nums text-foreground">{v}</dd>
+            <div key={k} className="flex flex-col-reverse gap-0.5">
+              <dt className="text-sm text-muted-foreground">{k}</dt>
+              <dd className="text-2xl font-bold text-foreground">{v}</dd>
             </div>
           ))}
         </dl>
-        <p className="mt-3 text-xs text-muted-foreground">La racha cuenta días seguidos con al menos 1 minuto de estudio.</p>
-      </Panel>
+        <p className="mt-5 text-sm text-muted-foreground">La racha cuenta días seguidos con al menos 1 minuto de estudio.</p>
+      </Section>
 
-      <Panel title="Objetivo semanal">
+      <Section title="Objetivo semanal">
         {goal.goalHours > 0 ? (
-          <div className="flex items-center gap-4">
-            <Gauge value={Math.min(100, goal.pct)} label="Semana" tone={goal.pct >= 100 ? "green" : "cyan"} />
-            <p className="font-mono text-sm tabular-nums text-foreground">
-              {goal.doneHours.toFixed(1)} / {goal.goalHours} h
-              <span className="block text-xs text-muted-foreground">{goal.pct} % del objetivo</span>
+          <div className="space-y-4">
+            <p className="text-3xl font-bold">
+              {goal.doneHours.toFixed(1)}
+              <span className="ml-1 text-base font-normal text-muted-foreground">de {goal.goalHours} horas · {goal.pct} % del objetivo</span>
             </p>
+            <ProgressBar value={Math.min(100, goal.pct)} label="Objetivo semanal" tone={goal.pct >= 100 ? "success" : "primary"} />
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">Define tus horas semanales en el perfil para compararlas.</p>
+          <p className="text-muted-foreground">Define tus horas semanales en el perfil para compararlas.</p>
         )}
-      </Panel>
+      </Section>
 
-      <Panel title="Horas por semana" aside="12 semanas">
+      <Section title="Horas por semana" aside="12 semanas">
         <WeeklyBars bars={bars} goalHours={goal.goalHours} />
-        <p className="mt-2 text-xs text-muted-foreground">Semana actual en cyan{goal.goalHours > 0 ? "; la línea discontinua es tu objetivo" : ""}.</p>
-      </Panel>
+        <p className="mt-4 text-sm text-muted-foreground">La barra más intensa es la semana actual{goal.goalHours > 0 ? "; la línea discontinua es tu objetivo" : ""}.</p>
+      </Section>
 
-      <Panel title="Por materia">
+      <Section title="Por materia">
         {splitTotal === 0 ? (
-          <p className="text-sm text-muted-foreground">Aún no hay sesiones.</p>
+          <p className="text-muted-foreground">Aún no hay sesiones.</p>
         ) : (
-          <ul className="space-y-3">
+          <ul className="space-y-5">
             {SUBJECTS.map(([key, label, tone]) => {
               const pct = (split[key] / splitTotal) * 100
               return (
-                <li key={key} className="space-y-1">
-                  <div className="flex items-baseline justify-between text-sm">
-                    <span className="uppercase tracking-wide">{label}</span>
-                    <span className="font-mono tabular-nums text-muted-foreground">{formatHM(split[key])} · {Math.round(pct)} %</span>
+                <li key={key} className="space-y-2">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <span className="font-bold">{label}</span>
+                    <span className="text-sm text-muted-foreground">{formatHM(split[key])} · {Math.round(pct)} %</span>
                   </div>
-                  <Tape value={pct} label={label} tone={tone === "dim" ? "white" : tone} />
+                  <ProgressBar value={pct} label={label} tone={tone === "muted" ? "default" : tone} />
                 </li>
               )
             })}
           </ul>
         )}
-        <p className="mt-3 text-xs text-muted-foreground">Según la fase de la tarea: F2 temario, F3 aptitudes y F4 inglés.</p>
-      </Panel>
+        <p className="mt-5 text-sm text-muted-foreground">Según la fase de la tarea: fase 2 temario, fase 3 aptitudes y fase 4 inglés.</p>
+      </Section>
 
-      <Panel title="Notas de los tests">
+      <Section title="Notas de los tests">
         {points.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Aún no has terminado ningún test.</p>
+          <p className="text-muted-foreground">Aún no has terminado ningún test.</p>
         ) : (
           <>
             <QuizLine points={points} />
-            <p className="mt-2 text-xs text-muted-foreground">% de aciertos. Los simulacros en cyan, los tests por tema en green.</p>
+            <p className="mt-4 text-sm text-muted-foreground">Porcentaje de aciertos. Puntos rellenos: simulacros; puntos huecos: tests por tema.</p>
           </>
         )}
-      </Panel>
+      </Section>
     </section>
   )
 }

@@ -1,7 +1,10 @@
 import Link from "next/link"
-import { Annunciator } from "@/components/cockpit/annunciator"
-import { Prose } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
+import { ChevronRight } from "lucide-react"
+import { CHECKLIST_ROW, ROW_HOVER } from "@/components/ui-torre/checklist"
+import { StatusChip } from "@/components/ui-torre/status-chip"
+import { cn } from "@/lib/utils"
+import { Prose } from "@/components/ui-torre/page-header"
+import { Section } from "@/components/ui-torre/section"
 import { Bloque, Cita, Consejo, GuiaPage, NoConsta, Tabla } from "@/components/guia/guia-ui"
 import { loadGuia } from "@/lib/guia"
 import { PRUEBAS, anexo4, bases, res } from "@/lib/guia-examen"
@@ -24,7 +27,7 @@ export default async function Page() {
   const { P9, P11, P12, P14 } = bases
   return (
     <GuiaPage
-      label="Guía · 00"
+      label="Capítulo 0"
       title="El examen por dentro"
       intro="Cuánto pesa cada prueba, qué nota mínima pide y qué te deja fuera. Al final, qué significa todo esto para tu estudio."
     >
@@ -32,7 +35,7 @@ export default async function Page() {
         <Prose>
           El ranking final suma seis pruebas. Las otras dos (personalidad y clínica) son solo apto o no apto: no suman, pero te pueden dejar fuera.
         </Prose>
-        <Annunciator tone="white">Cálculo propio a partir de las bases</Annunciator>
+        <StatusChip tone="muted">cálculo propio a partir de las bases</StatusChip>
         <Tabla
           caption="Peso de cada prueba sobre el total"
           head={["Prueba", "Máximo", "% ranking final", "% corte F1+F2"]}
@@ -88,8 +91,8 @@ export default async function Page() {
         <Prose>
           Ejemplo: si la persona 596 tiene 150 puntos, pasa todo el que tenga 150 o más. Con 149,9 te quedas fuera aunque hayas aprobado todas las pruebas.
         </Prose>
-        <div className="space-y-1.5">
-          <p className="text-xs uppercase tracking-wide text-foreground">Nota de corte de la convocatoria 2025</p>
+        <div className="space-y-2">
+          <p className="font-bold text-foreground">Nota de corte de la convocatoria 2025</p>
           <NoConsta label="No consta en las fuentes de Torre" source={res(g, { r: "portal" })} />
         </div>
         <Cita source={res(g, { r: "finalProv", loc: "pág. 1" })}>La convocatoria de 2025 ofrecía 149 puestos.</Cita>
@@ -102,7 +105,7 @@ export default async function Page() {
 
       <Bloque title="Si hay empate en el ranking final">
         <Cita source={res(g, P14)}>
-          <ol className="list-decimal space-y-1 pl-5">
+          <ol className="list-decimal space-y-2 pl-6">
             <li>Más puntos en la evaluación conductual.</li>
             <li>Más puntos en las pruebas digitales.</li>
             <li>Más puntos en el inglés oral.</li>
@@ -113,45 +116,45 @@ export default async function Page() {
 
       <Bloque title="Qué significa esto para tu estudio">
         <Consejo>
-          <ul className="list-disc space-y-2 pl-5">
+          <ul className="list-disc space-y-3 pl-6">
             <li>
-              <strong className="font-normal text-cyan">El peso está al final.</strong> La evaluación conductual ({pct(120, TOTAL)} %) y las pruebas digitales ({pct(100, TOTAL)} %) suman más de la mitad del ranking final. El temario es solo una parte ({pct(50, TOTAL)} %).
+              <strong className="font-bold">El peso está al final.</strong> La evaluación conductual ({pct(120, TOTAL)} %) y las pruebas digitales ({pct(100, TOTAL)} %) suman más de la mitad del ranking final. El temario es solo una parte ({pct(50, TOTAL)} %).
             </li>
             <li>
-              <strong className="font-normal text-cyan">Para llegar a la Fase 3, manda la Fase 2.</strong> En el corte del puesto 596, FEAST y PDEA son casi la mitad ({pct(100, CORTE)} %). Aptitudes pesa lo mismo que conocimientos.
+              <strong className="font-bold">Para llegar a la Fase 3, manda la Fase 2.</strong> En el corte del puesto 596, FEAST y PDEA son casi la mitad ({pct(100, CORTE)} %). Aptitudes pesa lo mismo que conocimientos.
             </li>
             <li>
-              <strong className="font-normal text-cyan">No basta con el temario.</strong> Aptitudes, FEAST y la entrevista se entrenan con práctica regular, no estudiando. Empieza desde el primer día, en paralelo al temario.
+              <strong className="font-bold">No basta con el temario.</strong> Aptitudes, FEAST y la entrevista se entrenan con práctica regular, no estudiando. Empieza desde el primer día, en paralelo al temario.
             </li>
             <li>
-              <strong className="font-normal text-cyan">Dos pruebas son solo apto o no apto:</strong> personalidad y clínica. No suben tu nota. Ve descansado y sé sincero.
+              <strong className="font-bold">Dos pruebas son solo apto o no apto:</strong> personalidad y clínica. No suben tu nota. Ve descansado y sé sincero.
             </li>
             <li>
-              <strong className="font-normal text-cyan">El inglés aparece tres veces:</strong> test escrito, test de inglés de FEAST I y entrevista oral. Pesa poco por separado, pero suspender una vez te saca del proceso.
+              <strong className="font-bold">El inglés aparece tres veces:</strong> test escrito, test de inglés de FEAST I y entrevista oral. Pesa poco por separado, pero suspender una vez te saca del proceso.
             </li>
             <li>
-              <strong className="font-normal text-cyan">Los mínimos son trampas.</strong> Cada prueba y cada competencia tiene el suyo. Un punto débil te elimina aunque la media sea buena.
+              <strong className="font-bold">Los mínimos son trampas.</strong> Cada prueba y cada competencia tiene el suyo. Un punto débil te elimina aunque la media sea buena.
             </li>
           </ul>
         </Consejo>
       </Bloque>
 
-      <Panel title="Las pruebas, una a una" aside={`${PRUEBAS.length}`} flush>
+      <Section title="Las pruebas, una a una" aside={`${PRUEBAS.length} pruebas`} flush>
         <ul className="divide-y divide-line">
           {PRUEBAS.map((p) => (
             <li key={p.slug}>
-              <Link href={`/guia/examen/${p.slug}`} className="flex items-start gap-3 px-3 py-2.5 hover:bg-surface sm:px-4">
-                <span className="w-20 shrink-0 font-mono text-xs uppercase leading-5 text-muted-foreground">{p.code}</span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm uppercase leading-5 tracking-wide text-cyan">{p.title}</span>
+              <Link href={`/guia/examen/${p.slug}`} className={cn(CHECKLIST_ROW, ROW_HOVER)}>
+                <span className="min-w-0 flex-1 space-y-1">
+                  <span className="block text-sm text-muted-foreground">{p.code}</span>
+                  <span className="block leading-snug font-bold text-foreground">{p.title}</span>
                   <span className="block text-sm text-muted-foreground">{p.short}</span>
                 </span>
-                <span aria-hidden="true" className="shrink-0 self-center font-mono text-cyan">›</span>
+                <ChevronRight aria-hidden="true" className="size-5 shrink-0 self-center text-muted-foreground" />
               </Link>
             </li>
           ))}
         </ul>
-      </Panel>
+      </Section>
     </GuiaPage>
   )
 }

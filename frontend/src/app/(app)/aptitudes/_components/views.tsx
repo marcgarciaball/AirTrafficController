@@ -10,7 +10,7 @@ export function PolyShape({ cells, label, className }: { cells: Cell[]; label: s
   return (
     <svg viewBox={`-1 -1 ${w * u + 2} ${h * u + 2}`} role="img" aria-label={label} className={cn("h-24 w-24 shrink-0", className)}>
       {cells.map(([x, y]) => (
-        <rect key={`${x},${y}`} x={x * u} y={y * u} width={u} height={u} strokeWidth="0.6" className="fill-foreground stroke-background" />
+        <rect key={`${x},${y}`} x={x * u} y={y * u} width={u} height={u} strokeWidth="0.6" className="fill-foreground stroke-card" />
       ))}
     </svg>
   )

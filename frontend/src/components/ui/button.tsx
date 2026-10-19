@@ -2,28 +2,28 @@ import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
-// Teclas de la MCDU: rectangulares, trazo de 1 px y texto en mayúsculas.
+// Botones con radio de 8 px y texto en mayúscula inicial. Todos los tamaños miden 44 px o más de alto.
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center gap-2 border font-mono text-sm uppercase tracking-wide whitespace-nowrap outline-none select-none disabled:pointer-events-none disabled:border-line disabled:text-muted-foreground aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-md border text-[15px] font-bold whitespace-nowrap transition-colors outline-none select-none disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-danger [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "border-cyan bg-transparent text-cyan hover:bg-surface",
-        outline: "border-line bg-transparent text-foreground hover:bg-surface",
-        secondary: "border-line bg-surface text-foreground hover:border-muted-foreground",
-        ghost: "border-transparent text-foreground hover:bg-surface",
-        destructive: "border-red bg-transparent text-red hover:bg-surface",
-        link: "border-transparent px-0 text-cyan normal-case tracking-normal underline-offset-4 hover:underline",
+        default: "border-primary bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
+        outline: "border-border bg-card text-foreground shadow-sm hover:bg-subtle",
+        secondary: "border-transparent bg-subtle text-foreground hover:bg-line",
+        ghost: "border-transparent text-foreground hover:bg-subtle",
+        destructive: "border-danger/40 bg-card text-danger hover:bg-subtle",
+        link: "h-auto border-transparent px-0 font-normal text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-3",
-        xs: "h-6 px-2 text-xs",
-        sm: "h-7 px-2.5 text-xs",
-        lg: "h-11 px-4",
-        icon: "size-8",
-        "icon-xs": "size-6",
-        "icon-sm": "size-7",
-        "icon-lg": "size-9",
+        default: "h-11 px-4",
+        xs: "h-11 px-2.5 text-sm font-normal",
+        sm: "h-11 px-3 text-sm",
+        lg: "h-12 px-6 text-base",
+        icon: "size-11",
+        "icon-xs": "size-11",
+        "icon-sm": "size-11",
+        "icon-lg": "size-12",
       },
     },
     defaultVariants: {
@@ -33,29 +33,13 @@ const buttonVariants = cva(
   }
 )
 
-/** Corchetes de la MCDU para la acción principal: [ ENTRAR ]. */
-function Brackets({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <span aria-hidden="true">[</span>
-      {children}
-      <span aria-hidden="true">]</span>
-    </>
-  )
-}
-
 function Button({
   className,
   variant = "default",
   size = "default",
-  children,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
-  return (
-    <ButtonPrimitive data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props}>
-      {variant === "default" && !size?.startsWith("icon") ? <Brackets>{children as React.ReactNode}</Brackets> : children}
-    </ButtonPrimitive>
-  )
+  return <ButtonPrimitive data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props} />
 }
 
-export { Brackets, Button, buttonVariants }
+export { Button, buttonVariants }

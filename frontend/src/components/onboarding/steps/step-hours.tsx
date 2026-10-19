@@ -18,7 +18,7 @@ export function StepHours({ draft, set }: StepProps) {
             type="button"
             variant="outline"
             aria-pressed={draft.weekly_hours === String(h)}
-            className={draft.weekly_hours === String(h) ? "border-cyan text-cyan" : undefined}
+            className={draft.weekly_hours === String(h) ? "border-primary text-primary" : undefined}
             onClick={() => set({ weekly_hours: String(h) })}
           >
             {h} H

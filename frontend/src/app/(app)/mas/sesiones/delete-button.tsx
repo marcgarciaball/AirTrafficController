@@ -11,7 +11,7 @@ export function DeleteButton({ id }: { id: string }) {
   const [pending, start] = useTransition()
   if (!confirm) {
     return (
-      <Button type="button" size="xs" variant="outline" onClick={() => setConfirm(true)}>
+      <Button type="button" size="sm" variant="ghost" className="font-normal text-muted-foreground" onClick={() => setConfirm(true)}>
         Borrar
       </Button>
     )
@@ -19,12 +19,12 @@ export function DeleteButton({ id }: { id: string }) {
   return (
     <Button
       type="button"
-      size="xs"
+      size="sm"
       variant="destructive"
       disabled={pending}
       onClick={() => start(async () => { await deleteSession(id); router.refresh() })}
     >
-      Confirmar
+      Confirmar borrado
     </Button>
   )
 }

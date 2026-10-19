@@ -42,8 +42,8 @@ export function LogForm({ today }: { today: string }) {
     })
   }
   return (
-    <form action={submit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+    <form action={submit} className="space-y-5">
+      <div className="grid gap-5 sm:grid-cols-2">
         <label className={LABEL}>
           <span className={CAP}>Objetivo</span>
           <select name="goal" className={SELECT}>
@@ -77,8 +77,8 @@ export function LogForm({ today }: { today: string }) {
         <span className={CAP}>Notas</span>
         <Input name="notes" maxLength={1000} />
       </label>
-      <Button type="submit" disabled={pending}>[ Añadir prueba ]</Button>
-      {error ? <p role="alert" className="text-sm text-red">{error}</p> : null}
+      <Button type="submit" disabled={pending}>Añadir prueba</Button>
+      {error ? <p role="alert" className="text-danger">{error}</p> : null}
     </form>
   )
 }
@@ -100,8 +100,8 @@ export function EndorsementForm({ today }: { today: string }) {
     })
   }
   return (
-    <form action={submit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+    <form action={submit} className="space-y-5">
+      <div className="grid gap-5 sm:grid-cols-2">
         <label className={LABEL}>
           <span className={CAP}>Idioma</span>
           <select name="language" className={SELECT}>
@@ -126,8 +126,8 @@ export function EndorsementForm({ today }: { today: string }) {
           <Input name="center" maxLength={120} />
         </label>
       </div>
-      <Button type="submit" disabled={pending}>[ Añadir anotación ]</Button>
-      {error ? <p role="alert" className="text-sm text-red">{error}</p> : null}
+      <Button type="submit" disabled={pending}>Añadir anotación</Button>
+      {error ? <p role="alert" className="text-danger">{error}</p> : null}
     </form>
   )
 }
@@ -136,7 +136,7 @@ export function DeleteButton({ id, kind }: { id: string; kind: "log" | "endorsem
   const [confirm, setConfirm] = useState(false)
   const [pending, start] = useTransition()
   if (!confirm) {
-    return <Button type="button" size="xs" variant="outline" onClick={() => setConfirm(true)}>Borrar</Button>
+    return <Button type="button" size="xs" variant="ghost" className="text-muted-foreground" onClick={() => setConfirm(true)}>Borrar</Button>
   }
   return (
     <Button
@@ -146,7 +146,7 @@ export function DeleteButton({ id, kind }: { id: string; kind: "log" | "endorsem
       disabled={pending}
       onClick={() => start(async () => { await (kind === "log" ? deleteLog(id) : deleteEndorsement(id)) })}
     >
-      Confirmar
+      Confirmar borrado
     </Button>
   )
 }
@@ -169,7 +169,7 @@ export function WeeklyPlan() {
   const [minutes, setMinutes] = useState(180)
   const plan = weeklyPlan(minutes)
   return (
-    <div className="space-y-3">
+    <div className="space-y-5">
       <label className={LABEL}>
         <span className={CAP}>Minutos de inglés por semana</span>
         <Input
@@ -182,13 +182,13 @@ export function WeeklyPlan() {
           className="max-w-32"
         />
       </label>
-      <ul className="divide-y divide-line border-y border-line">
+      <ul className="divide-y divide-line border-y">
         {SKILL_ORDER.map((s) => (
-          <li key={s} className="flex items-center justify-between gap-3 py-2">
-            <a href={SKILL_LINK[s]} target="_blank" rel="noopener noreferrer" className="text-cyan hover:underline">
-              {SKILL_LABEL[s]} ›
+          <li key={s} className="flex min-h-12 items-center justify-between gap-3 py-2">
+            <a href={SKILL_LINK[s]} target="_blank" rel="noopener noreferrer" className="text-primary underline decoration-primary/40 hover:decoration-primary">
+              {SKILL_LABEL[s]}
             </a>
-            <span className="font-mono tabular-nums">{plan[s]} min</span>
+            <span className="font-bold">{plan[s]} min</span>
           </li>
         ))}
       </ul>

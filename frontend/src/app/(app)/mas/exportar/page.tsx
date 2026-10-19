@@ -1,6 +1,6 @@
-import { Memo, MemoMark, MEMO_ROW } from "@/components/cockpit/memo"
-import { PageTitle } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
+import { Checklist, ChecklistMark, CHECKLIST_ROW } from "@/components/ui-torre/checklist"
+import { PageHeader } from "@/components/ui-torre/page-header"
+import { Section } from "@/components/ui-torre/section"
 
 const FILES = [
   ["/mas/exportar/json", "JSON completo", "Todos tus datos en un solo archivo."],
@@ -10,27 +10,28 @@ const FILES = [
 
 export default function Page() {
   return (
-    <section className="space-y-6">
-      <PageTitle code="MÁS · EXPORTAR" title="Exportar datos" back={{ href: "/mas", label: "Más" }} />
-      <p className="max-w-[68ch] text-base leading-relaxed text-foreground">
-        Descarga una copia de tus datos. Solo incluye lo que es tuyo: perfil, progreso, sesiones, intentos de test y recordatorios (y, si existen, aptitudes e inglés).
-      </p>
-      <Panel title="Descargas" flush>
-        <Memo>
+    <section className="space-y-12">
+      <PageHeader
+        title="Exportar datos"
+        description="Descarga una copia de tus datos. Solo incluye lo que es tuyo: perfil, progreso, sesiones, intentos de test y recordatorios (y, si existen, aptitudes e inglés)."
+        back={{ href: "/mas", label: "Más" }}
+      />
+      <Section title="Descargas" flush>
+        <Checklist>
           {FILES.map(([href, label, detail]) => (
             <li key={href}>
               {/* Enlace normal (no Link): es una descarga, no una navegación de la app. */}
-              <a href={href} download className={`${MEMO_ROW} hover:bg-surface`}>
-                <MemoMark state="disponible" />
-                <span className="min-w-0 flex-1 space-y-0.5">
-                  <span className="block leading-snug text-cyan">{label}</span>
+              <a href={href} download className={`${CHECKLIST_ROW} ${ROW_HOVER}`}>
+                <Download aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
+                <span className="min-w-0 flex-1 space-y-1">
+                  <span className="block leading-snug font-bold text-primary">{label}</span>
                   <span className="block text-sm text-muted-foreground">{detail}</span>
                 </span>
               </a>
             </li>
           ))}
-        </Memo>
-      </Panel>
+        </Checklist>
+      </Section>
     </section>
   )
 }

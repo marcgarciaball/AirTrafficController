@@ -15,7 +15,7 @@ function UrlError() {
   const code = useSearchParams().get("error");
   const message = code ? URL_ERRORS[code] : undefined;
   return message ? (
-    <p role="alert" className="text-sm text-red">
+    <p role="alert" className="text-sm text-danger">
       {message}
     </p>
   ) : null;

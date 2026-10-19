@@ -1,5 +1,5 @@
-import { Annunciator } from "@/components/cockpit/annunciator"
-import { Panel } from "@/components/cockpit/panel"
+import { StatusChip } from "@/components/ui-torre/status-chip"
+import { Section } from "@/components/ui-torre/section"
 import { GuiaPage } from "@/components/guia/guia-ui"
 import { SourceLink } from "@/components/source-link"
 import { loadGuia } from "@/lib/guia"
@@ -10,24 +10,24 @@ export default async function Page() {
     .filter((s) => s.level === "A")
     .sort((a, b) => a.title.localeCompare(b.title, "es"))
   return (
-    <GuiaPage label="Guía · 08" title="Fuentes" intro="Fuentes oficiales (nivel A) en las que se apoya la app. Abre siempre la fuente si vas a tomar una decisión.">
+    <GuiaPage label="Capítulo 8" title="Fuentes" intro="Fuentes oficiales (nivel A) en las que se apoya la app. Abre siempre la fuente si vas a tomar una decisión.">
       {lista.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No hay fuentes disponibles.</p>
+        <p className="text-muted-foreground">No hay fuentes disponibles.</p>
       ) : (
-        <Panel title="Nivel A" aside={`${lista.length}`} flush>
+        <Section title="Nivel A" aside={`${lista.length} fuentes`} flush>
           <ul className="divide-y divide-line">
             {lista.map((s) => (
-              <li key={s.url} className="space-y-1 px-3 py-2.5 sm:px-4">
+              <li key={s.url} className="space-y-1.5 px-5 py-4 sm:px-6">
                 <p className="flex items-start justify-between gap-3">
-                  <span className="text-foreground">{s.title}</span>
-                  <Annunciator tone="green">Nivel A</Annunciator>
+                  <span className="font-bold text-foreground">{s.title}</span>
+                  <StatusChip tone="success">nivel A</StatusChip>
                 </p>
                 <p className="text-sm text-muted-foreground">{s.publisher}</p>
                 <SourceLink source={s} />
               </li>
             ))}
           </ul>
-        </Panel>
+        </Section>
       )}
     </GuiaPage>
   )

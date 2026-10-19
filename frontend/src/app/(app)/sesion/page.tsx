@@ -1,5 +1,5 @@
-import { PageTitle } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
+import { PageHeader } from "@/components/ui-torre/page-header"
+import { Card } from "@/components/ui-torre/section"
 import { loadRoadmap } from "@/lib/roadmap/load"
 import { createClient } from "@/lib/supabase/server"
 import { SessionTimer, type OpenSession } from "./session-timer"
@@ -22,11 +22,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
       title = t?.title ?? null
     }
     return (
-      <section className="space-y-6">
-        <PageTitle code="SESIÓN" title="Sesión en marcha" />
-        <Panel title="Cronómetro">
+      <section className="space-y-8">
+        <PageHeader title="Sesión de estudio" back={{ href: "/hoy", label: "Hoy" }} />
+        <Card className="sm:p-8">
           <SessionTimer session={open} taskTitle={title} />
-        </Panel>
+        </Card>
       </section>
     )
   }
@@ -35,11 +35,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
   const options: TaskOption[] = roadmap.next.map((t) => ({ id: t.id, title: t.title, topic_id: t.topic_id }))
   const initial = task && options.some((o) => o.id === task) ? task : (options[0]?.id ?? null)
   return (
-    <section className="space-y-6">
-      <PageTitle code="SESIÓN" title="Nueva sesión" />
-      <Panel title="Empezar">
+    <section className="space-y-8">
+      <PageHeader title="Nueva sesión" description="Elige en qué vas a trabajar. El cronómetro descuenta las pausas." back={{ href: "/hoy", label: "Hoy" }} />
+      <Card>
         <StartPanel options={options} initialTaskId={initial} />
-      </Panel>
+      </Card>
     </section>
   )
 }

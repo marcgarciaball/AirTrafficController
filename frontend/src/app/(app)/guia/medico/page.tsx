@@ -6,7 +6,7 @@ export default async function Page() {
   const contr = fact(g, "contr_medico")
   return (
     <GuiaPage
-      label="Guía · 05"
+      label="Capítulo 5"
       title="Médico Clase 3"
       intro="No lo necesitas para inscribirte, pero sí para la licencia y el contrato. Conviene hacerlo pronto."
     >

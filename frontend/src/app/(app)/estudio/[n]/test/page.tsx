@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { PageTitle } from "@/components/cockpit/page-title"
+import { PageHeader } from "@/components/ui-torre/page-header"
 import { createClient } from "@/lib/supabase/server"
 import { loadClientQuestions } from "@/lib/study/load"
 import { pickQuestions } from "@/lib/study/quiz"
@@ -18,9 +18,9 @@ export default async function Page({ params }: { params: Promise<{ n: string }> 
   const pool = (await loadClientQuestions(topic.id))[topic.id] ?? []
   const questions = pickQuestions(pool, TEMA_TEST_SIZE)
   return (
-    <section className="space-y-6">
-      <PageTitle code={`Tema T${topic.number} · Test`} title={topic.title} back={{ href: `/estudio/${topic.number}`, label: `Tema T${topic.number}` }} />
-      <QuizRunner mode="tema" topicId={topic.id} topicTitles={{ [topic.id]: topic.title }} questions={questions} label={`T${topic.number}`} />
+    <section className="space-y-10">
+      <PageHeader title={`Test del tema ${topic.number}`} description={topic.title} back={{ href: `/estudio/${topic.number}`, label: `Tema ${topic.number}` }} />
+      <QuizRunner mode="tema" topicId={topic.id} topicTitles={{ [topic.id]: topic.title }} questions={questions} label={`Tema ${topic.number}`} />
     </section>
   )
 }

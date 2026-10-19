@@ -1,19 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { B612, B612_Mono } from "next/font/google";
+import { Atkinson_Hyperlegible, Atkinson_Hyperlegible_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { RegisterSw } from "@/components/register-sw";
 import "./globals.css";
 
-// B612: tipografía que Airbus diseñó para las pantallas de cabina.
-const b612 = B612({
-  variable: "--font-b612",
+// Atkinson Hyperlegible: diseñada por el Braille Institute para distinguir bien cada letra.
+const atkinson = Atkinson_Hyperlegible({
+  variable: "--font-atkinson",
   subsets: ["latin"],
   weight: ["400", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
-const b612Mono = B612_Mono({
-  variable: "--font-b612-mono",
+// Solo para relojes y códigos.
+const atkinsonMono = Atkinson_Hyperlegible_Mono({
+  variable: "--font-atkinson-mono",
   subsets: ["latin"],
   weight: ["400", "700"],
   display: "swap",
@@ -25,8 +27,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#000000",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf8f4" },
+    { media: "(prefers-color-scheme: dark)", color: "#1c1f24" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -34,11 +38,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="es"
       suppressHydrationWarning
-      className={`dark ${b612.variable} ${b612Mono.variable} h-full antialiased`}
+      className={`${atkinson.variable} ${atkinsonMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
-        {/* Solo modo oscuro: las cabinas no tienen modo claro. */}
-        <ThemeProvider attribute="class" forcedTheme="dark" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
           <RegisterSw />
         </ThemeProvider>

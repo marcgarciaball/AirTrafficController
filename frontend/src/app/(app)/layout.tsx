@@ -1,5 +1,7 @@
-import { EcamPageNav } from "@/components/cockpit/ecam-page-nav"
-import { RunningBar } from "@/components/cockpit/running-bar"
+import { Logo } from "@/components/ui-torre/logo"
+import { MainNav } from "@/components/ui-torre/main-nav"
+import { RunningBar } from "@/components/ui-torre/running-bar"
+import { ThemeToggle } from "@/components/ui-torre/theme-toggle"
 import { createClient } from "@/lib/supabase/server"
 
 type Open = { task_id: string | null; started_at: string; ended_at: string | null; paused_seconds: number; paused_at: string | null }
@@ -18,13 +20,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     title = t?.title ?? null
   }
   return (
-    <div className="flex min-h-dvh flex-col md:pl-20">
+    <div className="flex min-h-dvh flex-col md:pl-60">
       {open ? <RunningBar session={open} title={title} /> : null}
-      <header className="flex h-10 items-center border-b border-line px-4 md:hidden">
-        <span className="font-mono text-sm tracking-wider text-foreground">TORRE</span>
+      <header className="flex h-14 items-center justify-between px-5 md:hidden">
+        <Logo />
+        <ThemeToggle className="-mr-2" />
       </header>
-      <main className="mx-auto w-full max-w-2xl flex-1 px-4 pt-5 pb-24 md:px-6 md:pt-8 md:pb-12">{children}</main>
-      <EcamPageNav />
+      {/* Las páginas de lectura con índice lateral marcan data-wide para ganar ancho. */}
+      <main className="mx-auto w-full max-w-3xl flex-1 px-5 pt-4 pb-28 sm:px-8 md:pt-14 md:pb-20 lg:has-[[data-wide]]:max-w-5xl">{children}</main>
+      <MainNav />
     </div>
   )
 }

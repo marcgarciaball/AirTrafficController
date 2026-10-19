@@ -11,7 +11,7 @@ const OPTIONS: { value: TaskStatus; label: string }[] = [
   { value: "hecha", label: "Hecha" },
 ]
 
-/** Selector de la MCDU: tres opciones en línea; la seleccionada va recuadrada en cyan. */
+/** Control segmentado de tres opciones; la seleccionada va en tarjeta con texto primary. */
 export function TaskStatusSelect({
   taskId,
   status,
@@ -49,14 +49,14 @@ export function TaskStatusSelect({
         aria-describedby={disabled && reason ? `${id}-reason` : error ? `${id}-error` : undefined}
         className="flex flex-wrap items-center gap-x-3 gap-y-2"
       >
-        <legend className="float-left mr-1 text-xs uppercase tracking-wide text-foreground">Estado</legend>
-        <div className="flex gap-1">
+        <legend className="float-left mr-1 text-sm font-bold text-foreground">Estado</legend>
+        <div className="flex gap-1 rounded-lg bg-subtle p-1">
           {OPTIONS.map((o) => (
             <label
               key={o.value}
               className={cn(
-                "flex h-8 cursor-pointer items-center border px-2.5 font-mono text-xs uppercase tracking-wide has-[:focus-visible]:outline has-[:focus-visible]:outline-1 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-cyan",
-                value === o.value ? "border-cyan text-cyan" : "border-transparent text-muted-foreground hover:text-foreground",
+                "flex h-11 cursor-pointer items-center rounded-md px-4 text-[15px] transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary",
+                value === o.value ? "bg-card font-bold text-primary shadow-sm" : "text-muted-foreground hover:text-foreground",
                 off && "cursor-not-allowed hover:text-muted-foreground"
               )}
             >
@@ -74,12 +74,12 @@ export function TaskStatusSelect({
         </div>
       </fieldset>
       {disabled && reason ? (
-        <p id={`${id}-reason`} className="text-sm text-amber">
-          Bloqueada: {reason}
+        <p id={`${id}-reason`} className="text-sm text-warning">
+          Bloqueada hasta completar: {reason}
         </p>
       ) : null}
       {error ? (
-        <p id={`${id}-error`} role="alert" className="text-sm text-red">
+        <p id={`${id}-error`} role="alert" className="text-sm text-danger">
           {error}
         </p>
       ) : null}

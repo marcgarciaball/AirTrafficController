@@ -1,8 +1,8 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
-import { PageTitle } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
+import { PageHeader } from "@/components/ui-torre/page-header"
+import { Section } from "@/components/ui-torre/section"
 import { buttonVariants } from "@/components/ui/button"
 import { formatDate } from "@/lib/format"
 import type { OnboardingAnswers } from "@/lib/onboarding/schema"
@@ -50,22 +50,22 @@ export default async function PerfilPage() {
   ]
 
   return (
-    <section className="space-y-6">
-      <PageTitle code="MÁS · Perfil" title="Perfil" back={{ href: "/mas", label: "Más" }} />
-      <Panel title="Respuestas del cuestionario" flush>
+    <section className="space-y-12">
+      <PageHeader title="Perfil" back={{ href: "/mas", label: "Más" }} />
+      <Section title="Respuestas del cuestionario" flush>
         <dl className="divide-y divide-line">
           {rows.map(([k, v]) => (
-            <div key={k} className="flex items-baseline justify-between gap-4 px-3 py-2 sm:px-4">
-              <dt className="text-xs uppercase tracking-wide text-muted-foreground">{k}</dt>
-              <dd className="text-right font-mono text-sm text-foreground tabular-nums">{v}</dd>
+            <div key={k} className="flex items-baseline justify-between gap-6 px-5 py-3.5 sm:px-6">
+              <dt className="text-muted-foreground">{k}</dt>
+              <dd className="text-right text-foreground">{v}</dd>
             </div>
           ))}
         </dl>
-      </Panel>
-      <Panel title="Editar plan">
+      </Section>
+      <Section title="Editar plan">
         <ProfileEditForm answers={answers} />
-      </Panel>
-      <Link href="/bienvenida" className={buttonVariants({ variant: "outline" })}>
+      </Section>
+      <Link href="/bienvenida" className={buttonVariants({ variant: "outline", size: "lg" })}>
         Repetir cuestionario
       </Link>
     </section>

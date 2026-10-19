@@ -1,7 +1,8 @@
 import Link from "next/link"
-import { Annunciator } from "@/components/cockpit/annunciator"
-import { PageTitle } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
+import { buttonVariants } from "@/components/ui/button"
+import { StatusChip } from "@/components/ui-torre/status-chip"
+import { PageHeader } from "@/components/ui-torre/page-header"
+import { Section } from "@/components/ui-torre/section"
 import { effectiveSeconds, localDay, totals, weekStart } from "@/lib/plan/time"
 import { formatDate } from "@/lib/format"
 import { formatHM } from "@/lib/sessions/format"
@@ -59,59 +60,59 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
     : undefined
 
   return (
-    <section className="space-y-6">
-      <PageTitle code="MÁS · SESIONES" title="Sesiones de estudio" back={{ href: "/mas", label: "Más" }} />
+    <section className="space-y-12">
+      <PageHeader title="Sesiones de estudio" back={{ href: "/mas", label: "Más" }} />
 
-      <Panel title="Totales">
-        <dl className="grid grid-cols-3 gap-3 text-sm">
+      <Section title="Totales">
+        <dl className="grid grid-cols-3 gap-4">
           {[
-            ["Hoy", t.byDay[today] ?? 0],
-            ["Semana", t.byWeek[weekStart(today)] ?? 0],
-            ["Total", t.total],
+            ["hoy", t.byDay[today] ?? 0],
+            ["esta semana", t.byWeek[weekStart(today)] ?? 0],
+            ["en total", t.total],
           ].map(([k, v]) => (
-            <div key={k as string}>
-              <dt className="text-xs uppercase tracking-wide text-muted-foreground">{k}</dt>
-              <dd className="font-mono tabular-nums text-foreground">{formatHM(v as number)}</dd>
+            <div key={k as string} className="flex flex-col-reverse gap-0.5">
+              <dt className="text-sm text-muted-foreground">{k}</dt>
+              <dd className="text-2xl font-bold text-foreground">{formatHM(v as number)}</dd>
             </div>
           ))}
         </dl>
-      </Panel>
+      </Section>
 
-      <Panel title={initial ? "Editar sesión" : "Entrada manual"}>
+      <Section title={initial ? "Editar sesión" : "Entrada manual"}>
         <SessionForm key={initial?.id ?? "new"} tasks={leaves} today={today} initial={initial} />
-      </Panel>
+      </Section>
 
       {sessions.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Aún no hay sesiones.</p>
+        <p className="text-muted-foreground">Aún no hay sesiones.</p>
       ) : (
         [...byDay.entries()].map(([day, list]) => (
-          <Panel key={day} title={formatDate(day)} aside={formatHM(t.byDay[day] ?? 0)} flush>
+          <Section key={day} title={formatDate(day)} aside={formatHM(t.byDay[day] ?? 0)} flush>
             <ul className="divide-y divide-line">
               {list.map((s) => (
-                <li key={s.id} className="flex items-start gap-3 px-3 py-2.5 sm:px-4">
-                  <div className="min-w-0 flex-1 space-y-0.5">
-                    <p className="font-mono text-sm tabular-nums">
+                <li key={s.id} className="flex flex-wrap items-start gap-x-4 gap-y-2 px-5 py-4 sm:px-6">
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <p className="font-bold">
                       {isoToLocalTime(s.started_at, tz)}–{s.ended_at ? isoToLocalTime(s.ended_at, tz) : "en marcha"}
-                      <span className="ml-2 text-muted-foreground">{formatHM(effectiveSeconds(s, now))}</span>
+                      <span className="ml-2 font-normal text-muted-foreground">{formatHM(effectiveSeconds(s, now))}</span>
                     </p>
-                    <p className="truncate text-sm text-foreground">{s.task_id ? (titleOf.get(s.task_id) ?? "Tarea") : "Sin tarea"}</p>
+                    <p className="truncate text-foreground">{s.task_id ? (titleOf.get(s.task_id) ?? "Tarea") : "Sin tarea"}</p>
                     {s.notes ? <p className="text-sm text-muted-foreground">{s.notes}</p> : null}
                   </div>
-                  {s.origin === "manual" ? <Annunciator tone="dim">Manual</Annunciator> : null}
+                  {s.origin === "manual" ? <StatusChip tone="muted">manual</StatusChip> : null}
                   {s.ended_at ? (
-                    <div className="flex shrink-0 gap-2">
-                      <Link href={`/mas/sesiones?edit=${s.id}`} className="inline-flex h-6 items-center border border-line px-2 font-mono text-xs uppercase tracking-wide hover:bg-surface">
+                    <div className="flex shrink-0 gap-1">
+                      <Link href={`/mas/sesiones?edit=${s.id}`} className={buttonVariants({ variant: "ghost", size: "sm", className: "font-normal text-primary" })}>
                         Editar
                       </Link>
                       <DeleteButton id={s.id} />
                     </div>
                   ) : (
-                    <Link href="/sesion" className="text-sm uppercase tracking-wide text-cyan">Abrir ›</Link>
+                    <Link href="/sesion" className={buttonVariants({ variant: "ghost", size: "sm", className: "font-normal text-primary" })}>Abrir</Link>
                   )}
                 </li>
               ))}
             </ul>
-          </Panel>
+          </Section>
         ))
       )}
     </section>

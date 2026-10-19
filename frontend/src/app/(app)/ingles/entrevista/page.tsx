@@ -1,6 +1,6 @@
-import { Annunciator } from "@/components/cockpit/annunciator"
-import { PageTitle, Prose } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
+import { PageHeader, Prose } from "@/components/ui-torre/page-header"
+import { OwnTip } from "@/components/ui-torre/content-labels"
+import { Section } from "@/components/ui-torre/section"
 
 const STRUCTURE = [
   ["Presentación", "Preséntate con claridad: quién eres, tu formación y por qué quieres ser controlador. Prepara una versión de 1 minuto."],
@@ -31,48 +31,48 @@ const TIPS = [
 
 export default function Page() {
   return (
-    <section className="space-y-6">
-      <PageTitle code="ENG ENTREVISTA" title="Preparar la entrevista oral (Fase 3, nivel C1)" back={{ href: "/ingles", label: "Inglés" }}>
-        <Annunciator tone="amber">CONSEJO PROPIO · NO OFICIAL</Annunciator>
-      </PageTitle>
+    <div className="space-y-12">
+      <PageHeader title="Preparar la entrevista oral" description="Fase 3, nivel C1." back={{ href: "/ingles", label: "Inglés" }}>
+        <OwnTip />
+      </PageHeader>
 
-      <Panel title="Qué dice la convocatoria">
-        <Prose className="text-sm text-muted-foreground">
+      <Section title="Qué dice la convocatoria" plain>
+        <Prose>
           La Fase 3 incluye una entrevista oral para garantizar que se posee, al menos, el nivel C1: máximo 50 puntos, mínimo 25 (bases de la convocatoria 2025, base 8). El formato exacto de la entrevista no está detallado oficialmente: pendiente de verificar en la próxima convocatoria. Lo que sigue es una guía propia, no el temario ni el formato oficial.
         </Prose>
-      </Panel>
+      </Section>
 
-      <Panel title="Estructura sugerida" aside="Consejo propio · no oficial">
-        <ol className="space-y-3">
+      <Section title="Estructura sugerida" aside={<OwnTip />}>
+        <ol className="space-y-5">
           {STRUCTURE.map(([t, d], i) => (
-            <li key={t} className="flex gap-3">
-              <span className="w-5 shrink-0 font-mono text-magenta tabular-nums">{i + 1}</span>
-              <span className="max-w-[68ch] leading-relaxed">
-                <span className="text-cyan">{t}.</span> {d}
+            <li key={t} className="flex gap-4">
+              <span aria-hidden="true" className="flex size-7 shrink-0 items-center justify-center rounded-full bg-subtle text-sm font-bold text-muted-foreground">{i + 1}</span>
+              <span className="max-w-prose text-lg leading-relaxed">
+                <span className="font-bold">{t}.</span> {d}
               </span>
             </li>
           ))}
         </ol>
-      </Panel>
+      </Section>
 
-      <Panel title="Frases útiles" aside="Consejo propio · no oficial" flush>
+      <Section title="Frases útiles" aside={<OwnTip />} flush>
         <ul className="divide-y divide-line">
           {PHRASES.map(([k, v]) => (
-            <li key={k} className="px-3 py-2.5 sm:px-4">
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">{k}</p>
-              <p className="font-mono text-sm leading-relaxed">{v}</p>
+            <li key={k} className="space-y-1 px-5 py-4 sm:px-6">
+              <p className="text-sm text-muted-foreground">{k}</p>
+              <p lang="en" className="text-lg leading-relaxed italic">{v}</p>
             </li>
           ))}
         </ul>
-      </Panel>
+      </Section>
 
-      <Panel title="Consejos de práctica" aside="Consejo propio · no oficial">
-        <ul className="list-disc space-y-2 pl-5 marker:text-muted-foreground">
+      <Section title="Consejos de práctica" aside={<OwnTip />}>
+        <ul className="list-disc space-y-3 pl-6 marker:text-muted-foreground">
           {TIPS.map((t) => (
-            <li key={t} className="max-w-[68ch] leading-relaxed">{t}</li>
+            <li key={t} className="max-w-prose pl-1 text-lg leading-relaxed">{t}</li>
           ))}
         </ul>
-      </Panel>
-    </section>
+      </Section>
+    </div>
   )
 }

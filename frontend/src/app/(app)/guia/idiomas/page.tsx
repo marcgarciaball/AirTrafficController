@@ -6,7 +6,7 @@ export default async function Page() {
   const contr = fact(g, "contr_idiomas")
   return (
     <GuiaPage
-      label="Guía · 06"
+      label="Capítulo 6"
       title="Idiomas"
       intro="Son tres objetivos distintos y ninguno sustituye a otro. No necesitas ningún título para presentarte."
     >

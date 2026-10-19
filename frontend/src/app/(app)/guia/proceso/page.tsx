@@ -6,7 +6,7 @@ export default async function Page() {
   const bases = src(g, U.bases)
   return (
     <GuiaPage
-      label="Guía · 02"
+      label="Capítulo 2"
       title="El proceso selectivo"
       intro="Tres fases eliminatorias. Las pruebas se hacen en Madrid; la Fase 1 también en Barcelona y Gran Canaria."
     >

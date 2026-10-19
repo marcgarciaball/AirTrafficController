@@ -6,7 +6,7 @@ export default async function Page() {
   const P = U.feastPractica
   return (
     <GuiaPage
-      label="Guía · 07"
+      label="Capítulo 7"
       title="FEAST y PDEA"
       intro="La Fase 2 son dos pruebas por ordenador: FEAST (de Eurocontrol) y PDEA (propia de ENAIRE)."
     >

@@ -32,22 +32,22 @@ export function ProfileEditForm({ answers }: { answers: OnboardingAnswers }) {
 
   return (
     <form onSubmit={submit} className="space-y-5">
-      <fieldset className="space-y-4">
+      <fieldset className="space-y-5">
         <legend className="sr-only">Editar plan</legend>
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label htmlFor="weekly_hours">Horas por semana</Label>
           <Input id="weekly_hours" type="number" inputMode="decimal" min={0.5} max={80} step={0.5} value={hours} onChange={(e) => setHours(e.target.value)} required />
         </div>
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label htmlFor="target_date">Fecha objetivo</Label>
           <Input id="target_date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
         </div>
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label htmlFor="timezone">Zona horaria</Label>
           <Input id="timezone" value={tz} onChange={(e) => setTz(e.target.value)} required />
         </div>
       </fieldset>
-      {error && <p role="alert" className="text-sm text-red">{error}</p>}
+      {error && <p role="alert" className="text-danger">{error}</p>}
       <Button type="submit" disabled={pending}>{pending ? "Guardando…" : "Guardar cambios"}</Button>
     </form>
   )

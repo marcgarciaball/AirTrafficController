@@ -1,5 +1,5 @@
 import { Bloque, Datos, GuiaPage, Nota, Tabla } from "@/components/guia/guia-ui"
-import { Annunciator } from "@/components/cockpit/annunciator"
+import { StatusChip } from "@/components/ui-torre/status-chip"
 import { SourceLink } from "@/components/source-link"
 import { VerificationBadge } from "@/components/verification-badge"
 import { U, dato, fact, loadGuia, src, type Src } from "@/lib/guia"
@@ -21,17 +21,17 @@ const KIND: Record<string, string> = {
 /** Hito del calendario: fecha alineada a la derecha y, si procede, anunciador de estimación. */
 function Hitos({ items, srcOf, expected = false }: { items: Ev[]; srcOf: (id: string) => Src | undefined; expected?: boolean }) {
   return (
-    <ul className="divide-y divide-line">
+    <ul className="divide-y divide-line rounded-lg border bg-card px-5 shadow-sm sm:px-6">
       {items.map((ev) => {
         const s = srcOf(ev.source_id)
         return (
-          <li key={`${ev.kind}-${ev.date}`} className="space-y-1.5 py-2.5 first:pt-0">
+          <li key={`${ev.kind}-${ev.date}`} className="space-y-2 py-5">
             <p className="flex items-baseline justify-between gap-3">
-              <span className="text-xs uppercase tracking-wide text-foreground">{KIND[ev.kind] ?? ev.kind}</span>
-              <span className={`font-mono text-sm tabular-nums ${ev.is_estimate || expected ? "text-amber" : "text-foreground"}`}>{formatDate(ev.date)}</span>
+              <span className="font-bold text-foreground">{KIND[ev.kind] ?? ev.kind}</span>
+              <span className={`shrink-0 ${ev.is_estimate || expected ? "text-warning" : "text-foreground"}`}>{formatDate(ev.date)}</span>
             </p>
             <div className="flex flex-wrap items-center gap-2">
-              {ev.is_estimate ? <Annunciator tone="amber">Estimación</Annunciator> : expected ? <Annunciator tone="amber">Esperado</Annunciator> : null}
+              {ev.is_estimate ? <StatusChip tone="warning">estimación</StatusChip> : expected ? <StatusChip tone="warning">esperado</StatusChip> : null}
               <VerificationBadge verified={ev.verified} />
             </div>
             {s ? <SourceLink source={s} /> : null}
@@ -57,7 +57,7 @@ export default async function Page() {
   const srcOf = (id: string): Src | undefined => g.sources[id]
 
   return (
-    <GuiaPage label="Guía · 03" title="Calendario" intro="El calendario de 2025 sirve para estimar el de la próxima convocatoria, pero no es un calendario oficial de 2026-2027.">
+    <GuiaPage label="Capítulo 3" title="Calendario" intro="El calendario de 2025 sirve para estimar el de la próxima convocatoria, pero no es un calendario oficial de 2026-2027.">
       <Bloque title="Convocatoria 2025 · hitos">
         {ev2025.length > 0 ? (
           <Hitos items={ev2025} srcOf={srcOf} />

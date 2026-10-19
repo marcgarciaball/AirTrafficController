@@ -1,48 +1,51 @@
-import { Memo, MemoItem } from "@/components/cockpit/memo"
-import { PageTitle } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
+import { LinkRow } from "@/components/ui-torre/checklist"
+import { PageHeader } from "@/components/ui-torre/page-header"
+import { Section } from "@/components/ui-torre/section"
 import { Button } from "@/components/ui/button"
 import { signOut } from "./actions"
 
 export default function MasPage() {
   return (
-    <section className="space-y-6">
-      <PageTitle code="MÁS" title="Más" />
-      <Panel title="Aprende" flush>
-        <Memo>
-          <MemoItem state="disponible" href="/guia" detail="Requisitos, proceso, calendario y más.">
+    <div className="space-y-12">
+      <PageHeader title="Más" />
+      <Section title="Aprende" flush>
+        <ul className="divide-y divide-line">
+          <LinkRow href="/guia" detail="Requisitos, proceso, calendario, médico, idiomas y fuentes.">
             Guía del proceso
-          </MemoItem>
-        </Memo>
-      </Panel>
-      <Panel title="Estudio" flush>
-        <Memo>
-          <MemoItem state="disponible" href="/mas/sesiones" detail="Historial, entrada manual y totales de tiempo.">
+          </LinkRow>
+          <LinkRow href="/guia/examen" detail="Cuánto pesa cada prueba, qué mínimo pide y cómo prepararla.">
+            El examen por dentro
+          </LinkRow>
+        </ul>
+      </Section>
+      <Section title="Tu estudio" flush>
+        <ul className="divide-y divide-line">
+          <LinkRow href="/mas/sesiones" detail="Historial, entrada manual y totales de tiempo.">
             Sesiones
-          </MemoItem>
-          <MemoItem state="disponible" href="/mas/estadisticas" detail="Horas por semana, racha, materias y notas de tests.">
+          </LinkRow>
+          <LinkRow href="/mas/estadisticas" detail="Horas por semana, racha, materias y notas de tests.">
             Estadísticas
-          </MemoItem>
-          <MemoItem state="disponible" href="/mas/calendario" detail="Sesiones, plan, hitos de convocatoria y recordatorios.">
+          </LinkRow>
+          <LinkRow href="/mas/calendario" detail="Sesiones, plan, hitos de convocatoria y recordatorios.">
             Calendario
-          </MemoItem>
-        </Memo>
-      </Panel>
-      <Panel title="Cuenta" flush>
-        <Memo>
-          <MemoItem state="disponible" href="/mas/perfil">
-            Perfil y respuestas del cuestionario
-          </MemoItem>
-          <MemoItem state="disponible" href="/mas/exportar" detail="Descarga tus datos en JSON y CSV.">
+          </LinkRow>
+        </ul>
+      </Section>
+      <Section title="Cuenta" flush>
+        <ul className="divide-y divide-line">
+          <LinkRow href="/mas/perfil" detail="Fecha objetivo, horas semanales y respuestas del cuestionario.">
+            Perfil
+          </LinkRow>
+          <LinkRow href="/mas/exportar" detail="Descarga tus datos en JSON y CSV.">
             Exportar datos
-          </MemoItem>
-        </Memo>
-      </Panel>
+          </LinkRow>
+        </ul>
+      </Section>
       <form action={signOut}>
-        <Button type="submit" variant="outline">
+        <Button type="submit" variant="outline" size="lg">
           Cerrar sesión
         </Button>
       </form>
-    </section>
+    </div>
   )
 }

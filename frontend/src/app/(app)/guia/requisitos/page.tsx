@@ -15,7 +15,7 @@ export default async function Page() {
   ]
   return (
     <GuiaPage
-      label="Guía · 01"
+      label="Capítulo 1"
       title="Requisitos"
       intro="Hay dos grupos: los que necesitas para inscribirte y los que cumples después de aprobar, antes de firmar el contrato."
     >

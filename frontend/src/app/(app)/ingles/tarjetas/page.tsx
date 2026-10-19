@@ -1,5 +1,5 @@
-import { PageTitle } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
+import { PageHeader } from "@/components/ui-torre/page-header"
+import { Section } from "@/components/ui-torre/section"
 import { localDay } from "@/lib/plan/time"
 import { createClient } from "@/lib/supabase/server"
 import { CardForm, CardList, Reviewer } from "./card-tools"
@@ -16,17 +16,17 @@ export default async function Page() {
     supabase.from("flashcards").select("id, deck, front, due_on").order("created_at", { ascending: false }).limit(200),
   ])
   return (
-    <section className="space-y-6">
-      <PageTitle code="ENG TARJETAS" title="Tarjetas de repaso" back={{ href: "/ingles", label: "Inglés" }} />
-      <Panel title="Repaso de hoy" aside={`${due?.length ?? 0} pendientes`}>
+    <section className="space-y-12">
+      <PageHeader title="Tarjetas de repaso" description="Vocabulario y fraseología con repetición espaciada: cada tarjeta vuelve cuando estás a punto de olvidarla." back={{ href: "/ingles", label: "Inglés" }} />
+      <Section title="Repaso de hoy" aside={`${due?.length ?? 0} pendientes`}>
         <Reviewer cards={due ?? []} today={today} />
-      </Panel>
-      <Panel title="Nueva tarjeta">
+      </Section>
+      <Section title="Nueva tarjeta">
         <CardForm />
-      </Panel>
-      <Panel title="Todas las tarjetas" aside={`${all?.length ?? 0}`}>
+      </Section>
+      <Section title="Todas las tarjetas" aside={`${all?.length ?? 0} tarjetas`}>
         <CardList cards={all ?? []} />
-      </Panel>
+      </Section>
     </section>
   )
 }

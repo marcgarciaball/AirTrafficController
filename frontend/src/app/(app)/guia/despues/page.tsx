@@ -32,7 +32,7 @@ export default async function Page() {
     ),
   ]
   return (
-    <GuiaPage label="Guía · 04" title="Después de aprobar" intro="Aprobar el proceso de ENAIRE es el principio. Estos son los cinco pasos hasta ejercer.">
+    <GuiaPage label="Capítulo 4" title="Después de aprobar" intro="Aprobar el proceso de ENAIRE es el principio. Estos son los cinco pasos hasta ejercer.">
       <Bloque title="Los cinco pasos">
         <Datos items={pasos} />
       </Bloque>

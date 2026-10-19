@@ -2,14 +2,15 @@
 
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
+import { CONTROL, FIELD_LABEL, TEXTAREA } from "@/components/ui-torre/field"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { addManualSession, updateSession } from "../../sesion/actions"
 
 export type Initial = { id: string; day: string; start: string; end: string; taskId: string; notes: string }
 
-const LABEL = "block space-y-1"
-const CAP = "block text-xs uppercase tracking-wide text-cyan"
+const LABEL = "block space-y-2"
+const CAP = FIELD_LABEL
 
 export function SessionForm({ tasks, today, initial }: { tasks: { id: string; title: string }[]; today: string; initial?: Initial }) {
   const router = useRouter()
@@ -37,8 +38,8 @@ export function SessionForm({ tasks, today, initial }: { tasks: { id: string; ti
   }
 
   return (
-    <form action={submit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+    <form action={submit} className="space-y-5">
+      <div className="grid gap-5 sm:grid-cols-2">
         <label className={LABEL}>
           <span className={CAP}>Fecha</span>
           <Input name="day" type="date" required max={today} defaultValue={initial?.day ?? today} />
@@ -48,14 +49,14 @@ export function SessionForm({ tasks, today, initial }: { tasks: { id: string; ti
           <Input name="start" type="time" required defaultValue={initial?.start ?? ""} />
         </label>
       </div>
-      <fieldset className="space-y-2">
+      <fieldset className="space-y-3">
         <legend className={CAP}>Fin o duración</legend>
-        <div className="flex gap-4 text-sm">
-          <label className="flex items-center gap-1.5">
-            <input type="radio" checked={mode === "fin"} onChange={() => setMode("fin")} className="accent-cyan" /> Hora de fin
+        <div className="flex flex-wrap gap-x-6 gap-y-1">
+          <label className="flex min-h-11 items-center gap-2.5">
+            <input type="radio" checked={mode === "fin"} onChange={() => setMode("fin")} className="size-5 accent-primary" /> Hora de fin
           </label>
-          <label className="flex items-center gap-1.5">
-            <input type="radio" checked={mode === "duracion"} onChange={() => setMode("duracion")} className="accent-cyan" /> Duración (min)
+          <label className="flex min-h-11 items-center gap-2.5">
+            <input type="radio" checked={mode === "duracion"} onChange={() => setMode("duracion")} className="size-5 accent-primary" /> Duración (min)
           </label>
         </div>
         {mode === "fin" ? (
@@ -69,7 +70,7 @@ export function SessionForm({ tasks, today, initial }: { tasks: { id: string; ti
         <select
           name="taskId"
           defaultValue={initial?.taskId ?? ""}
-          className="h-10 w-full border-0 border-b border-line bg-background px-0 text-base text-foreground [color-scheme:dark] focus-visible:border-cyan focus-visible:outline-none"
+          className={CONTROL}
         >
           <option value="">Sin tarea</option>
           {tasks.map((t) => (
@@ -86,20 +87,20 @@ export function SessionForm({ tasks, today, initial }: { tasks: { id: string; ti
           rows={2}
           maxLength={2000}
           defaultValue={initial?.notes ?? ""}
-          className="w-full border border-line bg-transparent p-2 text-base text-foreground focus-visible:border-cyan focus-visible:outline-none"
+          className={TEXTAREA}
         />
       </label>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-3">
         <Button type="submit" disabled={pending}>
-          {initial ? "[ Guardar ]" : "[ Añadir sesión ]"}
+          {initial ? "Guardar" : "Añadir sesión"}
         </Button>
         {initial ? (
-          <Button type="button" variant="outline" onClick={() => router.push("/mas/sesiones")}>
+          <Button type="button" variant="ghost" onClick={() => router.push("/mas/sesiones")}>
             Cancelar
           </Button>
         ) : null}
       </div>
-      {error ? <p role="alert" className="text-sm text-red">{error}</p> : null}
+      {error ? <p role="alert" className="text-danger">{error}</p> : null}
     </form>
   )
 }

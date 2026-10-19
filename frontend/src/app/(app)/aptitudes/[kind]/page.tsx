@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { PageTitle } from "@/components/cockpit/page-title"
+import { PageHeader } from "@/components/ui-torre/page-header"
 import { isKind, KIND_META, summarize } from "@/lib/aptitudes/kinds"
 import { createClient } from "@/lib/supabase/server"
 import { AptNotice } from "../_components/notice"
@@ -13,8 +13,8 @@ export default async function Page({ params }: { params: Promise<{ kind: string 
   const s = summarize(data ?? [])[kind]
   const m = KIND_META[kind]
   return (
-    <section className="space-y-6">
-      <PageTitle code={`APT · ${m.code}`} title={m.title} back={{ href: "/aptitudes", label: "Aptitudes" }} />
+    <section className="space-y-8">
+      <PageHeader title={m.title} description={m.description} back={{ href: "/aptitudes", label: "Aptitudes" }} />
       <AptNotice />
       <Runner kind={kind} level={s.level} bestPct={s.bestPct} />
     </section>

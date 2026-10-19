@@ -1,6 +1,6 @@
-import { Annunciator } from "@/components/cockpit/annunciator"
+import { StatusChip } from "@/components/ui-torre/status-chip"
 
 export function VerificationBadge({ verified }: { verified: boolean }) {
   if (verified) return null
-  return <Annunciator tone="amber">Pdte verificar</Annunciator>
+  return <StatusChip tone="warning">pendiente de verificar</StatusChip>
 }

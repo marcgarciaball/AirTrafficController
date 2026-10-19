@@ -1,6 +1,9 @@
 import Link from "next/link"
-import { PageTitle, Prose } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
+import { ChevronRight } from "lucide-react"
+import { CHECKLIST_ROW, ROW_HOVER } from "@/components/ui-torre/checklist"
+import { PageHeader } from "@/components/ui-torre/page-header"
+import { Section } from "@/components/ui-torre/section"
+import { cn } from "@/lib/utils"
 
 const FICHAS = [
   { href: "/guia/examen", n: "00", title: "El examen por dentro", desc: "Cuánto pesa cada prueba, mínimos, corte del 596 y cómo preparar cada una." },
@@ -16,28 +19,28 @@ const FICHAS = [
 
 export default function GuiaIndex() {
   return (
-    <section className="space-y-6">
-      <PageTitle code="Guía · índice" title="Guía del proceso">
-        <Prose className="pt-1">
-          Todo lo que necesitas saber para empezar desde cero, paso a paso. Cada dato indica su fuente y si está pendiente de verificar.
-        </Prose>
-      </PageTitle>
-      <Panel title="Índice" aside={`${FICHAS.length}`} flush>
-        <ul className="divide-y divide-line">
+    <div className="space-y-10">
+      <PageHeader
+        title="Guía del proceso"
+        description="Todo lo que necesitas saber para empezar desde cero, paso a paso. Cada dato indica su fuente y si está pendiente de verificar."
+        back={{ href: "/mas", label: "Más" }}
+      />
+      <Section title="Índice" aside={`${FICHAS.length} capítulos`} flush>
+        <ol className="divide-y divide-line">
           {FICHAS.map((f) => (
             <li key={f.href}>
-              <Link href={f.href} className="flex items-start gap-3 px-3 py-2.5 hover:bg-surface sm:px-4">
-                <span className="w-6 shrink-0 font-mono text-sm text-muted-foreground tabular-nums">{f.n}</span>
-                <span className="min-w-0 flex-1">
-                  <span className="block uppercase tracking-wide text-sm leading-5 text-cyan">{f.title}</span>
+              <Link href={f.href} className={cn(CHECKLIST_ROW, ROW_HOVER)}>
+                <span aria-hidden="true" className="w-7 shrink-0 pt-px text-lg font-bold text-muted-foreground">{Number(f.n)}</span>
+                <span className="min-w-0 flex-1 space-y-1">
+                  <span className="block leading-snug font-bold text-foreground">{f.title}</span>
                   <span className="block text-sm text-muted-foreground">{f.desc}</span>
                 </span>
-                <span aria-hidden="true" className="shrink-0 self-center font-mono text-cyan">›</span>
+                <ChevronRight aria-hidden="true" className="size-5 shrink-0 self-center text-muted-foreground" />
               </Link>
             </li>
           ))}
-        </ul>
-      </Panel>
-    </section>
+        </ol>
+      </Section>
+    </div>
   )
 }

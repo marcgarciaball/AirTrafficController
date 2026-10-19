@@ -3,9 +3,9 @@
 import { useState, useTransition } from "react"
 import { SourceLink } from "@/components/source-link"
 import { Button } from "@/components/ui/button"
-import { Annunciator } from "@/components/cockpit/annunciator"
-import { Tape } from "@/components/cockpit/tape"
-import { UtcClock } from "@/components/cockpit/utc-clock"
+import { StatusChip } from "@/components/ui-torre/status-chip"
+import { ProgressBar } from "@/components/ui-torre/progress-bar"
+import { UtcClock } from "@/components/ui-torre/utc-clock"
 import { saveOnboarding } from "@/app/bienvenida/actions"
 import { onboardingActionSchema, type OnboardingAnswers } from "@/lib/onboarding/schema"
 import { todayISO } from "@/lib/onboarding/schema"
@@ -96,18 +96,18 @@ export function OnboardingWizard({
   return (
     <div className="mx-auto w-full max-w-xl space-y-6 px-4 pt-3 pb-10 md:pt-10">
       <div className="flex h-10 items-center justify-between border-b border-line font-mono text-sm">
-        <span className="tracking-wider text-foreground">TORRE</span>
+        <span className="text-foreground">TORRE</span>
         <UtcClock className="text-foreground tabular-nums" />
       </div>
 
       <div className="space-y-2">
-        <p className="flex items-baseline justify-between font-mono text-sm uppercase tracking-wide" aria-live="polite">
+        <p className="flex items-baseline justify-between font-mono text-sm" aria-live="polite">
           <span className="text-foreground">Preflight</span>
           <span className="sr-only">{step < TOTAL ? `Pregunta ${shown} de ${TOTAL}` : "Resultado"}</span>
           <span aria-hidden="true" className="text-foreground tabular-nums">{step < TOTAL ? `${shown}/${TOTAL}` : "RES"}</span>
         </p>
-        <Tape value={(Math.min(step, TOTAL) / TOTAL) * 100} tone="green" label={`Progreso del cuestionario, paso ${shown} de ${TOTAL}`} />
-        <p className="text-xs uppercase tracking-wide text-muted-foreground">Cuestionario · F0 Viabilidad</p>
+        <ProgressBar value={(Math.min(step, TOTAL) / TOTAL) * 100} tone="success" label={`Progreso del cuestionario, paso ${shown} de ${TOTAL}`} />
+        <p className="text-xs text-muted-foreground">Cuestionario · F0 Viabilidad</p>
       </div>
 
       {step === 0 && <StepNationality {...stepProps} />}
@@ -122,23 +122,23 @@ export function OnboardingWizard({
       {step === TOTAL && (
         <section className="space-y-5" aria-labelledby="resultado">
           {/* Página ECAM: título subrayado, bloqueos en red y avisos en amber. */}
-          <h1 id="resultado" className="w-fit border-b border-foreground text-sm uppercase tracking-wide text-foreground">
+          <h1 id="resultado" className="w-fit border-b border-foreground text-sm text-foreground">
             Resultado · Viabilidad
           </h1>
           {!parsed?.success && (
-            <p role="alert" className="text-red">
+            <p role="alert" className="text-danger">
               Faltan o no son válidas algunas respuestas. Vuelve atrás y revísalas.
             </p>
           )}
           {result && result.blockers.length > 0 && (
             <div role="alert" className="space-y-3">
               <p className="flex items-center gap-2">
-                <Annunciator tone="red">Bloqueo</Annunciator>
-                <span className="font-mono text-sm text-red tabular-nums">{result.blockers.length}</span>
+                <StatusChip tone="danger">Bloqueo</StatusChip>
+                <span className="font-mono text-sm text-danger tabular-nums">{result.blockers.length}</span>
               </p>
               <ul className="space-y-2">
                 {result.blockers.map((b) => (
-                  <li key={b.code} className="flex max-w-[68ch] gap-3 leading-relaxed text-red">
+                  <li key={b.code} className="flex max-w-[68ch] gap-3 leading-relaxed text-danger">
                     <span aria-hidden="true" className="font-mono">■</span>
                     <span>{b.message}</span>
                   </li>
@@ -149,7 +149,7 @@ export function OnboardingWizard({
             </div>
           )}
           {result && result.blockers.length === 0 && (
-            <p className="flex max-w-[68ch] items-start gap-3 leading-relaxed text-green">
+            <p className="flex max-w-[68ch] items-start gap-3 leading-relaxed text-success">
               <span aria-hidden="true" className="font-mono">✓</span>
               <span>Cumples los requisitos declarados. Empezarás en la fase 1.</span>
             </p>
@@ -157,12 +157,12 @@ export function OnboardingWizard({
           {result && result.warnings.length > 0 && (
             <div role="status" className="space-y-3">
               <p className="flex items-center gap-2">
-                <Annunciator tone="amber">Aviso</Annunciator>
-                <span className="text-xs uppercase tracking-wide text-muted-foreground">No bloquea · {result.warnings.length}</span>
+                <StatusChip tone="warning">Aviso</StatusChip>
+                <span className="text-xs text-muted-foreground">No bloquea · {result.warnings.length}</span>
               </p>
               <ul className="space-y-2">
                 {result.warnings.map((w) => (
-                  <li key={w.code} className="flex max-w-[68ch] gap-3 leading-relaxed text-amber">
+                  <li key={w.code} className="flex max-w-[68ch] gap-3 leading-relaxed text-warning">
                     <span aria-hidden="true" className="font-mono">△</span>
                     <span>{w.message}</span>
                   </li>
@@ -174,7 +174,7 @@ export function OnboardingWizard({
         </section>
       )}
 
-      {error && <p role="alert" className="text-sm text-red">{error}</p>}
+      {error && <p role="alert" className="text-sm text-danger">{error}</p>}
 
       <div className="flex justify-between gap-3 border-t border-line pt-5">
         <Button type="button" variant="outline" size="lg" disabled={step === 0 || pending} onClick={() => { setError(null); setStep((s) => s - 1) }}>

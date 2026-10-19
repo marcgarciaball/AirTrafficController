@@ -10,7 +10,7 @@ export function StartButton({ taskId, topicId }: { taskId: string; topicId: stri
   const [error, setError] = useState<string | null>(null)
   const [pending, start] = useTransition()
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <Button
         type="button"
         size="lg"
@@ -24,9 +24,9 @@ export function StartButton({ taskId, topicId }: { taskId: string; topicId: stri
           })
         }
       >
-        [ Empezar sesión ]
+        Empezar sesión
       </Button>
-      {error ? <p role="alert" className="text-sm text-red">{error}</p> : null}
+      {error ? <p role="alert" className="text-danger">{error}</p> : null}
     </div>
   )
 }

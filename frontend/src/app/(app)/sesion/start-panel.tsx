@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
+import { CONTROL, FIELD_LABEL } from "@/components/ui-torre/field"
 import { Button } from "@/components/ui/button"
 import { startSession } from "./actions"
 
@@ -24,13 +25,13 @@ export function StartPanel({ options, initialTaskId }: { options: TaskOption[]; 
   }
 
   return (
-    <div className="space-y-4">
-      <label className="block space-y-1">
-        <span className="block text-xs uppercase tracking-wide text-cyan">Tarea vinculada</span>
+    <div className="space-y-6">
+      <label className="block space-y-2">
+        <span className={FIELD_LABEL}>Tarea vinculada</span>
         <select
           value={taskId}
           onChange={(e) => setTaskId(e.target.value)}
-          className="h-10 w-full border-0 border-b border-line bg-background px-0 text-base text-foreground [color-scheme:dark] focus-visible:border-cyan focus-visible:outline-none"
+          className={CONTROL}
         >
           <option value="">Sin tarea (sesión libre)</option>
           {options.map((o) => (
@@ -41,9 +42,9 @@ export function StartPanel({ options, initialTaskId }: { options: TaskOption[]; 
         </select>
       </label>
       <Button type="button" size="lg" disabled={pending} onClick={go}>
-        [ Empezar sesión ]
+        Empezar sesión
       </Button>
-      {error ? <p role="alert" className="text-sm text-red">{error}</p> : null}
+      {error ? <p role="alert" className="text-danger">{error}</p> : null}
     </div>
   )
 }

@@ -1,8 +1,10 @@
 import Link from "next/link"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { buttonVariants } from "@/components/ui/button"
 import type { SupabaseClient } from "@supabase/supabase-js"
-import { Annunciator } from "@/components/cockpit/annunciator"
-import { PageTitle } from "@/components/cockpit/page-title"
-import { Panel } from "@/components/cockpit/panel"
+import { StatusChip } from "@/components/ui-torre/status-chip"
+import { PageHeader } from "@/components/ui-torre/page-header"
+import { Section } from "@/components/ui-torre/section"
 import { monthGrid, monthLabel, parseMonth, shiftMonth } from "@/lib/calendar/month"
 import { formatDate } from "@/lib/format"
 import { buildPlan } from "@/lib/plan/planner"
@@ -24,7 +26,7 @@ const KIND: Record<string, string> = {
   fase3: "Fase 3",
   resultado: "Resultado",
 }
-const DOW = ["L", "M", "X", "J", "V", "S", "D"]
+const DOW = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
 
 type Ev = { id: string; date: string; kind: string; is_estimate: boolean; verified: boolean }
 type Rem = { id: string; title: string; due_at: string; done: boolean }
@@ -65,17 +67,22 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
   const upcoming = rems.filter((r) => !r.done || r.day.startsWith(month))
 
   return (
-    <section className="space-y-6">
-      <PageTitle code="MÁS · CALENDARIO" title="Calendario" back={{ href: "/mas", label: "Más" }} />
+    <section className="space-y-12">
+      <PageHeader title="Calendario" back={{ href: "/mas", label: "Más" }} />
 
-      <Panel title={monthLabel(month)} aside={<span className="flex gap-3">
-        <Link href={`/mas/calendario?m=${shiftMonth(month, -1)}`} className="text-cyan hover:underline" aria-label="Mes anterior">‹</Link>
-        <Link href="/mas/calendario" className="text-cyan hover:underline">Hoy</Link>
-        <Link href={`/mas/calendario?m=${shiftMonth(month, 1)}`} className="text-cyan hover:underline" aria-label="Mes siguiente">›</Link>
+      <Section title={monthLabel(month)} aside={<span className="flex items-center gap-1">
+        <Link href={`/mas/calendario?m=${shiftMonth(month, -1)}`} className={buttonVariants({ variant: "ghost", size: "icon" })} aria-label="Mes anterior"><ChevronLeft aria-hidden="true" className="size-5" /></Link>
+        <Link href="/mas/calendario" className={buttonVariants({ variant: "outline", size: "sm" })}>Hoy</Link>
+        <Link href={`/mas/calendario?m=${shiftMonth(month, 1)}`} className={buttonVariants({ variant: "ghost", size: "icon" })} aria-label="Mes siguiente"><ChevronRight aria-hidden="true" className="size-5" /></Link>
       </span>}>
-        <table className="w-full table-fixed border-collapse text-xs">
+        <table className="w-full table-fixed border-collapse text-sm">
           <thead>
-            <tr>{DOW.map((d) => <th key={d} scope="col" className="pb-1 font-normal uppercase text-muted-foreground">{d}</th>)}</tr>
+            <tr>{DOW.map((d) => (
+              <th key={d} scope="col" className="pb-2 text-sm font-normal text-muted-foreground">
+                <span aria-hidden="true" className="sm:hidden">{d === "Miércoles" ? "X" : d[0]}</span>
+                <span className="max-sm:sr-only">{d}</span>
+              </th>
+            ))}</tr>
           </thead>
           <tbody>
             {grid.map((week, i) => (
@@ -86,15 +93,15 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
                   const hasEv = evByDay.has(day)
                   const rem = remByDay.get(day) ?? 0
                   return (
-                    <td key={day} className={cn("h-16 border border-line p-1 align-top", !inMonth && "opacity-40", day === today && "outline outline-1 outline-cyan")}>
-                      <span className="font-mono tabular-nums text-foreground">{Number(day.slice(8))}</span>
-                      <span className="mt-0.5 block font-mono tabular-nums">
-                        {d > 0 ? <span className="block text-green">{d}m</span> : null}
-                        {p > 0 ? <span className="block text-magenta">{p}m</span> : null}
+                    <td key={day} className={cn("h-20 border p-1.5 align-top", !inMonth && "text-muted-foreground/60 [&>*]:opacity-50", day === today && "bg-primary/[0.06]")}>
+                      <span className={cn("inline-flex size-6 items-center justify-center rounded-full", day === today ? "bg-primary font-bold text-primary-foreground" : "text-foreground")}>{Number(day.slice(8))}</span>
+                      <span className="mt-0.5 block text-xs leading-4">
+                        {d > 0 ? <span className="block font-bold text-success">{d} min</span> : null}
+                        {p > 0 ? <span className="block text-muted-foreground">plan {p}</span> : null}
                       </span>
-                      <span className="flex gap-1">
-                        {hasEv ? <span className="text-amber" title="Hito de convocatoria">◆<span className="sr-only">Hito</span></span> : null}
-                        {rem > 0 ? <span className="text-cyan" title="Recordatorio">●<span className="sr-only">Recordatorio</span></span> : null}
+                      <span className="mt-1 flex gap-1">
+                        {hasEv ? <span className="size-2 rotate-45 rounded-[1px] bg-warning" title="Hito de convocatoria"><span className="sr-only">Hito</span></span> : null}
+                        {rem > 0 ? <span className="size-2 rounded-full bg-primary" title="Recordatorio"><span className="sr-only">Recordatorio</span></span> : null}
                       </span>
                     </td>
                   )
@@ -103,49 +110,52 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ m
             ))}
           </tbody>
         </table>
-        <p className="mt-3 text-xs text-muted-foreground">
-          <span className="text-green">Verde</span>: minutos hechos. <span className="text-magenta">Magenta</span>: planificados esta semana ({weeklyHours > 0 ? `${weeklyHours} h/semana` : "sin horas definidas"}). <span className="text-amber">◆</span> hito. <span className="text-cyan">●</span> recordatorio.
-        </p>
-      </Panel>
+        <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+          <li><span className="font-bold text-success">min</span>: minutos hechos</li>
+          <li>plan: minutos planificados esta semana ({weeklyHours > 0 ? `${weeklyHours} horas a la semana` : "sin horas definidas"})</li>
+          <li className="flex items-center gap-2"><span aria-hidden="true" className="size-2 rotate-45 rounded-[1px] bg-warning" /> hito de convocatoria</li>
+          <li className="flex items-center gap-2"><span aria-hidden="true" className="size-2 rounded-full bg-primary" /> recordatorio</li>
+        </ul>
+      </Section>
 
-      <Panel title="Hitos del mes" flush>
+      <Section title="Hitos del mes" flush>
         {monthEvents.length === 0 ? (
-          <p className="px-3 py-2.5 text-sm text-muted-foreground">Sin hitos de convocatoria este mes.</p>
+          <p className="px-5 py-4 text-muted-foreground sm:px-6">Sin hitos de convocatoria este mes.</p>
         ) : (
           <ul className="divide-y divide-line">
             {monthEvents.map((e) => (
-              <li key={e.id} className="flex flex-wrap items-center gap-2 px-3 py-2.5 sm:px-4">
-                <span className="font-mono text-sm tabular-nums">{formatDate(e.date)}</span>
-                <span className="flex-1 text-sm">{KIND[e.kind] ?? e.kind}</span>
-                {e.is_estimate ? <Annunciator tone="amber">Estimación</Annunciator> : null}
-                {!e.verified ? <Annunciator tone="amber">Pendiente de verificar</Annunciator> : null}
+              <li key={e.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-4 sm:px-6">
+                <span className="w-24 shrink-0 text-sm text-muted-foreground">{formatDate(e.date)}</span>
+                <span className="flex-1 font-bold">{KIND[e.kind] ?? e.kind}</span>
+                {e.is_estimate ? <StatusChip tone="warning">estimación</StatusChip> : null}
+                {!e.verified ? <StatusChip tone="warning">pendiente de verificar</StatusChip> : null}
               </li>
             ))}
           </ul>
         )}
-      </Panel>
+      </Section>
 
-      <Panel title="Recordatorios" flush>
+      <Section title="Recordatorios" flush>
         {upcoming.length === 0 ? (
-          <p className="px-3 py-2.5 text-sm text-muted-foreground">Sin recordatorios.</p>
+          <p className="px-5 py-4 text-muted-foreground sm:px-6">Sin recordatorios.</p>
         ) : (
           <ul className="divide-y divide-line">
             {upcoming.map((r) => (
-              <li key={r.id} className="flex items-center gap-3 px-3 py-2.5 sm:px-4">
-                <div className="min-w-0 flex-1">
-                  <p className={cn("truncate text-sm", r.done ? "text-green" : "text-foreground")}>{r.done ? "✓ " : ""}{r.title}</p>
-                  <p className="font-mono text-xs tabular-nums text-muted-foreground">{formatDate(r.day)} {isoToLocalTime(r.due_at, tz)}</p>
+              <li key={r.id} className="flex items-center gap-4 px-5 py-3 sm:px-6">
+                <div className="min-w-0 flex-1 space-y-0.5">
+                  <p className={cn("truncate", r.done ? "text-muted-foreground line-through" : "text-foreground")}>{r.title}</p>
+                  <p className="text-sm text-muted-foreground">{formatDate(r.day)} {isoToLocalTime(r.due_at, tz)}</p>
                 </div>
                 <ReminderActions id={r.id} done={r.done} />
               </li>
             ))}
           </ul>
         )}
-      </Panel>
+      </Section>
 
-      <Panel title="Nuevo recordatorio">
+      <Section title="Nuevo recordatorio">
         <ReminderForm today={today} />
-      </Panel>
+      </Section>
     </section>
   )
 }

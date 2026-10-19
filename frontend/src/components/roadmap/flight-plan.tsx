@@ -1,99 +1,107 @@
 import Link from "next/link"
-import { Annunciator } from "@/components/cockpit/annunciator"
-import { Tape } from "@/components/cockpit/tape"
-import { TEXT, type Tone } from "@/components/cockpit/tones"
+import { ChevronRight } from "lucide-react"
+import { ProgressBar } from "@/components/ui-torre/progress-bar"
+import { StatusChip } from "@/components/ui-torre/status-chip"
+import { ROW_HOVER } from "@/components/ui-torre/checklist"
 import { cn } from "@/lib/utils"
 import type { PhaseView } from "@/lib/roadmap/types"
 
 const PARALLEL = [2, 3, 4]
 
-function toneOf(p: PhaseView, current: boolean): Tone {
-  if (current) return "magenta"
-  if (p.status === "bloqueada") return "dim"
-  if (p.status === "hecha") return "green"
-  return "white"
-}
-
-/** Tramo de la ruta: magenta entre waypoints activos y discontinuo en dim hacia los bloqueados. */
+/** Tramo vertical que une los waypoints: continuo si hay paso, discontinuo hacia lo bloqueado. */
 function Leg({ locked, className }: { locked: boolean; className?: string }) {
   return (
     <span
       aria-hidden="true"
-      className={cn("absolute left-[11px] border-l", locked ? "border-dashed border-muted-foreground" : "border-magenta", className)}
+      className={cn("absolute left-[33px] w-0 border-l-2 sm:left-[37px]", locked ? "border-dashed border-line" : "border-guide/35", className)}
     />
   )
 }
 
-/** Símbolo de waypoint del ND: rombo con trazo de 1 px. */
-function Waypoint({ phase, current, first, last }: { phase: PhaseView; current: boolean; first?: boolean; last?: boolean }) {
-  const tone = toneOf(phase, current)
+/** Waypoint: rombo relleno en la fase actual, círculo con check si está hecha, anillo si no. */
+function Mark({ phase, current }: { phase: PhaseView; current: boolean }) {
   const locked = phase.status === "bloqueada"
-  const tapeTone: Tone = current ? "magenta" : phase.status === "hecha" ? "green" : locked ? "dim" : "green"
+  return (
+    <span aria-hidden="true" className="absolute top-[22px] left-[24px] flex size-5 items-center justify-center bg-card sm:left-[28px]">
+      {current ? (
+        <span className="size-3.5 rotate-45 rounded-[3px] bg-guide ring-4 ring-guide/15" />
+      ) : phase.status === "hecha" ? (
+        <svg viewBox="0 0 20 20" className="size-5">
+          <circle cx="10" cy="10" r="9" className="fill-success" />
+          <path d="M6 10.4 8.6 13 14 7.5" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="stroke-card" />
+        </svg>
+      ) : (
+        <span className={cn("size-4 rounded-full border-2 bg-card", locked ? "border-dashed border-muted-foreground/60" : "border-muted-foreground")} />
+      )}
+    </span>
+  )
+}
+
+function Waypoint({ phase, current, first, last }: { phase: PhaseView; current: boolean; first?: boolean; last?: boolean }) {
+  const locked = phase.status === "bloqueada"
   return (
     <li className="relative">
-      <Leg locked={locked} className={cn(first ? "top-[19px]" : "top-0", last ? "h-[19px]" : "bottom-0")} />
-      <span
-        aria-hidden="true"
-        className={cn(
-          "absolute top-[15px] left-[7px] size-[9px] rotate-45 border bg-background",
-          current ? "border-magenta bg-magenta" : locked ? "border-muted-foreground" : phase.status === "hecha" ? "border-green" : "border-foreground"
-        )}
-      />
+      {!first ? <Leg locked={locked} className="top-0 h-[22px]" /> : null}
+      {!last ? <Leg locked={locked} className="top-[42px] bottom-0" /> : null}
+      <Mark phase={phase} current={current} />
       <Link
         href={`/ruta/${phase.number}`}
         aria-current={current ? "step" : undefined}
-        className="block py-2 pr-3 pl-8 hover:bg-surface"
+        className={cn("flex items-start gap-4 py-5 pr-5 pl-[68px] sm:pr-6 sm:pl-[76px]", ROW_HOVER)}
       >
-        <span className="flex items-baseline gap-3">
-          <span className={cn("w-6 shrink-0 font-mono text-sm", TEXT[tone])}>F{phase.number}</span>
-          <span className={cn("min-w-0 flex-1 truncate uppercase tracking-wide text-sm", TEXT[tone])}>{phase.title}</span>
-          {locked ? <Annunciator tone="dim">Bloq</Annunciator> : null}
-          <span className={cn("w-12 shrink-0 text-right font-mono text-sm tabular-nums", TEXT[tone])}>
-            {phase.pct}
-            <span className="text-muted-foreground"> %</span>
+        <span className="min-w-0 flex-1 space-y-2">
+          <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className={cn("text-sm", current ? "text-guide" : "text-muted-foreground")}>Fase {phase.number}</span>
+            {current ? <StatusChip tone="guide">fase actual</StatusChip> : null}
+            {locked ? <StatusChip tone="muted">bloqueada</StatusChip> : null}
+            {phase.status === "hecha" ? <StatusChip tone="success">hecha</StatusChip> : null}
           </span>
-        </span>
-        <span className="mt-1.5 flex items-center gap-3 pl-9">
-          <Tape value={phase.pct} tone={tapeTone} label={`Progreso de la fase ${phase.number}`} className="flex-1" />
-        </span>
-        {phase.est_weeks_min != null && phase.est_weeks_max != null ? (
-          <span className="mt-1 block pl-9 font-mono text-xs text-muted-foreground tabular-nums">
-            EST {phase.est_weeks_min}–{phase.est_weeks_max} SEM
+          <span className={cn("block text-lg leading-snug font-bold", locked ? "text-muted-foreground" : "text-foreground")}>{phase.title}</span>
+          <span className="flex items-center gap-3">
+            <ProgressBar
+              value={phase.pct}
+              size="sm"
+              tone={current ? "guide" : locked ? "muted" : "success"}
+              label={`Progreso de la fase ${phase.number}`}
+              className="max-w-64 flex-1"
+            />
+            <span className="w-11 shrink-0 text-sm text-muted-foreground">{phase.pct} %</span>
           </span>
-        ) : null}
+          {phase.est_weeks_min != null && phase.est_weeks_max != null ? (
+            <span className="block text-sm text-muted-foreground">
+              Entre {phase.est_weeks_min} y {phase.est_weeks_max} semanas (estimación)
+            </span>
+          ) : null}
+        </span>
+        <ChevronRight aria-hidden="true" className="mt-0.5 size-5 shrink-0 self-center text-muted-foreground" />
       </Link>
     </li>
   )
 }
 
-/** Plan de vuelo del ND: cada fase es un waypoint; las fases 2, 3 y 4 forman una rama paralela. */
+/** Ruta de fases como waypoints unidos por una línea vertical; las fases 2, 3 y 4 van en paralelo. */
 export function FlightPlan({ phases, currentPhase }: { phases: PhaseView[]; currentPhase: number | null }) {
   const before = phases.filter((p) => p.number < PARALLEL[0])
   const branch = phases.filter((p) => PARALLEL.includes(p.number))
   const after = phases.filter((p) => p.number > PARALLEL[PARALLEL.length - 1])
   const firstId = phases[0]?.id
   const lastId = phases[phases.length - 1]?.id
-  const wp = (p: PhaseView, extra?: { first?: boolean; last?: boolean }) => (
-    <Waypoint key={p.id} phase={p} current={p.number === currentPhase} first={extra?.first ?? p.id === firstId} last={extra?.last ?? p.id === lastId} />
+  const wp = (p: PhaseView) => (
+    <Waypoint key={p.id} phase={p} current={p.number === currentPhase} first={p.id === firstId} last={p.id === lastId} />
   )
-  const branchLocked = branch.every((p) => p.status === "bloqueada")
   return (
-    <ol aria-label="Plan de fases">
-      {before.map((p) => wp(p))}
+    <ol aria-label="Fases de la ruta" className="divide-y divide-line">
+      {before.map(wp)}
       {branch.length > 0 ? (
         <li className="relative">
-          <Leg locked={branchLocked} className="top-0 bottom-0" />
-          {/* Ramificación y unión: tramos horizontales hasta la rama paralela. */}
-          <span aria-hidden="true" className={cn("absolute top-0 left-[11px] w-6 border-t", branchLocked ? "border-dashed border-muted-foreground" : "border-magenta")} />
-          <span aria-hidden="true" className={cn("absolute bottom-0 left-[11px] w-6 border-t", branchLocked ? "border-dashed border-muted-foreground" : "border-magenta")} />
-          <div className="relative ml-6 pb-1">
-            <Leg locked={branchLocked} className="top-0 bottom-0" />
-            <p className="pt-2 pl-8 text-xs uppercase tracking-wide text-muted-foreground">En paralelo · F{PARALLEL.join(" · F")}</p>
-            <ol>{branch.map((p) => wp(p, { first: false, last: false }))}</ol>
-          </div>
+          <p className="relative bg-subtle py-3 pr-5 pl-[68px] text-sm text-muted-foreground sm:pl-[76px]">
+            <span aria-hidden="true" className="absolute top-1/2 left-[29px] size-2.5 -translate-y-1/2 rounded-full border-2 border-muted-foreground bg-subtle sm:left-[33px]" />
+            Estas {branch.length} fases se hacen en paralelo
+          </p>
+          <ol className="divide-y divide-line border-t border-line">{branch.map((p) => <Waypoint key={p.id} phase={p} current={p.number === currentPhase} />)}</ol>
         </li>
       ) : null}
-      {after.map((p) => wp(p))}
+      {after.map(wp)}
     </ol>
   )
 }

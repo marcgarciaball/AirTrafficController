@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
+import { CHECKBOX, FIELD_LABEL, TEXTAREA } from "@/components/ui-torre/field"
 import { Button } from "@/components/ui/button"
 import { effectiveSeconds } from "@/lib/plan/time"
 import { formatClock } from "@/lib/sessions/format"
@@ -40,63 +41,62 @@ export function SessionTimer({ session, taskTitle }: { session: OpenSession; tas
   }
 
   return (
-    <div className="space-y-5">
-      <p
-        suppressHydrationWarning
-        role="timer"
-        aria-label="Tiempo de sesión"
-        className={`font-mono text-[28px] leading-none tabular-nums sm:text-5xl ${paused ? "text-amber" : "text-green"}`}
-      >
-        {formatClock(effectiveSeconds(session, now))}
-      </p>
-      <p className="text-sm text-muted-foreground">
-        {paused ? "EN PAUSA" : "EN MARCHA"} · {taskTitle ?? "Sin tarea vinculada"}
-      </p>
+    <div className="space-y-8">
+      <div className="space-y-3">
+        <p className={`flex items-center gap-2 text-sm ${paused ? "text-warning" : "text-success"}`}>
+          <span aria-hidden="true" className={`size-2.5 rounded-full ${paused ? "bg-warning" : "bg-success motion-safe:animate-pulse"}`} />
+          {paused ? "En pausa" : "En marcha"}
+        </p>
+        <p suppressHydrationWarning role="timer" aria-label="Tiempo de sesión" className="font-mono text-5xl leading-none text-foreground sm:text-6xl">
+          {formatClock(effectiveSeconds(session, now))}
+        </p>
+        <p className="text-lg text-muted-foreground">{taskTitle ?? "Sin tarea vinculada"}</p>
+      </div>
 
       {finishing ? (
-        <div className="space-y-4">
-          <label className="block space-y-1">
-            <span className="block text-xs uppercase tracking-wide text-cyan">Notas</span>
+        <div className="space-y-5 border-t pt-6">
+          <label className="block space-y-2">
+            <span className={FIELD_LABEL}>Notas de la sesión</span>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               maxLength={2000}
               rows={3}
-              className="w-full border border-line bg-transparent p-2 text-base text-foreground focus-visible:border-cyan focus-visible:outline-none"
+              className={TEXTAREA}
             />
           </label>
           {session.task_id ? (
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={markDone} onChange={(e) => setMarkDone(e.target.checked)} className="size-4 accent-cyan" />
+            <label className="flex min-h-11 items-center gap-3">
+              <input type="checkbox" checked={markDone} onChange={(e) => setMarkDone(e.target.checked)} className={CHECKBOX} />
               Marcar tarea como hecha
             </label>
           ) : null}
-          <div className="flex gap-2">
-            <Button type="button" disabled={pending} onClick={() => run(() => finishSession(session.id, notes, markDone), () => router.push("/hoy"))}>
-              [ Confirmar ]
+          <div className="flex flex-wrap gap-3">
+            <Button type="button" size="lg" disabled={pending} onClick={() => run(() => finishSession(session.id, notes, markDone), () => router.push("/hoy"))}>
+              Guardar y terminar
             </Button>
-            <Button type="button" variant="outline" disabled={pending} onClick={() => setFinishing(false)}>
+            <Button type="button" size="lg" variant="ghost" disabled={pending} onClick={() => setFinishing(false)}>
               Cancelar
             </Button>
           </div>
         </div>
       ) : (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {paused ? (
             <Button type="button" size="lg" disabled={pending} onClick={() => run(() => resumeSession(session.id))}>
-              [ Reanudar ]
+              Reanudar
             </Button>
           ) : (
             <Button type="button" size="lg" variant="outline" disabled={pending} onClick={() => run(() => pauseSession(session.id))}>
-              [ Pausa ]
+              Pausar
             </Button>
           )}
           <Button type="button" size="lg" variant="destructive" disabled={pending} onClick={() => setFinishing(true)}>
-            [ Finalizar ]
+            Terminar
           </Button>
         </div>
       )}
-      {error ? <p role="alert" className="text-sm text-red">{error}</p> : null}
+      {error ? <p role="alert" className="text-danger">{error}</p> : null}
     </div>
   )
 }
