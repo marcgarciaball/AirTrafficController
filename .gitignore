@@ -9,6 +9,8 @@ next-env.d.ts
 # entorno (nunca claves reales)
 .env*
 !.env.example
+/env
+*.env
 
 # Supabase CLI
 database/supabase/.temp

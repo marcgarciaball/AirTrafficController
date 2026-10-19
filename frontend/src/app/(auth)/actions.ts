@@ -1,12 +1,17 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { resolveSiteUrl } from "@/lib/site-url";
 
 export type FormState = { error?: string; message?: string };
 
 const MIN_PASSWORD = 8;
-const siteUrl = () => process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const siteUrl = async () => {
+  const h = await headers();
+  return resolveSiteUrl((name) => h.get(name));
+};
 const field = (fd: FormData, name: string) => String(fd.get(name) ?? "").trim();
 
 export async function signIn(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -39,7 +44,7 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { emailRedirectTo: `${siteUrl()}/auth/callback?next=/bienvenida` },
+    options: { emailRedirectTo: `${await siteUrl()}/auth/callback?next=/bienvenida` },
   });
   if (error) return { error: "No hemos podido crear la cuenta. Revisa los datos e inténtalo de nuevo." };
   if (data.session) redirect("/bienvenida"); // confirmación de email desactivada
@@ -52,7 +57,7 @@ export async function requestPasswordReset(_prev: FormState, formData: FormData)
 
   const supabase = await createClient();
   await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${siteUrl()}/auth/callback?next=/nueva-contrasena`,
+    redirectTo: `${await siteUrl()}/auth/callback?next=/nueva-contrasena`,
   }); // PKCE: el enlace debe abrirse en el mismo navegador
   // Mismo mensaje exista o no la cuenta, para no revelar qué emails están registrados.
   return { message: "Si existe una cuenta con ese email, recibirás un enlace." };
@@ -81,7 +86,7 @@ export async function signInWithGoogle(): Promise<never> {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: `${siteUrl()}/auth/callback` },
+    options: { redirectTo: `${await siteUrl()}/auth/callback` },
   });
   if (error || !data.url) redirect("/login?error=google");
   redirect(data.url);
