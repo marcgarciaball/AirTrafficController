@@ -17,10 +17,10 @@ insert into public.topic_sections (id, topic_id, sort, title, body_md, source_pa
 values ('f0000000-0000-4000-8001-000000000001', (select id from public.topics where number = 1), 1, 't', 'b', 'pp. 1-2');
 insert into public.questions (id, topic_id, stem, options, correct_index, explanation, source_pages)
 values ('f0000000-0000-4000-8002-000000000001', (select id from public.topics where number = 1), 'p', '["a","b","c","d"]'::jsonb, 0, 'e', 'p. 1');
-insert into public.quiz_attempts (user_id, mode, topic_id, total)
+insert into public.quiz_attempts (id, user_id, mode, topic_id, total, answers)
 values
-  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'tema', (select id from public.topics where number = 1), 10),
-  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'simulacro', null, 50);
+  ('f0000000-0000-4000-8003-00000000000a', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'tema', (select id from public.topics where number = 1), 10, '[]'::jsonb),
+  ('f0000000-0000-4000-8003-00000000000b', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'simulacro', null, 50, '[]'::jsonb);
 
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "role": "authenticated"}', true);
@@ -45,6 +45,14 @@ select results_eq(
 select throws_ok(
   $$ insert into public.quiz_attempts (user_id, mode, total) values ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'tema', 10) $$,
   '42501', null, 'A no inserta intentos a nombre de B'
+);
+select throws_ok(
+  $$ select correct_index from public.questions $$,
+  '42501', null, 'authenticated no lee correct_index'
+);
+select throws_ok(
+  $$ select public.finish_quiz_attempt('f0000000-0000-4000-8003-00000000000b', '[]'::jsonb) $$,
+  '42501', null, 'finish_quiz_attempt rechaza intentos de otro usuario'
 );
 
 select set_config('request.jwt.claims', '', true);

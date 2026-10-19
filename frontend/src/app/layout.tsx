@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { B612, B612_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { RegisterSw } from "@/components/register-sw";
 import "./globals.css";
 
 // B612: tipografía que Airbus diseñó para las pantallas de cabina.
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Solo modo oscuro: las cabinas no tienen modo claro. */}
         <ThemeProvider attribute="class" forcedTheme="dark" defaultTheme="dark" enableSystem={false}>
           {children}
+          <RegisterSw />
         </ThemeProvider>
       </body>
     </html>

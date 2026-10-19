@@ -2,8 +2,7 @@
 
 import { z } from "zod"
 import { createClient } from "@/lib/supabase/server"
-import { scoreAttempt } from "@/lib/study/quiz"
-import { UUID_RE, type FinishResponse, type ReviewItem } from "@/lib/study/types"
+import { UUID_RE, type AttemptResult, type FinishResponse, type ReviewItem } from "@/lib/study/types"
 
 const uuid = z.string().regex(UUID_RE)
 
@@ -77,54 +76,41 @@ export async function finishAttempt(
   if (!attempt) return { error: "Intento no encontrado." }
   if (attempt.finished_at) return { error: "El intento ya está terminado." }
 
-  const ids = (Array.isArray(attempt.answers) ? attempt.answers : [])
-    .map((a) => (a && typeof a === "object" && !Array.isArray(a) ? (a as { question_id?: unknown }).question_id : null))
-    .filter((x): x is string => typeof x === "string")
-  const chosen = new Map<string, number | null>()
-  for (const a of parsed.data.answers) {
-    if (!ids.includes(a.question_id)) return { error: "Respuesta a una pregunta ajena al intento." }
-    chosen.set(a.question_id, a.chosen_index)
+  // La corrección la hace la función de base de datos: correct_index no es legible por el cliente.
+  const { data, error } = await supabase.rpc("finish_quiz_attempt", {
+    p_attempt_id: parsed.data.id,
+    p_answers: parsed.data.answers,
+  })
+  if (error || !data || typeof data !== "object" || Array.isArray(data)) {
+    return { error: "No se pudo guardar el resultado." }
+  }
+  const out = data as unknown as {
+    result: AttemptResult
+    review: { question_id: string; chosen_index: number | null; correct_index: number; correct: boolean | null; explanation: string }[]
   }
 
-  // La corrección se calcula aquí con correct_index de la base de datos.
   const { data: questions, error: qErr } = await supabase
     .from("questions")
-    .select("id, topic_id, stem, options, correct_index, explanation, source_pages")
-    .in("id", ids)
-  if (qErr || !questions || questions.length !== ids.length) return { error: "No se pudieron leer las preguntas." }
+    .select("id, topic_id, stem, options, source_pages")
+    .in("id", out.review.map((r) => r.question_id))
+  if (qErr || !questions) return { error: "No se pudieron leer las preguntas." }
   const byId = new Map(questions.map((q) => [q.id, q]))
 
-  const review: ReviewItem[] = ids.map((qid) => {
-    const q = byId.get(qid)!
-    const c = chosen.get(qid) ?? null
-    return {
-      question_id: qid,
+  const review: ReviewItem[] = []
+  for (const r of out.review) {
+    const q = byId.get(r.question_id)
+    if (!q) return { error: "No se pudieron leer las preguntas." }
+    review.push({
+      question_id: r.question_id,
       topic_id: q.topic_id,
       stem: q.stem,
       options: q.options as string[],
-      chosen_index: c,
-      correct_index: q.correct_index,
-      correct: c === null ? null : c === q.correct_index,
-      explanation: q.explanation,
+      chosen_index: r.chosen_index,
+      correct_index: r.correct_index,
+      correct: r.correct,
+      explanation: r.explanation,
       source_pages: q.source_pages,
-    }
-  })
-  const result = scoreAttempt(review)
-
-  const { data: updated, error } = await supabase
-    .from("quiz_attempts")
-    .update({
-      finished_at: new Date().toISOString(),
-      correct: result.correct,
-      wrong: result.wrong,
-      blank: result.blank,
-      answers: review.map((r) => ({ question_id: r.question_id, chosen_index: r.chosen_index, correct: r.correct === true })),
     })
-    .eq("id", parsed.data.id)
-    .eq("user_id", userData.user.id)
-    .is("finished_at", null)
-    .select("id")
-  if (error || !updated || updated.length === 0) return { error: "No se pudo guardar el resultado." }
-
-  return { result, review }
+  }
+  return { result: out.result, review }
 }

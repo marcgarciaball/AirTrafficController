@@ -39,6 +39,13 @@ export default async function Page() {
           </MemoItem>
         </Memo>
       </Panel>
+      <Panel title="Aptitudes" flush>
+        <Memo>
+          <MemoItem state="disponible" href="/aptitudes" detail="Atención, razonamiento espacial y abstracto, memoria, cálculo y multitarea.">
+            APTITUDES
+          </MemoItem>
+        </Memo>
+      </Panel>
       <Panel title="Temas" aside={`${list.length}`} flush>
         <ul className="divide-y divide-line">
           {list.map((t) => {

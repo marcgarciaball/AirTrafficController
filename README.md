@@ -83,6 +83,14 @@ Todo se prueba online desde el principio: base de datos en Supabase (plan gratui
    npm run db:test
    ```
 
+## PWA, exportación y recordatorios
+
+- Torre se puede instalar como app (`app/manifest.ts`, iconos SVG en `frontend/public/`). El service worker (`public/sw.js`) solo cachea recursos estáticos públicos y nunca respuestas autenticadas.
+- `/mas/exportar` descarga tus datos en JSON y CSV con tu propia sesión (RLS).
+- Los recordatorios del calendario se ven dentro de la app.
+
 ## Nota sobre el correo electrónico
 
 El SMTP por defecto de Supabase tiene límites de envío en el plan gratuito. Para usuarios reales, configura más adelante un SMTP propio (por ejemplo Resend).
+
+**Mejora futura: recordatorios por email.** Los recordatorios de `/mas/calendario` no envían correo, porque eso requiere un SMTP propio (por ejemplo Resend) y una tarea programada que lea `reminders` con `due_at` vencido y `done = false`.

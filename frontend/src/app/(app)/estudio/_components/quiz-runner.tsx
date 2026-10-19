@@ -46,14 +46,18 @@ export function QuizRunner({
   const [remaining, setRemaining] = useState<number | null>(null)
   const [outcome, setOutcome] = useState<{ result: AttemptResult; review: ReviewItem[] } | null>(null)
   const chosenRef = useRef(chosen)
-  chosenRef.current = chosen
   const idRef = useRef(attemptId)
-  idRef.current = attemptId
+  const autoTriedRef = useRef(false)
+  useEffect(() => {
+    chosenRef.current = chosen
+    idRef.current = attemptId
+  }, [chosen, attemptId])
   const headingRef = useRef<HTMLHeadingElement>(null)
 
   const finish = useCallback(async () => {
     const id = idRef.current
     if (!id) return
+    setError(null)
     setPhase("finishing")
     const answers = questions.map((q) => ({ question_id: q.id, chosen_index: chosenRef.current[q.id] ?? null }))
     const res = await finishAttempt(id, answers)
@@ -70,7 +74,11 @@ export function QuizRunner({
   useEffect(() => {
     if (phase !== "running" || remaining === null) return
     if (remaining <= 0) {
-      void finish()
+      // El envío automático se intenta una sola vez; si falla, el usuario reintenta con el botón.
+      if (!autoTriedRef.current) {
+        autoTriedRef.current = true
+        void finish()
+      }
       return
     }
     const t = setTimeout(() => setRemaining((r) => (r === null ? r : r - 1)), 1000)
@@ -88,6 +96,7 @@ export function QuizRunner({
       setError(res.error)
       return
     }
+    autoTriedRef.current = false
     setAttemptId(res.id)
     setChosen({})
     setIndex(0)
@@ -278,6 +287,9 @@ export function QuizRunner({
         })}
       </div>
       {error ? <p role="alert" className="text-sm text-red">{error}</p> : null}
+      {error && remaining !== null && remaining <= 0 ? (
+        <Button size="lg" disabled={busy} onClick={() => void finish()}>Reintentar envío</Button>
+      ) : null}
       <div className="flex flex-wrap justify-between gap-2">
         <Button
           variant="outline"

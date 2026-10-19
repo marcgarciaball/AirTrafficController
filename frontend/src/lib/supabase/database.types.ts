@@ -39,6 +39,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      aptitude_results: {
+        Row: {
+          duration_s: number
+          id: string
+          kind: string
+          level: number
+          score: number
+          taken_at: string
+          total: number
+          user_id: string
+        }
+        Insert: {
+          duration_s: number
+          id?: string
+          kind: string
+          level: number
+          score: number
+          taken_at?: string
+          total: number
+          user_id?: string
+        }
+        Update: {
+          duration_s?: number
+          id?: string
+          kind?: string
+          level?: number
+          score?: number
+          taken_at?: string
+          total?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      english_logs: {
+        Row: {
+          created_at: string | null
+          goal: string
+          id: string
+          max_score: number | null
+          notes: string | null
+          part: string | null
+          score: number | null
+          skill: string
+          taken_on: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          goal: string
+          id?: string
+          max_score?: number | null
+          notes?: string | null
+          part?: string | null
+          score?: number | null
+          skill: string
+          taken_on?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string | null
+          goal?: string
+          id?: string
+          max_score?: number | null
+          notes?: string | null
+          part?: string | null
+          score?: number | null
+          skill?: string
+          taken_on?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       exam_call_events: {
         Row: {
           date: string
@@ -159,6 +231,75 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      flashcards: {
+        Row: {
+          back: string
+          created_at: string | null
+          deck: string
+          due_on: string
+          ease: number
+          front: string
+          id: string
+          interval_days: number
+          reps: number
+          user_id: string
+        }
+        Insert: {
+          back: string
+          created_at?: string | null
+          deck: string
+          due_on?: string
+          ease?: number
+          front: string
+          id?: string
+          interval_days?: number
+          reps?: number
+          user_id?: string
+        }
+        Update: {
+          back?: string
+          created_at?: string | null
+          deck?: string
+          due_on?: string
+          ease?: number
+          front?: string
+          id?: string
+          interval_days?: number
+          reps?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      language_endorsements: {
+        Row: {
+          assessed_on: string
+          center: string | null
+          created_at: string | null
+          id: string
+          language: string
+          level: number
+          user_id: string
+        }
+        Insert: {
+          assessed_on: string
+          center?: string | null
+          created_at?: string | null
+          id?: string
+          language: string
+          level: number
+          user_id?: string
+        }
+        Update: {
+          assessed_on?: string
+          center?: string | null
+          created_at?: string | null
+          id?: string
+          language?: string
+          level?: number
+          user_id?: string
+        }
+        Relationships: []
       }
       phases: {
         Row: {
@@ -357,6 +498,44 @@ export type Database = {
             columns: ["topic_id"]
             isOneToOne: false
             referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reminders: {
+        Row: {
+          created_at: string | null
+          done: boolean
+          due_at: string
+          exam_call_event_id: string | null
+          id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          done?: boolean
+          due_at: string
+          exam_call_event_id?: string | null
+          id?: string
+          title: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string | null
+          done?: boolean
+          due_at?: string
+          exam_call_event_id?: string | null
+          id?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminders_exam_call_event_id_fkey"
+            columns: ["exam_call_event_id"]
+            isOneToOne: false
+            referencedRelation: "exam_call_events"
             referencedColumns: ["id"]
           },
         ]
@@ -732,7 +911,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      finish_quiz_attempt: {
+        Args: { p_attempt_id: string; p_answers: Json }
+        Returns: Json
+      }
     }
     Enums: {
       degree:
