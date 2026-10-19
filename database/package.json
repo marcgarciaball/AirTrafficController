@@ -1,0 +1,13 @@
+{
+  "name": "torre-database",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "db:push": "supabase db push --linked --include-seed",
+    "db:test": "supabase test db --linked",
+    "db:types": "supabase gen types typescript --linked > ../frontend/src/lib/supabase/database.types.ts"
+  },
+  "devDependencies": {
+    "supabase": "2.121.0"
+  }
+}
