@@ -391,6 +391,63 @@ export type Database = {
         }
         Relationships: []
       }
+      study_sessions: {
+        Row: {
+          created_at: string | null
+          ended_at: string | null
+          id: string
+          notes: string | null
+          origin: string
+          paused_at: string | null
+          paused_seconds: number
+          started_at: string
+          task_id: string | null
+          topic_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          ended_at?: string | null
+          id?: string
+          notes?: string | null
+          origin: string
+          paused_at?: string | null
+          paused_seconds?: number
+          started_at: string
+          task_id?: string | null
+          topic_id?: string | null
+          user_id?: string
+        }
+        Update: {
+          created_at?: string | null
+          ended_at?: string | null
+          id?: string
+          notes?: string | null
+          origin?: string
+          paused_at?: string | null
+          paused_seconds?: number
+          started_at?: string
+          task_id?: string | null
+          topic_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_sessions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_sessions_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subjects: {
         Row: {
           code: string

@@ -15,6 +15,13 @@ export default function MasPage() {
           </MemoItem>
         </Memo>
       </Panel>
+      <Panel title="Estudio" flush>
+        <Memo>
+          <MemoItem state="disponible" href="/mas/sesiones" detail="Historial, entrada manual y totales de tiempo.">
+            Sesiones
+          </MemoItem>
+        </Memo>
+      </Panel>
       <Panel title="Cuenta" flush>
         <Memo>
           <MemoItem state="disponible" href="/mas/perfil">
