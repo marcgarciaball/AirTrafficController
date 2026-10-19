@@ -912,7 +912,7 @@ export type Database = {
     }
     Functions: {
       finish_quiz_attempt: {
-        Args: { p_attempt_id: string; p_answers: Json }
+        Args: { p_answers: Json; p_attempt_id: string }
         Returns: Json
       }
     }

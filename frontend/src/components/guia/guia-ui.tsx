@@ -105,3 +105,33 @@ export function Nota({ children }: { children: ReactNode }) {
     </div>
   )
 }
+
+/** Texto que no sale de una fuente oficial: interpretación o consejo de Torre. */
+export function Consejo({ children }: { children: ReactNode }) {
+  return (
+    <div className="space-y-2 border-l border-line pl-3">
+      <Annunciator tone="white">Consejo propio · no oficial</Annunciator>
+      <div className="max-w-[68ch] space-y-2 text-base leading-relaxed text-foreground">{children}</div>
+    </div>
+  )
+}
+
+/** Dato que las fuentes oficiales no recogen: chip amber y la fuente revisada. */
+export function NoConsta({ label = "No consta en las bases", source }: { label?: string; source?: Src }) {
+  return (
+    <span className="inline-flex flex-col items-start gap-1.5">
+      <Annunciator tone="amber">{label}</Annunciator>
+      {source ? <SourceLink source={source} /> : null}
+    </span>
+  )
+}
+
+/** Párrafo oficial con su fuente debajo. */
+export function Cita({ children, source }: { children: ReactNode; source: Src }) {
+  return (
+    <div className="space-y-1.5">
+      <Prose>{children}</Prose>
+      <SourceLink source={source} />
+    </div>
+  )
+}

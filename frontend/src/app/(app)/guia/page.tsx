@@ -3,6 +3,7 @@ import { PageTitle, Prose } from "@/components/cockpit/page-title"
 import { Panel } from "@/components/cockpit/panel"
 
 const FICHAS = [
+  { href: "/guia/examen", n: "00", title: "El examen por dentro", desc: "Cuánto pesa cada prueba, mínimos, corte del 596 y cómo preparar cada una." },
   { href: "/guia/requisitos", n: "01", title: "Requisitos", desc: "Para presentarte y para ser contratado." },
   { href: "/guia/proceso", n: "02", title: "El proceso", desc: "Fases 1, 2 y 3, puntuaciones, nota de corte y desempates." },
   { href: "/guia/calendario", n: "03", title: "Calendario", desc: "Hitos de 2025 y la convocatoria 2026 esperada." },

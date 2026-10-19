@@ -24,6 +24,9 @@ export const U = {
   rd1516: ["https://www.boe.es/buscar/act.php?id=BOE-A-2009-16482", "RD 1516/2009, consolidado"],
   feast: ["https://feast-info.eurocontrol.int/", "Eurocontrol FEAST"],
   feastPractica: ["https://feast-training.eurocontrol.int/", "Eurocontrol FEAST: práctica"],
+  faq: ["https://empleo.enaire.es/empleo/PFSrv?accion=descargarSAP&URL=PREGUNTAS%20FRECUENTES%20-%20FAQS", "FAQ de la convocatoria 2025"],
+  temario: ["https://empleo.enaire.es/empleo/PFSrv?accion=descargarSAP&URL=ANEXO%20I_TEMARIO", "Anexo I: temario 2025"],
+  plantillas: ["https://empleo.enaire.es/empleo/PFSrv?accion=descargarSAP&URL=ANEXO%20I_PLANTILLAS%20CORRECCI%D3N%20PRUEBAS%20FASE%201", "Plantilla oficial de respuestas 2026 (Fase 1, 7 y 8 de febrero)"],
   nota2026: ["https://www.enaire.es/2026_08_17/enaire_refuerza_todos_los_a%C3%B1os_plantilla_controladores", "ENAIRE: nota de 17-08-2026"],
 } as const satisfies Record<string, readonly [string, string]>
 
@@ -66,4 +69,18 @@ export function facts(g: GuiaData, keys: string[]): Item[] {
 
 export function dato(g: GuiaData, ref: readonly [string, string], label: string, value: string | null, verified = true): Item {
   return { label, value, verified, source: src(g, ref) }
+}
+
+/** Documentos del portal de empleo de ENAIRE que no están en `sources`: enlace estático al portal con el título del documento. */
+export const DOC = {
+  anexo4: "Anexo IV: criterios de la evaluación conductual (Resolución de 31-03-2026)",
+  admision: "Resolución del listado definitivo de admisión (15-01-2026)",
+  resF1: "Resolución del listado definitivo de resultados de la Fase 1 (05-03-2026)",
+  finalProv: "Resolución final provisional (26-06-2026)",
+} as const
+
+/** Cita con localización (base, página): la fuente de la tabla o el respaldo, con el lugar exacto en el título. */
+export function cita(g: GuiaData, ref: readonly [string, string] | keyof typeof DOC, loc?: string): Src {
+  const base: Src = typeof ref === "string" ? { url: U.portal[0], title: `${DOC[ref]} · en el portal de empleo de ENAIRE`, consulted_on: "2026-10-19" } : src(g, ref)
+  return loc ? { ...base, title: `${base.title} · ${loc}` } : base
 }

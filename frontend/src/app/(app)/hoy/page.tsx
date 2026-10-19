@@ -140,6 +140,9 @@ export default async function Page() {
           <MemoItem state="disponible" href="/guia" detail="Requisitos, proceso, calendario y todo lo necesario para empezar desde cero.">
             Guía del proceso
           </MemoItem>
+          <MemoItem state="disponible" href="/guia/examen" detail="Cuánto pesa cada prueba, qué mínimo pide y cómo prepararla.">
+            El examen por dentro
+          </MemoItem>
         </Memo>
       </Panel>
     </section>
