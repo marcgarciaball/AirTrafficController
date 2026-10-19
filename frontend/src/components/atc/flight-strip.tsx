@@ -13,12 +13,8 @@ const BAND: Record<StripKind, string> = {
   destructive: "bg-destructive",
 }
 
-const FRAME: Record<StripKind, string> = {
-  dep: "",
-  arr: "",
-  ovf: "",
-  neutral: "",
-  ok: "",
+// Color del marco y de los divisores internos (por defecto, el borde del tema).
+const FRAME: Partial<Record<StripKind, string>> = {
   warning: "border-warning/45",
   destructive: "border-destructive/55",
 }
@@ -60,12 +56,12 @@ export function FlightStrip({
         {children ? <div className="text-sm leading-relaxed text-muted-foreground">{children}</div> : null}
       </div>
       {meta ? (
-        <div className="flex w-[4.75rem] shrink-0 items-center justify-center border-l border-inherit px-2 text-center font-mono text-[10px] leading-tight uppercase tracking-[0.1em] text-muted-foreground tabular-nums sm:w-24">
+        <div className={cn("flex w-[4.75rem] shrink-0 items-center justify-center border-l px-2 text-center font-mono text-[10px] leading-tight uppercase tracking-[0.1em] text-muted-foreground tabular-nums sm:w-24", FRAME[kind])}>
           {meta}
         </div>
       ) : null}
       {code ? (
-        <div className="flex min-w-[4.5rem] shrink-0 items-center justify-center border-l border-inherit px-3 font-mono text-xl font-medium tracking-tight tabular-nums">
+        <div className={cn("flex min-w-[4.5rem] shrink-0 items-center justify-center border-l px-3 font-mono text-xl font-medium tracking-tight tabular-nums", FRAME[kind])}>
           {code}
         </div>
       ) : null}

@@ -13,7 +13,7 @@ export default function NuevaContrasenaPage() {
         <Field id="password" label="Nueva contraseña (mínimo 8 caracteres)" type="password" autoComplete="new-password" minLength={8} />
         <Field id="confirm" label="Repite la contraseña" type="password" autoComplete="new-password" minLength={8} />
         <FormMessages state={state} />
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" size="lg" className="mt-1" disabled={pending}>
           {pending ? "Guardando..." : "Cambiar contraseña"}
         </Button>
       </form>

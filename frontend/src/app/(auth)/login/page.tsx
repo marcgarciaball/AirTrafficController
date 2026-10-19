@@ -32,7 +32,7 @@ export default function LoginPage() {
         <Field id="email" label="Email" type="email" autoComplete="email" />
         <Field id="password" label="Contraseña" type="password" autoComplete="current-password" />
         <FormMessages state={state} />
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" size="lg" className="mt-1" disabled={pending}>
           {pending ? "Entrando..." : "Entrar"}
         </Button>
       </form>

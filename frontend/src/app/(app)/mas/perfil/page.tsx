@@ -5,6 +5,8 @@ import { Separator } from "@/components/ui/separator"
 import { formatDate } from "@/lib/format"
 import type { OnboardingAnswers } from "@/lib/onboarding/schema"
 import { ProfileEditForm } from "./profile-edit-form"
+import { PageHeader } from "@/components/atc/page-header"
+import { SectionLabel } from "@/components/atc/section-label"
 
 const LABELS: Record<string, string> = {
   espanola: "Española", ue: "UE o libre circulación", residente: "Extranjera con residencia legal", ninguna: "Ninguna",
@@ -48,20 +50,23 @@ export default async function PerfilPage() {
   ]
 
   return (
-    <section className="space-y-6">
-      <h1 className="text-2xl font-semibold">Perfil</h1>
-      <dl className="space-y-3">
-        {rows.map(([k, v]) => (
-          <div key={k}>
-            <dt className="text-sm text-muted-foreground">{k}</dt>
-            <dd>{v}</dd>
-          </div>
-        ))}
-      </dl>
+    <section className="space-y-8">
+      <PageHeader label="05 · Más · Perfil" title="Perfil" />
+      <div className="space-y-2">
+        <SectionLabel as="h2">Respuestas del cuestionario</SectionLabel>
+        <dl className="divide-y overflow-hidden rounded-sm border bg-card">
+          {rows.map(([k, v]) => (
+            <div key={k} className="grid grid-cols-1 gap-1 px-3.5 py-2.5 sm:grid-cols-[11rem_minmax(0,1fr)] sm:items-baseline sm:gap-4">
+              <dt className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{k}</dt>
+              <dd className="text-sm tabular-nums">{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
       <Separator />
       <ProfileEditForm answers={answers} />
       <Separator />
-      <Link href="/bienvenida" className="inline-block rounded-md border px-4 py-2 outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50">
+      <Link href="/bienvenida" className="inline-flex h-9 items-center rounded-md border px-3.5 text-sm font-medium outline-none transition-colors hover:border-muted-foreground/50 hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
         Repetir cuestionario
       </Link>
     </section>

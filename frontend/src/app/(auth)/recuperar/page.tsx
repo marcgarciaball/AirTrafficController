@@ -12,7 +12,7 @@ export default function RecuperarPage() {
       <form action={action} className="flex flex-col gap-4">
         <Field id="email" label="Email" type="email" autoComplete="email" />
         <FormMessages state={state} />
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" size="lg" className="mt-1" disabled={pending}>
           {pending ? "Enviando..." : "Enviar enlace"}
         </Button>
       </form>
