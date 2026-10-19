@@ -10,9 +10,9 @@ export function StepFieldset({
   children: ReactNode
 }) {
   return (
-    <fieldset className="space-y-3">
-      <legend className="text-xl font-semibold">{legend}</legend>
-      {hint ? <p className="text-sm text-muted-foreground">{hint}</p> : null}
+    <fieldset className="space-y-4">
+      <legend className="mb-2 text-xl leading-tight font-semibold tracking-tight">{legend}</legend>
+      {hint ? <p className="text-sm leading-relaxed text-muted-foreground">{hint}</p> : null}
       {children}
     </fieldset>
   )
@@ -32,12 +32,19 @@ export function OptionList({
   onChange: (v: string) => void
 }) {
   return (
-    <div className="space-y-2">
-      {options.map((o) => (
+    <div className="divide-y overflow-hidden rounded-sm border bg-card">
+      {options.map((o, i) => (
         <label
           key={o.value}
-          className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 has-[:checked]:border-primary has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50 has-[:disabled]:opacity-50"
+          className="flex cursor-pointer items-start gap-3 border-l-2 border-l-transparent py-3 pr-3.5 pl-3 transition-colors hover:bg-muted/40 has-[:checked]:border-l-primary has-[:checked]:bg-primary/10 has-[:focus-visible]:outline-2 has-[:focus-visible]:-outline-offset-2 has-[:focus-visible]:outline-ring has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 has-[:disabled]:hover:bg-transparent"
         >
+          <span aria-hidden="true" className="w-5 pt-[3px] font-mono text-[11px] leading-4 text-muted-foreground tabular-nums">
+            {String(i + 1).padStart(2, "0")}
+          </span>
+          <span className="flex-1 space-y-1.5">
+            <span className="block text-[15px] leading-snug">{o.label}</span>
+            {o.extra}
+          </span>
           <input
             type="radio"
             name={name}
@@ -45,12 +52,8 @@ export function OptionList({
             checked={value === o.value}
             disabled={o.disabled}
             onChange={() => onChange(o.value)}
-            className="mt-1 size-4 accent-primary"
+            className="mt-[3px] size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-muted-foreground/60 bg-background transition-[border] outline-none checked:border-[5px] checked:border-primary disabled:cursor-not-allowed"
           />
-          <span className="flex-1 space-y-1">
-            <span className="block">{o.label}</span>
-            {o.extra}
-          </span>
         </label>
       ))}
     </div>

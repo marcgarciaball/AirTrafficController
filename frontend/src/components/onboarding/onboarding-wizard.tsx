@@ -3,7 +3,10 @@
 import { useState, useTransition } from "react"
 import { SourceLink } from "@/components/source-link"
 import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
+import { FlightStrip } from "@/components/atc/flight-strip"
+import { SectionLabel } from "@/components/atc/section-label"
+import { UtcClock } from "@/components/atc/utc-clock"
+import { cn } from "@/lib/utils"
 import { saveOnboarding } from "@/app/bienvenida/actions"
 import { onboardingActionSchema, type OnboardingAnswers } from "@/lib/onboarding/schema"
 import { todayISO } from "@/lib/onboarding/schema"
@@ -92,11 +95,45 @@ export function OnboardingWizard({
   const shown = Math.min(step + 1, TOTAL)
 
   return (
-    <div className="mx-auto w-full max-w-xl space-y-6 p-4">
-      <Progress value={(shown / TOTAL) * 100} aria-label={`Progreso del cuestionario, paso ${shown} de ${TOTAL}`} />
-      <p className="text-sm text-muted-foreground" aria-live="polite">
-        {step < TOTAL ? `Pregunta ${shown} de ${TOTAL}` : "Resultado"}
-      </p>
+    <div className="mx-auto w-full max-w-xl space-y-7 px-4 pt-4 pb-10 md:pt-10">
+      <div className="flex h-10 items-center justify-between">
+        <span className="font-mono text-sm font-medium tracking-[0.42em]">TORRE</span>
+        <UtcClock />
+      </div>
+
+      <FlightStrip
+        kind="neutral"
+        title={<SectionLabel as="span">Cuestionario · Fase 0 · Viabilidad</SectionLabel>}
+        code={<span aria-hidden="true">{step < TOTAL ? `${shown}/${TOTAL}` : "RES"}</span>}
+      >
+        <div className="space-y-3">
+          <p className="text-sm text-foreground" aria-live="polite">
+            {step < TOTAL ? `Pregunta ${shown} de ${TOTAL}` : "Resultado"}
+          </p>
+          <div
+            role="progressbar"
+            aria-label={`Progreso del cuestionario, paso ${shown} de ${TOTAL}`}
+            aria-valuemin={0}
+            aria-valuemax={TOTAL}
+            aria-valuenow={shown}
+            className="grid grid-cols-8 gap-1"
+          >
+            {Array.from({ length: TOTAL }, (_, i) => {
+              const done = i < step
+              const current = i === step
+              return (
+                <span
+                  key={i}
+                  className={cn(
+                    "h-1 rounded-[1px]",
+                    done ? "bg-primary" : current ? "animate-pulse bg-primary motion-reduce:animate-none" : "bg-border"
+                  )}
+                />
+              )
+            })}
+          </div>
+        </div>
+      </FlightStrip>
 
       {step === 0 && <StepNationality {...stepProps} />}
       {step === 1 && <StepAge {...stepProps} />}
@@ -108,30 +145,45 @@ export function OnboardingWizard({
       {step === 7 && <StepTimezone {...stepProps} />}
 
       {step === TOTAL && (
-        <section className="space-y-4" aria-labelledby="resultado">
-          <h1 id="resultado" className="text-xl font-semibold">Resultado</h1>
+        <section className="space-y-5" aria-labelledby="resultado">
+          <h1 id="resultado" className="text-xl leading-tight font-semibold tracking-tight">Resultado</h1>
           {!parsed?.success && (
-            <p role="alert" className="text-destructive">
+            <p role="alert" className="border-l-2 border-destructive pl-3 text-destructive">
               Faltan o no son válidas algunas respuestas. Vuelve atrás y revísalas.
             </p>
           )}
           {result && result.blockers.length > 0 && (
-            <div role="alert" className="space-y-2 rounded-lg border border-destructive p-4">
-              <ul className="list-disc space-y-1 pl-5">
-                {result.blockers.map((b) => <li key={b.code}>{b.message}</li>)}
+            <div role="alert" className="space-y-2">
+              <SectionLabel className="text-destructive">Bloqueos · {result.blockers.length}</SectionLabel>
+              <ul className="space-y-2">
+                {result.blockers.map((b) => (
+                  <li key={b.code}>
+                    <FlightStrip kind="destructive" meta="Bloquea">
+                      <p className="text-[15px] text-foreground">{b.message}</p>
+                    </FlightStrip>
+                  </li>
+                ))}
               </ul>
               {basesSource && <SourceLink source={basesSource} />}
-              <p className="font-medium">Te quedarás en la fase 0 hasta resolverlo.</p>
+              <p className="pt-1 font-medium">Te quedarás en la fase 0 hasta resolverlo.</p>
             </div>
           )}
           {result && result.blockers.length === 0 && (
-            <p>Cumples los requisitos declarados. Empezarás en la fase 1.</p>
+            <FlightStrip kind="ok" meta="Fase 1">
+              <p className="text-[15px] text-foreground">Cumples los requisitos declarados. Empezarás en la fase 1.</p>
+            </FlightStrip>
           )}
           {result && result.warnings.length > 0 && (
-            <div role="status" className="space-y-2 rounded-lg border p-4">
-              <p className="font-medium">Avisos (no bloquean)</p>
-              <ul className="list-disc space-y-1 pl-5">
-                {result.warnings.map((w) => <li key={w.code}>{w.message}</li>)}
+            <div role="status" className="space-y-2">
+              <SectionLabel>Avisos (no bloquean) · {result.warnings.length}</SectionLabel>
+              <ul className="space-y-2">
+                {result.warnings.map((w) => (
+                  <li key={w.code}>
+                    <FlightStrip kind="warning" meta="Aviso">
+                      <p className="text-[15px] text-foreground">{w.message}</p>
+                    </FlightStrip>
+                  </li>
+                ))}
               </ul>
               {basesSource && <SourceLink source={basesSource} />}
             </div>
@@ -139,18 +191,18 @@ export function OnboardingWizard({
         </section>
       )}
 
-      {error && <p role="alert" className="text-destructive">{error}</p>}
+      {error && <p role="alert" className="border-l-2 border-destructive pl-3 text-destructive">{error}</p>}
 
-      <div className="flex justify-between gap-3">
-        <Button type="button" variant="outline" disabled={step === 0 || pending} onClick={() => { setError(null); setStep((s) => s - 1) }}>
+      <div className="flex justify-between gap-3 border-t pt-5">
+        <Button type="button" variant="outline" size="lg" disabled={step === 0 || pending} onClick={() => { setError(null); setStep((s) => s - 1) }}>
           Atrás
         </Button>
         {step < TOTAL ? (
-          <Button type="button" disabled={!canContinue(step, draft, calls)} onClick={next}>
+          <Button type="button" size="lg" disabled={!canContinue(step, draft, calls)} onClick={next}>
             Siguiente
           </Button>
         ) : (
-          <Button type="button" disabled={!parsed?.success || pending} onClick={() => parsed?.success && save(parsed.data)}>
+          <Button type="button" size="lg" disabled={!parsed?.success || pending} onClick={() => parsed?.success && save(parsed.data)}>
             {pending ? "Guardando…" : "Guardar y empezar"}
           </Button>
         )}
