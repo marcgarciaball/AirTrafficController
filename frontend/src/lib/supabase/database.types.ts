@@ -465,13 +465,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "glossary_terms_topic_id_fkey"
-            columns: ["topic_id"]
-            isOneToOne: false
-            referencedRelation: "topics"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "glossary_terms_block_id_fkey"
             columns: ["block_id"]
             isOneToOne: false
@@ -483,6 +476,13 @@ export type Database = {
             columns: ["source_id"]
             isOneToOne: false
             referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "glossary_terms_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
             referencedColumns: ["id"]
           },
         ]
@@ -846,17 +846,17 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "study_blocks_topic_id_fkey"
-            columns: ["topic_id"]
-            isOneToOne: false
-            referencedRelation: "topics"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "study_blocks_source_id_fkey"
             columns: ["source_id"]
             isOneToOne: false
             referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_blocks_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
             referencedColumns: ["id"]
           },
         ]
@@ -1306,13 +1306,10 @@ export type Database = {
     }
     Functions: {
       answer_block_question: {
-        Args: { p_chosen: number | null; p_question_id: string }
+        Args: { p_chosen: number; p_question_id: string }
         Returns: Json
       }
-      complete_block: {
-        Args: { p_block_id: string }
-        Returns: Json
-      }
+      complete_block: { Args: { p_block_id: string }; Returns: Json }
       finish_quiz_attempt: {
         Args: { p_answers: Json; p_attempt_id: string }
         Returns: Json
