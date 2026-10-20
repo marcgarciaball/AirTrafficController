@@ -145,6 +145,9 @@ export type Hecho = {
   texto: string
   /** Un testimonio o dato de academia siempre se marca además como pendiente de verificar. */
   fuente?: Src
+  /** Origen del testimonio: país y tipo de fuente. */
+  pais?: string
+  tipo?: "academia" | "aspirante" | "prensa"
 }
 
 const NIVEL_CHIP: Record<Nivel, { tone: "success" | "guide" | "warning"; label: string }> = {
@@ -167,6 +170,7 @@ export function Hechos({ items }: { items: Hecho[] }) {
               {it.titulo ? <span className="font-bold text-foreground">{it.titulo}</span> : null}
             </div>
             <Prose>{it.texto}</Prose>
+            {it.tipo ? <p className="text-sm text-muted-foreground">Tipo: {it.tipo}{it.pais ? ` · País: ${it.pais}` : ""}</p> : null}
             {it.fuente ? <SourceLink source={it.fuente} /> : null}
           </li>
         )

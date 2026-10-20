@@ -20,6 +20,7 @@ const FICHAS = [
   { href: "/guia/fase3", title: "Entrevista y dinámica", desc: "Qué evalúan, conducta, método STAR, banco de preguntas y ejercicios." },
   { href: "/guia/personalidad", title: "Test de personalidad", desc: "Cómo funciona, coherencia y errores típicos." },
   { href: "/guia/cifras", title: "Datos del proceso", desc: "Tasa, aspirantes por plaza, 17 meses y coste de la formación." },
+  { href: "/guia/experiencias", title: "Experiencias de aspirantes", desc: "Testimonios, errores que causan suspensos y consejos repetidos." },
   { href: "/guia/fuentes", title: "Fuentes", desc: "Todas las fuentes oficiales y su fecha de consulta." },
 ]
 

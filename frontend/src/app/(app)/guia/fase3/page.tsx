@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Bloque, Consejo, GuiaPage, Hechos, Leyenda, Nota } from "@/components/guia/guia-ui"
 import { F, cita, loadGuia } from "@/lib/guia"
 
@@ -19,6 +20,9 @@ export default async function Page() {
       intro="Es la parte de la Fase 3 sobre la que hay menos información. Lo oficial es poco; lo demás viene de academias y aspirantes."
     >
       <Leyenda />
+      <p className="text-lg">
+        <Link href="/guia/experiencias" className="text-primary underline">Lee las experiencias de aspirantes</Link>
+      </p>
       <Bloque title="Qué evalúan">
         <Hechos
           items={[
