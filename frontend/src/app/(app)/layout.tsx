@@ -27,7 +27,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <ThemeToggle className="-mr-2" />
       </header>
       {/* Las páginas de lectura con índice lateral marcan data-wide para ganar ancho. */}
-      <main className="mx-auto w-full max-w-3xl flex-1 px-5 pt-4 pb-28 sm:px-8 md:pt-14 md:pb-20 lg:has-[[data-wide]]:max-w-5xl">{children}</main>
+      <main className="mx-auto w-full max-w-4xl flex-1 px-5 pt-4 pb-28 sm:px-8 md:pt-14 md:pb-20 lg:has-[[data-wide]]:max-w-6xl">{children}</main>
       <MainNav />
     </div>
   )
