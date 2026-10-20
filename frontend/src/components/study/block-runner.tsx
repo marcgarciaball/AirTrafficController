@@ -186,7 +186,9 @@ export function BlockRunner({
   const needsQuestions = (step === "previa" && previa.length > 0) || (step === "comprobacion" && comprobacion.length > 0)
   const blocked = needsQuestions && !questionsDone[step]
 
-  useEffect(() => window.scrollTo({ top: 0 }), [pos])
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [pos])
 
   function finish() {
     setError(null)
