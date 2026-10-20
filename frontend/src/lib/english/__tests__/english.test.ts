@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest"
 import { endorsementExpiry, expiryStatus, latestEndorsement, endorsementObjective } from "@/lib/english/endorsement"
 import { sm2, newCard } from "@/lib/english/sm2"
-import { weeklyPlan, SKILL_SHARE } from "@/lib/english/plan"
+import { weeklyPlan, SKILL_SHARE, skillOfDay } from "@/lib/english/plan"
 import { percent, chartPoints } from "@/lib/english/chart"
 
 describe("endorsementExpiry (ATCO.B.035)", () => {
@@ -82,7 +82,7 @@ describe("weeklyPlan", () => {
     for (const v of Object.values(p)) expect(Number.isInteger(v) && v >= 0).toBe(true)
   })
   it("las proporciones suman 1", () => expect(Object.values(SKILL_SHARE).reduce((a, b) => a + b, 0)).toBeCloseTo(1, 10))
-  it("sigue las proporciones cuando es exacto", () => expect(weeklyPlan(100)).toEqual({ reading_use: 30, writing: 25, listening: 25, speaking: 20 }))
+  it("sigue las proporciones cuando es exacto", () => expect(weeklyPlan(100)).toEqual({ reading_use: 35, writing: 10, listening: 20, speaking: 35 }))
   it("entradas no válidas dan cero", () => {
     expect(weeklyPlan(-5)).toEqual({ reading_use: 0, writing: 0, listening: 0, speaking: 0 })
     expect(weeklyPlan(Number.NaN)).toEqual({ reading_use: 0, writing: 0, listening: 0, speaking: 0 })
@@ -148,4 +148,11 @@ describe("objetivos de anotación", () => {
     expect(endorsementObjective([{ language: "en", level: 4, assessed_on: "2020-01-01" }], "en", today)).toBe("caducada"))
   it("no mezcla idiomas", () =>
     expect(endorsementObjective([{ language: "es", level: 6, assessed_on: "2026-05-01" }], "en", today)).toBe("sin-anotacion"))
+})
+
+describe("skillOfDay", () => {
+  it("rota por día de la semana", () => {
+    expect(skillOfDay("2026-10-19")).toBe("speaking") // lunes
+    expect(skillOfDay("2026-10-24")).toBe("writing") // sábado
+  })
 })

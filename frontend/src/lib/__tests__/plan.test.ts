@@ -54,6 +54,18 @@ describe("tarea ahora / reparto por pesos", () => {
     expect(p.now?.id).toBe(a.id)
     expect(p.next.map((t) => t.id)).toEqual([b.id])
   })
+  it("el inglés se programa desde el primer día junto a las fases 0 y 1", () => {
+    const a = leaf(0), b = leaf(1), e = leaf(4)
+    const p = buildPlan({ ...base, today, roadmap: rm([phase(0, [a]), phase(1, [b]), phase(4, [e])]) })
+    expect([p.now?.id, ...p.next.map((t) => t.id)]).toContain(e.id)
+  })
+  it("avisa si las semanas mínimas de fases no caben", () => {
+    const p2 = { ...phase(2, [leaf(2)]), est_weeks_min: 13 }
+    const p6 = { ...phase(6, [leaf(6)]), est_weeks_min: 6, unlock_after: [2] }
+    const f = buildPlan({ ...base, today, targetDate: "2027-02-06", weeklyHours: 100, roadmap: rm([p2, p6]) }).forecast
+    expect(f.minWeeks).toBe(19)
+    expect(f.status).toBe("no_llegas")
+  })
   it("fase 0 hecha: pasa a las líneas paralelas", () => {
     const a = leaf(0, { status: "hecha" }), c = leaf(2)
     expect(buildPlan({ ...base, today, roadmap: rm([phase(0, [a]), phase(2, [c])]) }).now?.id).toBe(c.id)
@@ -98,7 +110,7 @@ describe("previsión", () => {
   const target = "2026-11-18" // today + 28 días
   it("sin objetivo", () => {
     const f = buildPlan({ ...base, today, roadmap: r }).forecast
-    expect(f).toEqual({ status: "sin_objetivo", remainingMinutes: 600, weeksLeft: null, neededWeeklyHours: null })
+    expect(f).toEqual({ status: "sin_objetivo", remainingMinutes: 600, weeksLeft: null, neededWeeklyHours: null, minWeeks: 0 })
   })
   it("llegas", () => {
     const f = buildPlan({ ...base, today, roadmap: r, targetDate: target, weeklyHours: 5 }).forecast

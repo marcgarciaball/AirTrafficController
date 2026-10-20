@@ -11,6 +11,8 @@ import { buttonVariants } from "@/components/ui/button"
 import { loose } from "@/lib/bloques/db"
 import { loadBlockStats } from "@/lib/bloques/progress"
 import { dailyQueue } from "@/lib/cards/queue"
+import { DAILY_ENGLISH_MINUTES, skillOfDay, type EnglishSkill } from "@/lib/english/plan"
+import { SKILL_RESOURCES } from "@/lib/english/resources"
 import { buildSession } from "@/lib/plan/session"
 import { buildPlan } from "@/lib/plan/planner"
 import { localDay, streak, totals } from "@/lib/plan/time"
@@ -28,6 +30,13 @@ type SessionRow = {
   ended_at: string | null
   paused_seconds: number
   paused_at: string | null
+}
+
+const ENGLISH_LABEL: Record<EnglishSkill, string> = {
+  reading_use: "Reading and Use of English",
+  writing: "Writing",
+  listening: "Listening",
+  speaking: "Speaking",
 }
 
 const FORECAST: Record<string, { text: string; tone: Tone }> = {
@@ -103,6 +112,7 @@ export default async function Page() {
   })
   const firstBlock = session.weak[0] ?? session.blocks[0]
   const startHref = session.cards > 0 ? "/flashback" : firstBlock ? `/estudio/${topicOf.get(firstBlock)}/b/${firstBlock}` : null
+  const engSkill = skillOfDay(today)
   const later = plan.next.filter((t) => t.id !== nowTask?.id)
 
   return (
@@ -112,7 +122,10 @@ export default async function Page() {
           <h1 className="text-2xl font-bold">Hoy</h1>
           <p className="text-muted-foreground first-letter:uppercase">{dateLabel}</p>
         </div>
-        <UtcClock className="pb-1 font-mono text-sm text-muted-foreground" />
+        <div className="flex flex-col items-end gap-2">
+          <Link href="/guia/plazas" className={buttonVariants({ variant: "outline", size: "sm" })}>¿Hay plazas?</Link>
+          <UtcClock className="font-mono text-sm text-muted-foreground" />
+        </div>
       </header>
 
       <Card className="space-y-6">
@@ -172,6 +185,24 @@ export default async function Page() {
         </Section>
       ) : null}
 
+      <Section title="Inglés de hoy" plain>
+        <Card className="space-y-3">
+          <p className="text-lg">
+            {DAILY_ENGLISH_MINUTES} min · {ENGLISH_LABEL[engSkill]}
+          </p>
+          <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+            {SKILL_RESOURCES[engSkill].map((r) => (
+              <a key={r.href} href={r.href} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                {r.label}
+              </a>
+            ))}
+          </p>
+          <Link href="/ingles" className={buttonVariants({ variant: "outline" })}>
+            Plan de inglés
+          </Link>
+        </Card>
+      </Section>
+
       {plan.behindMinutes > 0 ? (
         <p role="status" className="rounded-lg border border-warning/40 bg-card px-5 py-4 text-warning sm:px-6">
           Vas con retraso: {formatMinutes(plan.behindMinutes)} por recuperar esta semana.
@@ -216,6 +247,11 @@ export default async function Page() {
             </>
           )}
         </p>
+        {f.weeksLeft != null && f.minWeeks > f.weeksLeft ? (
+          <p role="status" className="mt-3 max-w-prose text-warning">
+            Aviso: las fases pendientes piden como mínimo {f.minWeeks} semanas (con sus dependencias) y solo quedan {f.weeksLeft.toFixed(1)} hasta la fecha. Las horas no lo compensan: revisa la fecha o el alcance.
+          </p>
+        ) : null}
       </Section>
 
       <Section title="Para consultar" flush>

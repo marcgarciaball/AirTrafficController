@@ -95,7 +95,7 @@ export default async function Page() {
           <p className="font-bold text-foreground">Nota de corte de la convocatoria 2025</p>
           <NoConsta label="No consta en las fuentes de Torre" source={res(g, { r: "portal" })} />
         </div>
-        <Cita source={res(g, { r: "finalProv", loc: "pág. 1" })}>La convocatoria de 2025 ofrecía 149 puestos.</Cita>
+        <Cita source={res(g, { r: "boe" })}>La convocatoria de 2025 ofrecía 149 puestos.</Cita>
         <Consejo>
           <p>
             El corte deja pasar a la Fase 3 a unas cuatro personas por plaza. Por eso no basta con aprobar la Fase 1 y la 2: hay que quedar entre los primeros 596.
@@ -118,10 +118,10 @@ export default async function Page() {
         <Consejo>
           <ul className="list-disc space-y-3 pl-6">
             <li>
-              <strong className="font-bold">El peso está al final.</strong> La evaluación conductual ({pct(120, TOTAL)} %) y las pruebas digitales ({pct(100, TOTAL)} %) suman más de la mitad del ranking final. El temario es solo una parte ({pct(50, TOTAL)} %).
+              <strong className="font-bold">El peso está al final.</strong> Con la hipótesis de 50 puntos en Conocimientos (su máximo no consta en las bases), la evaluación conductual ({pct(120, TOTAL)} %) y las pruebas digitales ({pct(100, TOTAL)} %) suman más de la mitad del ranking final, y el temario sería solo una parte ({pct(50, TOTAL)} %).
             </li>
             <li>
-              <strong className="font-bold">Para llegar a la Fase 3, manda la Fase 2.</strong> En el corte del puesto 596, FEAST y PDEA son casi la mitad ({pct(100, CORTE)} %). Aptitudes pesa lo mismo que conocimientos.
+              <strong className="font-bold">Para llegar a la Fase 3, manda la Fase 2.</strong> En el corte del puesto 596, FEAST y PDEA suman el {pct(100, CORTE)} % con la misma hipótesis de 50 puntos en Conocimientos.
             </li>
             <li>
               <strong className="font-bold">No basta con el temario.</strong> Aptitudes, FEAST y la entrevista se entrenan con práctica regular, no estudiando. Empieza desde el primer día, en paralelo al temario.

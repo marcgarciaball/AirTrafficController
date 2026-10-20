@@ -12,6 +12,7 @@ const t = (id: string, phase: number, o: Partial<TaskRow> = {}): TaskRow => ({
 })
 const prog = (m: Record<string, TaskStatus>): ProgressRow[] => Object.entries(m).map(([task_id, status]) => ({ task_id, status }))
 const find = (r: ReturnType<typeof computeRoadmap>, id: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const walk = (ts: any[]): any => { for (const x of ts) { if (x.id === id) return x; const c = walk(x.children); if (c) return c } }
   for (const p of r.phases) { const f = walk(p.tasks); if (f) return f }
 }

@@ -1,7 +1,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 select set_config('search_path', 'public, ' || quote_ident(n.nspname), true) from pg_extension e join pg_namespace n on n.oid = e.extnamespace where e.extname = 'pgtap';
-select plan(14);
+select plan(15);
 
 select has_table('public', 'topic_sections', 'existe topic_sections');
 select has_table('public', 'questions', 'existe questions');
@@ -57,7 +57,8 @@ select throws_ok(
 
 select set_config('request.jwt.claims', '', true);
 set local role anon;
-select is((select count(*)::int from public.topic_sections) + (select count(*)::int from public.questions), 0, 'anon no lee temario ni preguntas');
+select is((select count(*)::int from public.topic_sections), 0, 'anon no lee el temario');
+select throws_ok($$ select count(*) from public.questions $$, '42501', null, 'anon no tiene permiso sobre questions (migración 0023)');
 select is((select count(*)::int from public.quiz_attempts), 0, 'anon no ve quiz_attempts');
 
 select * from finish();

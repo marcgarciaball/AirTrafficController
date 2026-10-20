@@ -14,6 +14,7 @@ export type GuiaData = {
 export const U = {
   portal: ["https://empleo.enaire.es/empleo/PFSrv?accion=inicio", "Portal de empleo de ENAIRE"],
   bases: ["https://empleo.enaire.es/empleo/PFSrv?accion=descargarSAP&URL=BASES%20CONVOCATORIA%202025", "Bases de la convocatoria 2025"],
+  boe: ["https://www.boe.es/diario_boe/txt.php?id=BOE-B-2025-42761", "BOE: anuncio de 2025 (BOE-B-2025-42761)"],
   aesa: ["https://www.seguridadaerea.gob.es/es/ambitos/navegacion-aerea/controladores", "AESA: controladores"],
   aemc: ["https://www.seguridadaerea.gob.es/es/ambitos/licencias-y-medicina-aeronautica/medicina-aeronautica/centros-medicos-aeronauticos-acreditados", "AESA: AeMC acreditados"],
   validez: ["https://www.seguridadaerea.gob.es/es/ambitos/licencias-y-medicina-aeronautica/medicina-aeronautica/periodos-de-validez-de-certificados-medicos", "AESA: validez de certificados médicos"],
@@ -28,6 +29,12 @@ export const U = {
   temario: ["https://empleo.enaire.es/empleo/PFSrv?accion=descargarSAP&URL=ANEXO%20I_TEMARIO", "Anexo I: temario 2025"],
   plantillas: ["https://empleo.enaire.es/empleo/PFSrv?accion=descargarSAP&URL=ANEXO%20I_PLANTILLAS%20CORRECCI%D3N%20PRUEBAS%20FASE%201", "Plantilla oficial de respuestas 2026 (Fase 1, 7 y 8 de febrero)"],
   nota2026: ["https://www.enaire.es/2026_08_17/enaire_refuerza_todos_los_a%C3%B1os_plantilla_controladores", "ENAIRE: nota de 17-08-2026"],
+  convenio: ["https://www.boe.es/diario_boe/txt.php?id=BOE-A-2023-18633", "BOE-A-2023-18633: III Convenio Colectivo ENAIRE-controladores"],
+  fin2018: ["https://www.enaire.es/es_ES/2018_11_21/ndp_20181121_fecha_limite_convocatoria_control", "ENAIRE 2018: financiación del curso"],
+  blog2020: ["https://www.enaire.es/es_ES/2020_02_25/blog_convocatoria_control_enaire", "ENAIRE 2020: blog de la convocatoria"],
+  nota2025: ["https://enaire.es/2025_11_20/ndp_enaire_lanza_nueva_convocatoria_149plazas_controlador_aereo", "ENAIRE: convocatoria 2025 (149 plazas)"],
+  testimonio: ["https://elespanol.com/reportajes/20230919/juan-antonio-martinez-trabaja-profesion-no-necesita-carrera-gana-euros/795420882_0.html", "El Español 2023 (testimonio)"],
+  menorca: ["https://www.menorca.info/actualidad/sociedad/2024/03/03/2117469/cuanto-cobra-controlador-aereo-espana.html", "Menorca.info 2024"],
 } as const satisfies Record<string, readonly [string, string]>
 
 export async function loadGuia(): Promise<GuiaData> {

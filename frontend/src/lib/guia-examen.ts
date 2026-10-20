@@ -189,7 +189,7 @@ export const PRUEBAS: Prueba[] = [
       "Practicar sin cronómetro. En el examen el tiempo es parte de la prueba.",
       "Atascarse en una pregunta. Si no sale, pasa a la siguiente.",
       "Pensar que es innata. La velocidad mejora mucho con práctica regular.",
-      "Olvidar que suma: 50 puntos cuentan en el corte y en el ranking igual que conocimientos.",
+      "Olvidar que suma: son 50 puntos en el corte y en el ranking final.",
     ],
   },
   {

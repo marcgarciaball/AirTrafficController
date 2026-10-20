@@ -14,6 +14,8 @@ export type DailyPlan = {
     remainingMinutes: number
     weeksLeft: number | null
     neededWeeklyHours: number | null
+    /** Semanas mínimas de la cadena de fases pendientes (est_weeks_min con dependencias). */
+    minWeeks: number
   }
 }
 export type PlanInput = {
@@ -60,6 +62,21 @@ function interleave(lines: { w: number; tasks: TaskView[] }[]): TaskView[] {
   }
 }
 
+/** Camino más largo de est_weeks_min entre fases no terminadas, respetando unlock_after. */
+function minPhaseWeeks(phases: Roadmap["phases"]): number {
+  const byNum = new Map(phases.map((p) => [p.number, p]))
+  const memo = new Map<number, number>()
+  const chain = (n: number, seen: number[]): number => {
+    const p = byNum.get(n)
+    if (!p || p.pct >= 100 || seen.includes(n)) return 0
+    if (memo.has(n)) return memo.get(n)!
+    const v = (p.est_weeks_min ?? 0) + Math.max(0, ...p.unlock_after.map((u) => chain(u, [...seen, n])))
+    memo.set(n, v)
+    return v
+  }
+  return Math.max(0, ...phases.map((p) => chain(p.number, [])))
+}
+
 export function buildPlan(input: PlanInput): DailyPlan {
   const { today, weeklyHours, targetDate, roadmap, secondsByDay } = input
   const weights = input.weights ?? DEFAULT_WEIGHTS
@@ -81,33 +98,37 @@ export function buildPlan(input: PlanInput): DailyPlan {
   const phaseLeaves = roadmap.phases.map((p) => ({ number: p.number, leaves: leaves(p.tasks) }))
   const pending = (t: TaskView) => t.status !== "hecha" && !t.blocked
   const priority = phaseLeaves.filter((p) => p.number <= 1).flatMap((p) => p.leaves.filter(pending))
-  let ordered: TaskView[]
-  if (priority.length) {
-    ordered = priority
-  } else {
-    const lines = (Object.entries(LINE_BY_PHASE) as [string, keyof Weights][]).map(([num, key]) => ({
-      w: weights[key],
-      tasks: phaseLeaves.filter((p) => p.number === Number(num)).flatMap((p) => p.leaves.filter(pending)),
-    }))
-    ordered = interleave(lines)
-  }
+  const english = phaseLeaves.filter((p) => p.number === 4).flatMap((p) => p.leaves.filter(pending))
+  // El inglés corre en paralelo desde el primer día: las fases 0 y 1 forman una línea más junto al inglés.
+  const lines = priority.length
+    ? [
+        { w: weights.temario + weights.aptitudes, tasks: priority },
+        { w: weights.ingles, tasks: english },
+      ]
+    : (Object.entries(LINE_BY_PHASE) as [string, keyof Weights][]).map(([num, key]) => ({
+        w: weights[key],
+        tasks: phaseLeaves.filter((p) => p.number === Number(num)).flatMap((p) => p.leaves.filter(pending)),
+      }))
+  const ordered = interleave(lines)
   const inProgress = ordered.filter((t) => t.status === "en_curso")
   const now = inProgress[0] ?? ordered[0] ?? null
   const next = ordered.filter((t) => t !== now).slice(0, 3)
 
   // Previsión
   const remainingMinutes = phaseLeaves.flatMap((p) => p.leaves).filter((t) => t.status !== "hecha").reduce((a, t) => a + est(t), 0)
+  const minWeeks = minPhaseWeeks(roadmap.phases)
   let forecast: DailyPlan["forecast"]
   if (!targetDate) {
-    forecast = { status: "sin_objetivo", remainingMinutes, weeksLeft: null, neededWeeklyHours: null }
+    forecast = { status: "sin_objetivo", remainingMinutes, weeksLeft: null, neededWeeklyHours: null, minWeeks }
   } else {
     const weeksLeft = dayDiff(today, targetDate) / 7
     if (weeksLeft <= 0) {
-      forecast = { status: remainingMinutes > 0 ? "no_llegas" : "llegas", remainingMinutes, weeksLeft: Math.max(0, weeksLeft), neededWeeklyHours: null }
+      forecast = { status: remainingMinutes > 0 ? "no_llegas" : "llegas", remainingMinutes, weeksLeft: Math.max(0, weeksLeft), neededWeeklyHours: null, minWeeks }
     } else {
       const needed = remainingMinutes / weeksLeft / 60
-      const status = needed <= weeklyHours * 0.9 ? "llegas" : needed <= weeklyHours * 1.1 ? "justo" : "no_llegas"
-      forecast = { status, remainingMinutes, weeksLeft, neededWeeklyHours: needed }
+      const byHours = needed <= weeklyHours * 0.9 ? "llegas" : needed <= weeklyHours * 1.1 ? "justo" : "no_llegas"
+      const status = minWeeks > weeksLeft ? "no_llegas" : byHours
+      forecast = { status, remainingMinutes, weeksLeft, neededWeeklyHours: needed, minWeeks }
     }
   }
 

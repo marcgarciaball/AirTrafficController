@@ -4,6 +4,7 @@ import { useState, useTransition } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { weeklyPlan, SKILL_ORDER, type EnglishSkill } from "@/lib/english/plan"
+import { SKILL_RESOURCES } from "@/lib/english/resources"
 import { addEndorsement, addLog, deleteEndorsement, deleteLog } from "../actions"
 import { CAP, LABEL, SELECT } from "./ui"
 
@@ -158,13 +159,6 @@ const SKILL_LABEL: Record<EnglishSkill, string> = {
   speaking: "Speaking",
 }
 
-const SKILL_LINK: Record<EnglishSkill, string> = {
-  reading_use: "https://www.cambridgeenglish.org/exams-and-tests/advanced/preparation",
-  writing: "https://www.cambridgeenglish.org/exams-and-tests/advanced/preparation",
-  listening: "https://www.cambridgeenglish.org/exams-and-tests/advanced/preparation",
-  speaking: "https://www.cambridgeenglish.org/exams-and-tests/advanced/preparation",
-}
-
 export function WeeklyPlan() {
   const [minutes, setMinutes] = useState(180)
   const plan = weeklyPlan(minutes)
@@ -184,10 +178,17 @@ export function WeeklyPlan() {
       </label>
       <ul className="divide-y divide-line border-y">
         {SKILL_ORDER.map((s) => (
-          <li key={s} className="flex min-h-12 items-center justify-between gap-3 py-2">
-            <a href={SKILL_LINK[s]} target="_blank" rel="noopener noreferrer" className="text-primary underline decoration-primary/40 hover:decoration-primary">
-              {SKILL_LABEL[s]}
-            </a>
+          <li key={s} className="flex min-h-12 flex-wrap items-center justify-between gap-x-3 gap-y-1 py-2">
+            <div className="space-y-1">
+              <p>{SKILL_LABEL[s]}</p>
+              <p className="flex flex-wrap gap-x-3 text-sm">
+                {SKILL_RESOURCES[s].map((r) => (
+                  <a key={r.href} href={r.href} target="_blank" rel="noopener noreferrer" className="text-primary underline decoration-primary/40 hover:decoration-primary">
+                    {r.label}
+                  </a>
+                ))}
+              </p>
+            </div>
             <span className="font-bold">{plan[s]} min</span>
           </li>
         ))}
