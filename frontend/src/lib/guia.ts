@@ -91,3 +91,25 @@ export function cita(g: GuiaData, ref: readonly [string, string] | keyof typeof 
   const base: Src = typeof ref === "string" ? { url: U.portal[0], title: `${DOC[ref]} · en el portal de empleo de ENAIRE`, consulted_on: "2026-10-19" } : src(g, ref)
   return loc ? { ...base, title: `${base.title} · ${loc}` } : base
 }
+
+/** Fuente de la investigación del 2026-10-20 (auditoría de contenido y certificado médico). */
+export const f20 = (url: string, title: string): Src => ({ url, title, consulted_on: "2026-10-20" })
+export const F = {
+  certDoc: f20("https://www.easa.europa.eu/en/document-library/easy-access-rules/online-publications/easy-access-rules-air-traffic-controllers?page=29", "EASA: Easy Access Rules ATCO (ATCO.MED)"),
+  vision: f20("https://trafikstyrelsen.dk/publikationsliste/luftfart-publikationer/atoc-class-3-visual-system", "Trafikstyrelsen: ATCO.MED.B.070 (visión)"),
+  ukcaa: f20("https://www.caa.co.uk/commercial-industry/airspace/air-traffic-management-and-air-navigational-services/licences/medical-requirements/initial-medical-certification-for-air-traffic-controllers-atcos/", "UK CAA: examen inicial ATCO"),
+  masterd: f20("https://www.masterd.es/blog/exclusiones-medicas-controlador-aereo", "MasterD: exclusiones médicas (academia)"),
+  usal: f20("https://adventia.usal.es/wp-content/uploads/2022/04/Reconocimiento22.pdf", "Univ. de Salamanca: precios 2022"),
+  aesaAme: f20("https://www.seguridadaerea.gob.es/es/ambitos/licencias-y-medicina-aeronautica/medicina-aeronautica/medicos-examinadores-aereos-autorizados", "AESA: médicos examinadores autorizados"),
+  foroClase3: f20("http://www.controladoresaereos.org/foros/convocatorias-de-empleo-para-controlador-aereo/certificado-medico-de-clase-3/", "Foro controladoresaereos.org: certificado médico Clase 3"),
+  foroCima: f20("http://www.controladoresaereos.org/foros/convocatoria-de-empleo-enaire-2017/cima-cert-medico-clase-iii/", "Foro controladoresaereos.org: CIMA Clase III"),
+  prensa4700: f20("https://actualidadaeroespacial.com/casi-4-700-candidatos-aspiran-a-ocupar-las-150-plazas-de-controladores-convocadas-por-enaire/", "Actualidad Aeroespacial, 31-01-2025"),
+  fin2018: f20("https://www.enaire.es/2018_11_02/ndp_financiacion_cta_2018", "ENAIRE 2018: financiación del curso"),
+  boe: f20("https://www.boe.es/diario_boe/txt.php?id=BOE-B-2025-42761", "BOE-B-2025-42761"),
+  superaoposiciones: f20("https://www.superaoposiciones.es/blog/preparacion-evaluacion-clinica-conductual-controlador-aereo", "Superaoposiciones: preparación clínica y conductual (academia)"),
+  enclavepsi: f20("https://www.enclavepsi.com/preparacion-de-la-prueba-conductual-de-controlador-aereo/", "Enclavepsi: prueba conductual (preparador privado)"),
+  controlprep: f20("https://controlprep.com/mi-camino-a-enaire-4.html", "ControlPrep: testimonio, test de personalidad (resumen del buscador)"),
+  controlprep2: f20("https://controlprep.com/mi-camino-a-enaire-2.html", "ControlPrep: testimonio, seis intentos (resumen del buscador)"),
+  infobae: f20("https://www.infobae.com/espana/2026/01/24/controlador-aereo-las-oposiciones-mejor-pagadas-y-como-llegar-a-ellas/", "Infobae, 24-01-2026"),
+  masterdConv: f20("https://www.masterd.es/blog/convocatoria-controlador-aereo-enaire", "MasterD: convocatoria ENAIRE (academia)"),
+}

@@ -137,3 +137,51 @@ export function Cita({ children, source }: { children: ReactNode; source: Src })
     </div>
   )
 }
+
+export type Nivel = "oficial" | "testimonio" | "verificar"
+export type Hecho = {
+  nivel: Nivel
+  titulo?: string
+  texto: string
+  /** Un testimonio o dato de academia siempre se marca además como pendiente de verificar. */
+  fuente?: Src
+}
+
+const NIVEL_CHIP: Record<Nivel, { tone: "success" | "guide" | "warning"; label: string }> = {
+  oficial: { tone: "success", label: "oficial" },
+  testimonio: { tone: "guide", label: "testimonio" },
+  verificar: { tone: "warning", label: "pendiente de verificar" },
+}
+
+/** Lista de hechos con etiqueta visible: oficial, testimonio (siempre con aviso de verificar) o pendiente de verificar. */
+export function Hechos({ items }: { items: Hecho[] }) {
+  return (
+    <ul className="divide-y divide-line rounded-lg border bg-card px-5 shadow-sm sm:px-6">
+      {items.map((it) => {
+        const chip = NIVEL_CHIP[it.nivel]
+        return (
+          <li key={(it.titulo ?? "") + it.texto} className="space-y-2 py-5">
+            <div className="flex flex-wrap items-center gap-2">
+              <StatusChip tone={chip.tone}>{chip.label}</StatusChip>
+              {it.nivel === "testimonio" ? <StatusChip tone="warning">pendiente de verificar</StatusChip> : null}
+              {it.titulo ? <span className="font-bold text-foreground">{it.titulo}</span> : null}
+            </div>
+            <Prose>{it.texto}</Prose>
+            {it.fuente ? <SourceLink source={it.fuente} /> : null}
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
+/** Leyenda de las tres etiquetas. */
+export function Leyenda() {
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+      <span className="flex items-center gap-2"><StatusChip tone="success">oficial</StatusChip> norma o autoridad</span>
+      <span className="flex items-center gap-2"><StatusChip tone="guide">testimonio</StatusChip> aspirante o academia</span>
+      <span className="flex items-center gap-2"><StatusChip tone="warning">pendiente de verificar</StatusChip> no confirmado</span>
+    </div>
+  )
+}

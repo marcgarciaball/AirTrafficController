@@ -14,9 +14,12 @@ const FICHAS = [
   { href: "/guia/proceso", title: "El proceso", desc: "Fases 1, 2 y 3, puntuaciones, nota de corte y desempates." },
   { href: "/guia/calendario", title: "Calendario", desc: "Hitos de 2025 y la convocatoria 2026 esperada." },
   { href: "/guia/despues", title: "Después de aprobar", desc: "Formación, licencias SATCO y ATCO, y el plazo de 17 meses." },
-  { href: "/guia/medico", title: "Médico Clase 3", desc: "Centros AeMC, validez y pre-solicitud." },
+  { href: "/guia/medico", title: "Médico Clase 3", desc: "Qué es, pruebas, causas de no apto, validez, precio y cómo pedir cita." },
   { href: "/guia/idiomas", title: "Idiomas", desc: "C1 de ENAIRE, anotaciones OACI y centros CECL." },
   { href: "/guia/feast", title: "FEAST y PDEA", desc: "Las pruebas digitales y la práctica oficial." },
+  { href: "/guia/fase3", title: "Entrevista y dinámica", desc: "Qué evalúan, conducta, método STAR, banco de preguntas y ejercicios." },
+  { href: "/guia/personalidad", title: "Test de personalidad", desc: "Cómo funciona, coherencia y errores típicos." },
+  { href: "/guia/cifras", title: "Datos del proceso", desc: "Tasa, aspirantes por plaza, 17 meses y coste de la formación." },
   { href: "/guia/fuentes", title: "Fuentes", desc: "Todas las fuentes oficiales y su fecha de consulta." },
 ]
 
