@@ -8,6 +8,10 @@ import { StatusChip } from "@/components/ui-torre/status-chip"
 import { TEXT, type Tone } from "@/components/ui-torre/tones"
 import { UtcClock } from "@/components/ui-torre/utc-clock"
 import { buttonVariants } from "@/components/ui/button"
+import { loose } from "@/lib/bloques/db"
+import { loadBlockStats } from "@/lib/bloques/progress"
+import { dailyQueue } from "@/lib/cards/queue"
+import { buildSession } from "@/lib/plan/session"
 import { buildPlan } from "@/lib/plan/planner"
 import { localDay, streak, totals } from "@/lib/plan/time"
 import { loadRoadmap } from "@/lib/roadmap/load"
@@ -80,6 +84,25 @@ export default async function Page() {
   const fc = FORECAST[f.status] ?? FORECAST.sin_objetivo
   const days = streak(byDay, today)
   const dateLabel = new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: tz }).format(now)
+  const db = loose(supabase)
+  const [{ data: blockRows }, { data: dueRows }, { data: wrong }, stats] = await Promise.all([
+    db.from("study_blocks").select("id, sort, topics!inner(number)").order("sort").limit(500),
+    db.from("user_cards").select("id, due, suspended").eq("suspended", false).limit(3000),
+    db.from("block_answers").select("question_id").eq("correct", false).limit(200),
+    loadBlockStats(db),
+  ])
+  const blocks = (blockRows ?? []) as unknown as { id: string; topics: { number: number } }[]
+  const topicOf = new Map(blocks.map((b) => [b.id, b.topics.number]))
+  const dueCards = dailyQueue(dueRows ?? [], now, tz, 1e6).length
+  const session = buildSession({
+    todayMinutes: plan.todayMinutes,
+    dueCards,
+    newBlocks: blocks.filter((b) => !stats.get(b.id)?.status || stats.get(b.id)?.status === "en_curso").map((b) => ({ id: b.id, minutes: 5 })),
+    weakBlocks: blocks.filter((b) => (stats.get(b.id)?.mastery ?? 100) < 70).map((b) => ({ id: b.id })),
+    failedQuestions: new Set((wrong ?? []).map((w: { question_id: string }) => w.question_id)).size,
+  })
+  const firstBlock = session.weak[0] ?? session.blocks[0]
+  const startHref = session.cards > 0 ? "/flashback" : firstBlock ? `/estudio/${topicOf.get(firstBlock)}/b/${firstBlock}` : null
   const later = plan.next.filter((t) => t.id !== nowTask?.id)
 
   return (
@@ -136,6 +159,19 @@ export default async function Page() {
         )}
       </section>
 
+      {startHref ? (
+        <Section title="Sesión de hoy" plain>
+          <Card className="space-y-4">
+            <p className="text-lg">
+              {session.blocks.length + session.weak.length} {session.blocks.length + session.weak.length === 1 ? "bloque" : "bloques"} · {session.cards} {session.cards === 1 ? "tarjeta" : "tarjetas"} · {session.reviewQuestions} {session.reviewQuestions === 1 ? "repaso" : "repasos"} (~{formatMinutes(session.minutes)})
+            </p>
+            <Link href={startHref} className={buttonVariants({ size: "lg" })}>
+              Empezar
+            </Link>
+          </Card>
+        </Section>
+      ) : null}
+
       {plan.behindMinutes > 0 ? (
         <p role="status" className="rounded-lg border border-warning/40 bg-card px-5 py-4 text-warning sm:px-6">
           Vas con retraso: {formatMinutes(plan.behindMinutes)} por recuperar esta semana.
@@ -184,6 +220,9 @@ export default async function Page() {
 
       <Section title="Para consultar" flush>
         <ul className="divide-y divide-line">
+          <LinkRow href="/ruta" detail="Las fases del plan y lo que llevas hecho en cada una.">
+            Ruta
+          </LinkRow>
           <LinkRow href="/guia" detail="Requisitos, proceso, calendario y todo lo necesario para empezar desde cero.">
             Guía del proceso
           </LinkRow>

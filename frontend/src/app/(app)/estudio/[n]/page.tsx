@@ -5,6 +5,7 @@ import { MarkdownBody } from "@/components/study/markdown-body"
 import { PageHeader } from "@/components/ui-torre/page-header"
 import { StatusChip } from "@/components/ui-torre/status-chip"
 import { buttonVariants } from "@/components/ui/button"
+import { loose } from "@/lib/bloques/db"
 import { createClient } from "@/lib/supabase/server"
 import { cn } from "@/lib/utils"
 import { TEMA_TEST_SIZE } from "@/lib/study/types"
@@ -16,10 +17,11 @@ export default async function Page({ params }: { params: Promise<{ n: string }> 
   const supabase = await createClient()
   const { data: topic } = await supabase.from("topics").select("id, number, title, sources(url)").eq("number", num).maybeSingle()
   if (!topic) notFound()
-  const [{ data: sections }, { count }, { data: around }] = await Promise.all([
+  const [{ data: sections }, { count }, { data: around }, { count: blockCount }] = await Promise.all([
     supabase.from("topic_sections").select("id, title, body_md, source_pages, reviewed").eq("topic_id", topic.id).order("sort"),
     supabase.from("questions").select("id", { count: "exact", head: true }).eq("topic_id", topic.id),
     supabase.from("topics").select("number, title").in("number", [num - 1, num + 1]),
+    loose(supabase).from("study_blocks").select("id", { count: "exact", head: true }).eq("topic_id", topic.id),
   ])
   const nq = count ?? 0
   const list = sections ?? []
@@ -35,6 +37,16 @@ export default async function Page({ params }: { params: Promise<{ n: string }> 
             {list.length > 0 ? ` · ${list.length} ${list.length === 1 ? "sección" : "secciones"}` : ""}
           </p>
         </PageHeader>
+
+        {(blockCount ?? 0) > 0 ? (
+          <div className="max-w-prose space-y-3 rounded-lg border border-primary/40 bg-card p-5 shadow-sm sm:p-6">
+            <p className="text-lg font-bold">Estudiar por bloques</p>
+            <p className="text-muted-foreground">{blockCount} bloques de unos 5 minutos, con preguntas y tarjetas para repasar después.</p>
+            <Link href={`/estudio/${topic.number}/bloques`} className={cn(buttonVariants({ size: "lg" }), "mt-2")}>
+              Ver los bloques
+            </Link>
+          </div>
+        ) : null}
 
         {list.length === 0 ? (
           <p className="text-lg text-muted-foreground">

@@ -72,6 +72,164 @@ export type Database = {
         }
         Relationships: []
       }
+      block_answers: {
+        Row: {
+          answered_at: string
+          chosen_index: number | null
+          correct: boolean
+          id: string
+          question_id: string
+          user_id: string
+        }
+        Insert: {
+          answered_at?: string
+          chosen_index?: number | null
+          correct: boolean
+          id?: string
+          question_id: string
+          user_id?: string
+        }
+        Update: {
+          answered_at?: string
+          chosen_index?: number | null
+          correct?: boolean
+          id?: string
+          question_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "block_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "block_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      block_questions: {
+        Row: {
+          block_id: string
+          correct_index: number
+          explanation: string
+          id: string
+          options: Json
+          origin: string
+          reviewed: boolean
+          role: string
+          source_pages: string
+          stem: string
+        }
+        Insert: {
+          block_id: string
+          correct_index: number
+          explanation: string
+          id?: string
+          options: Json
+          origin?: string
+          reviewed?: boolean
+          role: string
+          source_pages: string
+          stem: string
+        }
+        Update: {
+          block_id?: string
+          correct_index?: number
+          explanation?: string
+          id?: string
+          options?: Json
+          origin?: string
+          reviewed?: boolean
+          role?: string
+          source_pages?: string
+          stem?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "block_questions_block_id_fkey"
+            columns: ["block_id"]
+            isOneToOne: false
+            referencedRelation: "study_blocks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      card_reviews: {
+        Row: {
+          elapsed_days: number | null
+          id: string
+          rating: number
+          reviewed_at: string
+          scheduled_days: number | null
+          user_card_id: string
+          user_id: string
+        }
+        Insert: {
+          elapsed_days?: number | null
+          id?: string
+          rating: number
+          reviewed_at?: string
+          scheduled_days?: number | null
+          user_card_id: string
+          user_id?: string
+        }
+        Update: {
+          elapsed_days?: number | null
+          id?: string
+          rating?: number
+          reviewed_at?: string
+          scheduled_days?: number | null
+          user_card_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_reviews_user_card_id_fkey"
+            columns: ["user_card_id"]
+            isOneToOne: false
+            referencedRelation: "user_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      concept_cards: {
+        Row: {
+          back: string
+          block_id: string
+          front: string
+          id: string
+          reviewed: boolean
+          source_pages: string
+          term_en: string | null
+        }
+        Insert: {
+          back: string
+          block_id: string
+          front: string
+          id?: string
+          reviewed?: boolean
+          source_pages: string
+          term_en?: string | null
+        }
+        Update: {
+          back?: string
+          block_id?: string
+          front?: string
+          id?: string
+          reviewed?: boolean
+          source_pages?: string
+          term_en?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "concept_cards_block_id_fkey"
+            columns: ["block_id"]
+            isOneToOne: false
+            referencedRelation: "study_blocks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       english_logs: {
         Row: {
           created_at: string | null
@@ -270,6 +428,64 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      glossary_terms: {
+        Row: {
+          block_id: string | null
+          definition: string
+          id: string
+          reviewed: boolean
+          source_id: string
+          source_pages: string
+          term: string
+          term_en: string | null
+          topic_id: string
+        }
+        Insert: {
+          block_id?: string | null
+          definition: string
+          id?: string
+          reviewed?: boolean
+          source_id: string
+          source_pages: string
+          term: string
+          term_en?: string | null
+          topic_id: string
+        }
+        Update: {
+          block_id?: string | null
+          definition?: string
+          id?: string
+          reviewed?: boolean
+          source_id?: string
+          source_pages?: string
+          term?: string
+          term_en?: string | null
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "glossary_terms_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "glossary_terms_block_id_fkey"
+            columns: ["block_id"]
+            isOneToOne: false
+            referencedRelation: "study_blocks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "glossary_terms_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       language_endorsements: {
         Row: {
@@ -570,6 +786,81 @@ export type Database = {
         }
         Relationships: []
       }
+      study_blocks: {
+        Row: {
+          body_md: string
+          exam_part: string
+          exam_tip_md: string
+          example_md: string | null
+          id: string
+          key_idea: string
+          mnemonic_md: string | null
+          objectives: string[]
+          review_notes: string | null
+          reviewed: boolean
+          sort: number
+          source_id: string
+          source_pages: string
+          temario_point: string
+          title: string
+          topic_id: string
+          trap_md: string
+        }
+        Insert: {
+          body_md: string
+          exam_part?: string
+          exam_tip_md: string
+          example_md?: string | null
+          id?: string
+          key_idea: string
+          mnemonic_md?: string | null
+          objectives: string[]
+          review_notes?: string | null
+          reviewed?: boolean
+          sort: number
+          source_id: string
+          source_pages: string
+          temario_point: string
+          title: string
+          topic_id: string
+          trap_md: string
+        }
+        Update: {
+          body_md?: string
+          exam_part?: string
+          exam_tip_md?: string
+          example_md?: string | null
+          id?: string
+          key_idea?: string
+          mnemonic_md?: string | null
+          objectives?: string[]
+          review_notes?: string | null
+          reviewed?: boolean
+          sort?: number
+          source_id?: string
+          source_pages?: string
+          temario_point?: string
+          title?: string
+          topic_id?: string
+          trap_md?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_blocks_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_blocks_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       study_sessions: {
         Row: {
           created_at: string | null
@@ -868,6 +1159,109 @@ export type Database = {
           },
         ]
       }
+      user_block_progress: {
+        Row: {
+          block_id: string
+          check_correct: number | null
+          check_total: number | null
+          completed_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          block_id: string
+          check_correct?: number | null
+          check_total?: number | null
+          completed_at?: string | null
+          status: string
+          user_id?: string
+        }
+        Update: {
+          block_id?: string
+          check_correct?: number | null
+          check_total?: number | null
+          completed_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_block_progress_block_id_fkey"
+            columns: ["block_id"]
+            isOneToOne: false
+            referencedRelation: "study_blocks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_cards: {
+        Row: {
+          back: string
+          concept_card_id: string | null
+          deck: string
+          difficulty: number
+          due: string
+          elapsed_days: number
+          front: string
+          id: string
+          lapses: number
+          last_review: string | null
+          learning_steps: number
+          reps: number
+          scheduled_days: number
+          stability: number
+          state: number
+          suspended: boolean
+          user_id: string
+        }
+        Insert: {
+          back: string
+          concept_card_id?: string | null
+          deck: string
+          difficulty?: number
+          due?: string
+          elapsed_days?: number
+          front: string
+          id?: string
+          lapses?: number
+          last_review?: string | null
+          learning_steps?: number
+          reps?: number
+          scheduled_days?: number
+          stability?: number
+          state?: number
+          suspended?: boolean
+          user_id?: string
+        }
+        Update: {
+          back?: string
+          concept_card_id?: string | null
+          deck?: string
+          difficulty?: number
+          due?: string
+          elapsed_days?: number
+          front?: string
+          id?: string
+          lapses?: number
+          last_review?: string | null
+          learning_steps?: number
+          reps?: number
+          scheduled_days?: number
+          stability?: number
+          state?: number
+          suspended?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_cards_concept_card_id_fkey"
+            columns: ["concept_card_id"]
+            isOneToOne: false
+            referencedRelation: "concept_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_task_progress: {
         Row: {
           completed_at: string | null
@@ -911,6 +1305,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      answer_block_question: {
+        Args: { p_chosen: number | null; p_question_id: string }
+        Returns: Json
+      }
+      complete_block: {
+        Args: { p_block_id: string }
+        Returns: Json
+      }
       finish_quiz_attempt: {
         Args: { p_answers: Json; p_attempt_id: string }
         Returns: Json

@@ -2,15 +2,15 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BookOpen, Ellipsis, Languages, Route, Sun } from "lucide-react"
+import { BookOpen, Ellipsis, Languages, Layers, Sun } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Logo } from "./logo"
 import { ThemeToggle } from "./theme-toggle"
 
 const ITEMS = [
   { href: "/hoy", label: "Hoy", icon: Sun },
-  { href: "/ruta", label: "Ruta", icon: Route },
   { href: "/estudio", label: "Estudio", icon: BookOpen },
+  { href: "/flashback", label: "Flashback", icon: Layers },
   { href: "/ingles", label: "Inglés", icon: Languages },
   { href: "/mas", label: "Más", icon: Ellipsis },
 ]
@@ -20,7 +20,8 @@ const isActive = (pathname: string, href: string) =>
   pathname.startsWith(`${href}/`) ||
   // Aptitudes cuelga de Estudio y la guía de Más.
   (href === "/estudio" && pathname.startsWith("/aptitudes")) ||
-  (href === "/mas" && pathname.startsWith("/guia"))
+  (href === "/estudio" && pathname.startsWith("/glosario")) ||
+  (href === "/mas" && (pathname.startsWith("/guia") || pathname.startsWith("/ruta")))
 
 /** Barra lateral en escritorio y barra inferior en móvil, siempre con palabras completas. */
 export function MainNav() {

@@ -10,6 +10,12 @@ export default function MasPage() {
       <PageHeader title="Más" />
       <Section title="Aprende" flush>
         <ul className="divide-y divide-line">
+          <LinkRow href="/ruta" detail="Las fases del plan y lo que llevas hecho en cada una.">
+            Ruta
+          </LinkRow>
+          <LinkRow href="/glosario" detail="Términos en español y en inglés, con su bloque y su fuente.">
+            Glosario
+          </LinkRow>
           <LinkRow href="/guia" detail="Requisitos, proceso, calendario, médico, idiomas y fuentes.">
             Guía del proceso
           </LinkRow>

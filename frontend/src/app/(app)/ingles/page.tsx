@@ -9,6 +9,7 @@ import { endorsementExpiry, endorsementObjective, latestEndorsement, type Endors
 import { percent } from "@/lib/english/chart"
 import { formatDate } from "@/lib/format"
 import { localDay } from "@/lib/plan/time"
+import { loose } from "@/lib/bloques/db"
 import { createClient } from "@/lib/supabase/server"
 import { EvolutionChart } from "./_components/evolution-chart"
 import { DeleteButton, EndorsementForm, LogForm, WeeklyPlan } from "./_components/forms"
@@ -36,7 +37,7 @@ export default async function Page() {
   const [{ data: logsData }, { data: endData }, { count: dueCount }] = await Promise.all([
     supabase.from("english_logs").select("id, goal, skill, part, taken_on, score, max_score, notes").order("taken_on", { ascending: false }).limit(200),
     supabase.from("language_endorsements").select("id, language, level, assessed_on, center").order("assessed_on", { ascending: false }),
-    supabase.from("flashcards").select("id", { count: "exact", head: true }).lte("due_on", today),
+    loose(supabase).from("user_cards").select("id", { count: "exact", head: true }).eq("deck", "ingles").eq("suspended", false).lte("due", `${today}T23:59:59.999Z`),
   ])
   const logs = logsData ?? []
   const ends = endData ?? []
@@ -119,7 +120,7 @@ export default async function Page() {
 
       <Section title="Tarjetas y entrevista" flush>
         <Checklist>
-          <ChecklistItem state="disponible" href="/ingles/tarjetas" meta={dueCount ? <StatusChip tone="primary">{dueCount} para hoy</StatusChip> : <span>nada para hoy</span>}>
+          <ChecklistItem state="disponible" href="/flashback?baraja=ingles" meta={dueCount ? <StatusChip tone="primary">{dueCount} para hoy</StatusChip> : <span>nada para hoy</span>}>
             Tarjetas de vocabulario y fraseología
           </ChecklistItem>
           <ChecklistItem state="disponible" href="/ingles/entrevista" detail={<OwnTip className="mt-1" />}>
