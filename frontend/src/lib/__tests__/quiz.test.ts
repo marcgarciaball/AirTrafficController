@@ -85,4 +85,13 @@ describe("parseMarkdown", () => {
     expect(b[2]).toMatchObject({ type: "ul" })
     expect((b[2] as { items: unknown[] }).items).toHaveLength(2)
   })
+  it("parsea tablas y descarta la fila separadora", () => {
+    const b = parseMarkdown("Antes\n| A | B |\n|---|---|\n| **1** | 2 |\nDespués")
+    expect(b.map((x) => x.type)).toEqual(["p", "table", "p"])
+    expect(b[1]).toEqual({
+      type: "table",
+      head: [[{ text: "A", bold: false }], [{ text: "B", bold: false }]],
+      rows: [[[{ text: "1", bold: true }], [{ text: "2", bold: false }]]],
+    })
+  })
 })

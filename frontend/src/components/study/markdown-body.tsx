@@ -20,6 +20,21 @@ export function MarkdownBody({ md }: { md: string }) {
               {b.items.map((it, j) => <li key={j} className="pl-1"><Inlines inlines={it} /></li>)}
             </ul>
           )
+        if (b.type === "table")
+          return (
+            <div key={k} className="overflow-x-auto">
+              <table className="w-full border-collapse text-base">
+                <thead>
+                  <tr>{b.head.map((c, j) => <th key={j} className="border-b-2 px-3 py-2 text-left font-bold"><Inlines inlines={c} /></th>)}</tr>
+                </thead>
+                <tbody>
+                  {b.rows.map((r, j) => (
+                    <tr key={j} className="border-b">{r.map((c, m) => <td key={m} className="px-3 py-2 align-top"><Inlines inlines={c} /></td>)}</tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
         return <p key={k}><Inlines inlines={b.inlines} /></p>
       })}
     </div>
