@@ -18,7 +18,7 @@ export default async function Page() {
   const avg = bests.length ? bests.reduce((a, b) => a + b, 0) / bests.length : 0
   return (
     <div className="space-y-10">
-      <PageHeader title="Aptitudes" description="El nivel de cada prueba sube con un 80 % o más de acierto y baja con menos del 50 %." back={{ href: "/estudio", label: "Estudio" }} />
+      <PageHeader title="Aptitudes" description="El nivel de cada prueba sube con un 80 % o más de acierto y baja con menos del 50 %." back={{ href: "/estudio", label: "Estudia" }} />
       <AptNotice />
       <Card className="flex flex-wrap items-end justify-between gap-x-8 gap-y-2">
         <p className="text-3xl font-bold">

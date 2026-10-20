@@ -33,26 +33,17 @@ export default async function Page() {
   const list = topics ?? []
   return (
     <div className="space-y-12">
-      <PageHeader title="Estudio" description="Lee cada tema con calma y comprueba lo aprendido con su test." />
+      <PageHeader title="Estudia" description="Cada sección es una prueba del examen: qué evalúa, qué mínimo pide y dónde prepararla." />
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Link href="/estudio/simulacro" className="group rounded-lg border bg-card p-5 shadow-sm transition-colors hover:border-primary/50 sm:p-6">
-          <span className="flex items-center justify-between gap-3">
-            <span className="text-lg font-bold">Simulacro de examen</span>
-            <ChevronRight aria-hidden="true" className="size-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-          </span>
-          <span className="mt-1.5 block text-muted-foreground">50 preguntas de todos los temas, con cronómetro opcional.</span>
+      <p className="text-sm text-muted-foreground">
+        ¿No sabes cómo funciona el examen?{" "}
+        <Link href="/guia" className="text-primary underline decoration-primary/40 hover:decoration-primary">
+          Empieza aquí
         </Link>
-        <Link href="/aptitudes" className="group rounded-lg border bg-card p-5 shadow-sm transition-colors hover:border-primary/50 sm:p-6">
-          <span className="flex items-center justify-between gap-3">
-            <span className="text-lg font-bold">Aptitudes</span>
-            <ChevronRight aria-hidden="true" className="size-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-          </span>
-          <span className="mt-1.5 block text-muted-foreground">Atención, razonamiento espacial y abstracto, memoria, cálculo y multitarea.</span>
-        </Link>
-      </div>
+      </p>
 
-      <Section title="Temario" aside={`${list.length} temas`} flush>
+      <Section title="Fase 1 A · Conocimientos" aside={`${list.length} temas · mínimo 25 puntos`} flush>
+        <p className="px-5 pt-4 text-muted-foreground sm:px-6">Evalúa el temario oficial con preguntas tipo test. Lee cada tema y comprueba lo aprendido.</p>
         <ol className="divide-y divide-line">
           {list.map((t) => {
             const nq = qCount.get(t.id) ?? 0
@@ -107,6 +98,56 @@ export default async function Page() {
           })}
         </ol>
       </Section>
+
+      <ul className="grid gap-4 sm:grid-cols-2">
+        <PruebaLink href="/estudio/simulacro" title="Simulacro de examen" text="50 preguntas de todos los temas, con cronómetro opcional." />
+        <PruebaLink href="/glosario" title="Glosario" text="Términos del temario para repasar." />
+      </ul>
+
+      <Section title="Fase 1 B · Inglés escrito" aside="mínimo 10 de 20" plain>
+        <ul>
+          <PruebaLink href="/ingles" title="Inglés" text="Prueba escrita de inglés. Practica vocabulario, lectura y fraseología." />
+        </ul>
+      </Section>
+
+      <Section title="Fase 1 C · Aptitudes" aside="mínimo 25 de 50" plain>
+        <ul>
+          <PruebaLink href="/aptitudes" title="Aptitudes" text="Evalúa atención, razonamiento espacial y abstracto, memoria, cálculo y multitarea." />
+        </ul>
+      </Section>
+
+      <Section title="Fase 1 D · Personalidad" aside="apto" plain>
+        <ul>
+          <PruebaLink href="/guia/personalidad" title="Personalidad" text="Evalúa tu perfil de personalidad; solo se califica como apto o no apto." />
+        </ul>
+      </Section>
+
+      <Section title="Fase 2 · FEAST y PDEA" aside="50 de 100 y cada test" plain>
+        <ul>
+          <PruebaLink href="/guia/feast" title="FEAST y PDEA" text="Pruebas por ordenador de aptitudes específicas del control aéreo." />
+        </ul>
+      </Section>
+
+      <Section title="Fase 3 · Entrevistas" aside="inglés 25 de 50 · conductual 60 de 120" plain>
+        <ul className="grid gap-4 sm:grid-cols-2">
+          <PruebaLink href="/ingles/entrevista" title="Inglés oral" text="Entrevista en inglés: comprensión y expresión oral." />
+          <PruebaLink href="/guia/fase3" title="Conductual" text="Entrevista por competencias sobre tu forma de actuar." />
+        </ul>
+      </Section>
     </div>
+  )
+}
+
+function PruebaLink({ href, title, text }: { href: string; title: string; text: string }) {
+  return (
+    <li className="list-none">
+      <Link href={href} className="group block rounded-lg border bg-card p-5 shadow-sm transition-colors hover:border-primary/50 sm:p-6">
+        <span className="flex items-center justify-between gap-3">
+          <span className="text-lg font-bold">{title}</span>
+          <ChevronRight aria-hidden="true" className="size-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+        </span>
+        <span className="mt-1.5 block text-muted-foreground">{text}</span>
+      </Link>
+    </li>
   )
 }

@@ -128,6 +128,18 @@ export default async function Page() {
         </div>
       </header>
 
+      {sessions.length === 0 ? (
+        <Card className="space-y-3">
+          <h2 className="text-lg font-bold">Empieza aquí: entiende la oposición en 16 lecciones</h2>
+          <p className="text-muted-foreground">Qué pruebas hay, cómo se puntúa y cómo prepararte, paso a paso.</p>
+          <Link href="/guia" className={buttonVariants({ size: "lg" })}>Empezar el curso</Link>
+        </Card>
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          <Link href="/guia" className="text-primary underline">Empieza aquí: entiende la oposición en 16 lecciones</Link>
+        </p>
+      )}
+
       <Card className="space-y-6">
         <h2 className="sr-only">Resumen</h2>
         <div className="flex items-center gap-6 sm:gap-8">

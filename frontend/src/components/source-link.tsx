@@ -1,10 +1,12 @@
-import { formatDate } from "@/lib/format"
+"use client"
 
-export function SourceLink({
-  source,
-}: {
-  source: { url: string; title: string; consulted_on: string }
-}) {
+import { formatDate } from "@/lib/format"
+import { useRegisterSource, type Source } from "@/components/sources"
+
+/** Dentro de una página con SourcesProvider la fuente se lista al final; fuera se pinta aquí. */
+export function SourceLink({ source }: { source: Source }) {
+  const collected = useRegisterSource(source)
+  if (collected) return null
   return (
     <span className="block text-sm leading-relaxed">
       <span className="text-muted-foreground">Fuente: </span>

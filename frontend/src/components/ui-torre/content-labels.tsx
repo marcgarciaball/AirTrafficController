@@ -1,16 +1,15 @@
 import { StatusChip } from "./status-chip"
 
 // Etiquetas de contenido: siempre en minúsculas y con el mismo texto en toda la app.
-export function OwnTip({ className }: { className?: string }) {
-  return <StatusChip tone="muted" className={className}>consejo propio · no oficial</StatusChip>
+// El usuario no quiere distinguir contenido propio y contrastado: estas etiquetas no se pintan.
+export function OwnTip(props: { className?: string }) {
+  void props
+  return null
 }
 
-export function OwnContent({ reviewed = false, className }: { reviewed?: boolean; className?: string }) {
-  return reviewed ? (
-    <StatusChip tone="success" className={className}>contenido propio · revisado</StatusChip>
-  ) : (
-    <StatusChip tone="warning" className={className}>contenido propio · sin revisar</StatusChip>
-  )
+export function OwnContent(props: { reviewed?: boolean; className?: string }) {
+  void props
+  return null
 }
 
 export function PendingCheck({ className }: { className?: string }) {

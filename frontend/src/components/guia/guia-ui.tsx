@@ -1,30 +1,40 @@
 import type { ReactNode } from "react"
+import { ChevronDown } from "lucide-react"
+import { SourcesFooter, SourcesProvider } from "@/components/sources"
+import { CursoNav } from "@/components/guia/curso-nav"
 import { StatusChip } from "@/components/ui-torre/status-chip"
 import { PageHeader, Prose } from "@/components/ui-torre/page-header"
-import { OwnTip } from "@/components/ui-torre/content-labels"
-import { Section } from "@/components/ui-torre/section"
 import { SourceLink } from "@/components/source-link"
 import { VerificationBadge } from "@/components/verification-badge"
 import { cn } from "@/lib/utils"
 import type { Item, Src } from "@/lib/guia"
 
-export function GuiaPage({ label, title, intro, back = { href: "/guia", label: "Guía del proceso" }, children }: { label: string; title: string; intro?: string; back?: { href: string; label: string }; children: ReactNode }) {
+export function GuiaPage({ label, title, intro, back = { href: "/guia", label: "Empieza aquí" }, children }: { label: string; title: string; intro?: string; back?: { href: string; label: string }; children: ReactNode }) {
   return (
-    <article className="space-y-14">
-      <PageHeader title={title} back={back}>
-        <p className="text-sm text-muted-foreground">{label}</p>
-        {intro ? <Prose className="pt-2 text-muted-foreground">{intro}</Prose> : null}
-      </PageHeader>
-      {children}
-    </article>
+    <SourcesProvider>
+      <article className="space-y-10">
+        <PageHeader title={title} back={back}>
+          <p className="text-sm text-muted-foreground">{label}</p>
+          {intro ? <Prose className="pt-2 text-muted-foreground">{intro}</Prose> : null}
+        </PageHeader>
+        {children}
+        <CursoNav />
+        <SourcesFooter />
+      </article>
+    </SourcesProvider>
   )
 }
 
-export function Bloque({ title, children }: { title: string; children: ReactNode }) {
+/** Apartado plegable: la página se lee como un índice y se abre lo que interesa. */
+export function Bloque({ title, open = false, children }: { title: string; open?: boolean; children: ReactNode }) {
   return (
-    <Section title={title} plain>
-      <div className="space-y-6">{children}</div>
-    </Section>
+    <details open={open} className="group rounded-lg border bg-card shadow-sm">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 sm:px-6 [&::-webkit-details-marker]:hidden">
+        <h2 className="text-lg font-bold text-foreground">{title}</h2>
+        <ChevronDown aria-hidden="true" className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+      </summary>
+      <div className="space-y-6 border-t px-5 py-6 sm:px-6">{children}</div>
+    </details>
   )
 }
 
@@ -112,7 +122,7 @@ export function Nota({ children }: { children: ReactNode }) {
 export function Consejo({ children }: { children: ReactNode }) {
   return (
     <div className="max-w-prose space-y-3 rounded-lg bg-subtle px-5 py-5 sm:px-6">
-      <OwnTip />
+      <p className="text-sm font-bold text-muted-foreground">Consejo</p>
       <div className="space-y-3 text-lg leading-relaxed text-foreground">{children}</div>
     </div>
   )
@@ -151,7 +161,7 @@ export type Hecho = {
 }
 
 const NIVEL_CHIP: Record<Nivel, { tone: "success" | "guide" | "warning"; label: string }> = {
-  oficial: { tone: "success", label: "oficial" },
+  oficial: { tone: "success", label: "" },
   testimonio: { tone: "guide", label: "testimonio" },
   verificar: { tone: "warning", label: "pendiente de verificar" },
 }
@@ -165,7 +175,7 @@ export function Hechos({ items }: { items: Hecho[] }) {
         return (
           <li key={(it.titulo ?? "") + it.texto} className="space-y-2 py-5">
             <div className="flex flex-wrap items-center gap-2">
-              <StatusChip tone={chip.tone}>{chip.label}</StatusChip>
+              {chip.label ? <StatusChip tone={chip.tone}>{chip.label}</StatusChip> : null}
               {it.nivel === "testimonio" ? <StatusChip tone="warning">pendiente de verificar</StatusChip> : null}
               {it.titulo ? <span className="font-bold text-foreground">{it.titulo}</span> : null}
             </div>
@@ -183,7 +193,6 @@ export function Hechos({ items }: { items: Hecho[] }) {
 export function Leyenda() {
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-      <span className="flex items-center gap-2"><StatusChip tone="success">oficial</StatusChip> norma o autoridad</span>
       <span className="flex items-center gap-2"><StatusChip tone="guide">testimonio</StatusChip> aspirante o academia</span>
       <span className="flex items-center gap-2"><StatusChip tone="warning">pendiente de verificar</StatusChip> no confirmado</span>
     </div>

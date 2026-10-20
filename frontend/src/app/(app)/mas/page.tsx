@@ -8,24 +8,11 @@ export default function MasPage() {
   return (
     <div className="space-y-12">
       <PageHeader title="Más" />
-      <Section title="Aprende" flush>
+      <Section title="Tu progreso" flush>
         <ul className="divide-y divide-line">
-          <LinkRow href="/ruta" detail="Las fases del plan y lo que llevas hecho en cada una.">
-            Ruta
+          <LinkRow href="/ruta" detail="Tu plan por fases y lo que llevas hecho en cada una.">
+            Plan de estudio
           </LinkRow>
-          <LinkRow href="/glosario" detail="Términos en español y en inglés, con su bloque y su fuente.">
-            Glosario
-          </LinkRow>
-          <LinkRow href="/guia" detail="Requisitos, proceso, calendario, médico, idiomas y fuentes.">
-            Guía del proceso
-          </LinkRow>
-          <LinkRow href="/guia/examen" detail="Cuánto pesa cada prueba, qué mínimo pide y cómo prepararla.">
-            El examen por dentro
-          </LinkRow>
-        </ul>
-      </Section>
-      <Section title="Tu estudio" flush>
-        <ul className="divide-y divide-line">
           <LinkRow href="/mas/sesiones" detail="Historial, entrada manual y totales de tiempo.">
             Sesiones
           </LinkRow>

@@ -31,7 +31,7 @@ export default async function Page({ params }: { params: Promise<{ n: string }> 
   return (
     <div data-wide className="lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-16">
       <article className="min-w-0 space-y-12">
-        <PageHeader title={topic.title} back={{ href: "/estudio", label: "Estudio" }}>
+        <PageHeader title={topic.title} back={{ href: "/estudio", label: "Estudia" }}>
           <p className="text-muted-foreground">
             Tema {topic.number}
             {list.length > 0 ? ` · ${list.length} ${list.length === 1 ? "sección" : "secciones"}` : ""}

@@ -2,26 +2,25 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BookOpen, Ellipsis, Languages, Layers, Sun } from "lucide-react"
+import { BookOpen, Compass, Ellipsis, Layers, Sun } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Logo } from "./logo"
 import { ThemeToggle } from "./theme-toggle"
 
 const ITEMS = [
   { href: "/hoy", label: "Hoy", icon: Sun },
-  { href: "/estudio", label: "Estudio", icon: BookOpen },
-  { href: "/flashback", label: "Flashback", icon: Layers },
-  { href: "/ingles", label: "Inglés", icon: Languages },
+  { href: "/guia", label: "Empieza aquí", icon: Compass },
+  { href: "/estudio", label: "Estudia", icon: BookOpen },
+  { href: "/flashback", label: "Repasa", icon: Layers },
   { href: "/mas", label: "Más", icon: Ellipsis },
 ]
 
 const isActive = (pathname: string, href: string) =>
   pathname === href ||
   pathname.startsWith(`${href}/`) ||
-  // Aptitudes cuelga de Estudio y la guía de Más.
-  (href === "/estudio" && pathname.startsWith("/aptitudes")) ||
-  (href === "/estudio" && pathname.startsWith("/glosario")) ||
-  (href === "/mas" && (pathname.startsWith("/guia") || pathname.startsWith("/ruta")))
+  // Aptitudes, glosario e inglés cuelgan de Estudia; la ruta, de Más.
+  (href === "/estudio" && ["/aptitudes", "/glosario", "/ingles"].some((p) => pathname.startsWith(p))) ||
+  (href === "/mas" && pathname.startsWith("/ruta"))
 
 /** Barra lateral en escritorio y barra inferior en móvil, siempre con palabras completas. */
 export function MainNav() {

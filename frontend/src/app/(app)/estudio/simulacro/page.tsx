@@ -17,7 +17,7 @@ export default async function Page() {
   const questions = pickSimulacro(byTopic, SIMULACRO_SIZE)
   return (
     <section className="space-y-10">
-      <PageHeader title="Simulacro de examen" description="Preguntas de todos los temas, como en la prueba de conocimientos." back={{ href: "/estudio", label: "Estudio" }} />
+      <PageHeader title="Simulacro de examen" description="Preguntas de todos los temas, como en la prueba de conocimientos." back={{ href: "/estudio", label: "Estudia" }} />
       <QuizRunner mode="simulacro" topicId={null} topicTitles={titles} questions={questions} label="Simulacro" />
     </section>
   )

@@ -78,7 +78,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ b
 
   return (
     <div className="space-y-12">
-      <PageHeader title="Flashback" description="Los conceptos de cada bloque vuelven justo cuando estás a punto de olvidarlos." />
+      <PageHeader title="Repasa" description="Los conceptos de cada bloque vuelven justo cuando estás a punto de olvidarlos." />
       <Card>
         <dl className="grid grid-cols-2 gap-x-6 gap-y-5 lg:grid-cols-4">
           {figures.map(([v, l]) => (
