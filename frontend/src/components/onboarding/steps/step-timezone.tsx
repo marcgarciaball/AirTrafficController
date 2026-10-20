@@ -6,7 +6,7 @@ import { StepFieldset } from "./step-fieldset"
 export function StepTimezone({ draft, set }: StepProps) {
   return (
     <StepFieldset legend="Zona horaria" hint="Se detecta desde tu navegador; puedes cambiarla. Marca el corte de días y semanas.">
-      <div className="space-y-1">
+      <div className="space-y-2">
         <Label htmlFor="timezone">Zona horaria (por ejemplo Europe/Madrid)</Label>
         <Input id="timezone" value={draft.timezone} onChange={(e) => set({ timezone: e.target.value })} required />
       </div>

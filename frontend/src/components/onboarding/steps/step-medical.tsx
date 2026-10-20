@@ -15,7 +15,7 @@ export function StepMedical({ draft, set }: StepProps) {
     <StepFieldset legend="Médico de Clase 3">
       <OptionList name="medical" options={OPTIONS} value={draft.medical_status} onChange={(v) => set({ medical_status: v })} />
       {draft.medical_status === "vigente" ? (
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label htmlFor="medical_valid_until">Válido hasta</Label>
           <Input id="medical_valid_until" type="date" value={draft.medical_valid_until} onChange={(e) => set({ medical_valid_until: e.target.value })} required />
         </div>

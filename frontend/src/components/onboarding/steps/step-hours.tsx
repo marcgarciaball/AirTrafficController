@@ -7,7 +7,7 @@ import { StepFieldset } from "./step-fieldset"
 export function StepHours({ draft, set }: StepProps) {
   return (
     <StepFieldset legend="Horas por semana" hint="Cuántas horas puedes dedicar al estudio cada semana.">
-      <div className="space-y-1">
+      <div className="space-y-2">
         <Label htmlFor="weekly_hours">Horas semanales</Label>
         <Input id="weekly_hours" type="number" inputMode="decimal" min={0.5} max={80} step={0.5} value={draft.weekly_hours} onChange={(e) => set({ weekly_hours: e.target.value })} required />
       </div>
@@ -18,7 +18,7 @@ export function StepHours({ draft, set }: StepProps) {
             type="button"
             variant="outline"
             aria-pressed={draft.weekly_hours === String(h)}
-            className={draft.weekly_hours === String(h) ? "border-primary text-primary" : undefined}
+            className={draft.weekly_hours === String(h) ? "border-primary text-primary ring-1 ring-primary" : undefined}
             onClick={() => set({ weekly_hours: String(h) })}
           >
             {h} H

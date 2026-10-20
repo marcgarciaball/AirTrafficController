@@ -1,4 +1,5 @@
-import { Checklist, ChecklistMark, CHECKLIST_ROW } from "@/components/ui-torre/checklist"
+import { Download } from "lucide-react"
+import { Checklist, CHECKLIST_ROW, ROW_HOVER } from "@/components/ui-torre/checklist"
 import { PageHeader } from "@/components/ui-torre/page-header"
 import { Section } from "@/components/ui-torre/section"
 
