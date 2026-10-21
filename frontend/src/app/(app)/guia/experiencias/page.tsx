@@ -3,6 +3,24 @@ import { F, f20 } from "@/lib/guia"
 
 const ES = "España"
 
+const VIDEO_ALBA = f20("https://www.youtube.com/watch?v=RfZ2w5CDOSQ", "YouTube: «De enfermera a controladora aérea» (entrevista, 2026)")
+
+/** Entrevista a una aprobada de la convocatoria 2025, resumida por fases. */
+const ALBA: [string, string][] = [
+  ["Perfil y punto de partida", "31 años, enfermera de Bilbao con plaza fija, dos másteres y 9 años en hospitales. Sin formación aeronáutica: creía que hacía falta ser piloto o ingeniero y descubrió en los requisitos que no. Llegó al control aéreo por podcasts y redes de controladores. Empezó a preparar a finales de agosto de 2025, pocos meses antes de la convocatoria."],
+  ["Cómo estudió", "Trabajando a turnos: estudiaba en las noches tranquilas del hospital, aunque fuera media hora, y llevaba siempre los apuntes encima. Lo planteó como unos meses de sacrificio con un objetivo claro. Su consejo: presentarse porque te guste el trabajo, no solo por las condiciones."],
+  ["Fase 1: temario", "Aprobar el temario es fácil; sacar nota alta exige horas, y esos puntos cuentan. Ella fue a por la máxima nota posible."],
+  ["Fase 1: psicotécnicos", "Nunca había hecho ninguno: el primer ejercicio de cubos le pareció imposible y al final los resolvía en unos 12 segundos con práctica estructurada. Con tiempo ilimitado todos sacarían un 10: el límite es el tiempo. Ve con una estrategia de qué ejercicios hacer primero para sumar el máximo de puntos."],
+  ["Fase 1: inglés", "Aunque veía series y películas en inglés y creía dominarlo, la gramática la sorprendió y tuvo que repasarla mucho más de lo previsto. Hizo muchos exámenes de práctica. Hay pocas preguntas y los errores restan (cita 0,33 por fallo), así que cada fallo pesa mucho: arriesga poco. A veces dos opciones parecen válidas y hay que elegir la más correcta. Ella arriesgó más de lo planeado y le salió bien, pero salió con dudas."],
+  ["Fase 1: resultados", "Las notas salieron en torno a una semana después."],
+  ["Fase 2: pruebas digitales", "Unos 2 meses de preparación. Antes solo conocía los ejercicios en teoría; después practicó con simulador. Recuerda pruebas de ruta y torre, multicolor y radar, en una jornada de 9:00 a 15:00 aproximadamente. La primera (de ruta, con drones) le salió mal: barras en rojo que cambiaban sin entender por qué. Clave: no hundirse por un ejercicio, porque condiciona el resto de la mañana; los que salen bien compensan a los que salen mal. Le resultó la fase más entretenida, «como un juego». Resultados en unas 2 semanas, con más incertidumbre que la Fase 1 porque no se sabe cómo puntúan."],
+  ["Fase 3: formato", "Por orden alfabético a lo largo de 40-45 días. Dinámica de grupo y tres entrevistas individuales a solas con el evaluador: clínica, conductual y profesional (Recursos Humanos y un controlador). Ambiente cordial, nada frío. Todo está muy estructurado, así que saber de antemano qué viene da tranquilidad."],
+  ["Fase 3: venderse sin fingir", "Su mayor problema: era tímida, con perfil bajo, y nunca la habían entrevistado (en sanidad era un número en una bolsa). Le costaba decir virtudes y le salían defectos sin parar. El cambio clave fue creerse sus propias cualidades: si tú no te lo crees, el entrevistador tampoco. Pidió a familia y amigos 3 virtudes y 3 defectos suyos. No hay que cambiar de personalidad: un tímido no tiene que parecer extrovertido, sino mostrar sus cualidades tal como es. Los evaluadores son profesionales y detectan lo fingido."],
+  ["Fase 3: dinámica de grupo", "Lo que más le ayudó fue ensayar dinámicas con feedback: hasta practicarlas no ves tus fallos (no dejar hablar a otros, por ejemplo). Encaja la crítica como algo que corregir, no como ataque. En la dinámica se evalúa el trabajo en equipo: querer destacar o eclipsar al resto es un error, y ENAIRE no busca egos. Vio actitudes egocéntricas en su grupo y esas personas suspendieron. Para venderte ya están las entrevistas individuales."],
+  ["Fase 3: entrevistas", "La conductual es la que más respeto le daba: hay que demostrar cualidades con situaciones reales y cómo las resolviste, y contarlas bien. Todo se evalúa por competencias: en cada respuesta intentaba mostrar más de una. Su experiencia laboral le dio muchos ejemplos. Fue tranquila y segura porque contaba la verdad, y cree que eso se notó."],
+  ["Perfiles que aprueban", "No hay un perfil único: aprueban tímidos y extrovertidos, jóvenes y mayores, con mucha o poca formación académica. Buscan a la persona, no un molde. Piden adaptabilidad al cambio: las pruebas cambian a menudo de una convocatoria a otra."],
+]
+
 export default function Page() {
   return (
     <GuiaPage
@@ -12,6 +30,11 @@ export default function Page() {
     >
       <Leyenda />
       <Nota>Aviso de sesgo: las academias y los preparadores privados venden cursos y su información tiene interés comercial. No se halló ningún hilo de Reddit, PPRuNe, Quora ni Forocoches, ni reseña legible de Glassdoor; solo 9 testimonios distintos, varios muy pobres. Los únicos relatos en primera persona están en una web comercial (ControlPrep), y solo se leyó el resumen del buscador.</Nota>
+      <Bloque title="Relato completo: enfermera aprobada en la convocatoria 2025" open>
+        <Hechos
+          items={ALBA.map(([titulo, texto]) => ({ nivel: "testimonio" as const, tipo: "aspirante" as const, pais: ES, titulo, texto, fuente: VIDEO_ALBA }))}
+        />
+      </Bloque>
       <Bloque title="Testimonios">
         <Hechos
           items={[
@@ -45,11 +68,11 @@ export default function Page() {
           head={["Consejo", "Fuentes"]}
           rows={[
             ["Constancia: no rendirse tras un suspenso; es habitual necesitar varios intentos.", "4: ControlPrep (2), MasterD (Judith), NATS"],
-            ["Estabilidad emocional y gestión del estrés, en la prueba y en el oficio.", "3: ControlPrep, Última Hora, Avsaf"],
-            ["Querer de verdad la profesión.", "3: ControlPrep, Última Hora, NATS"],
+            ["Estabilidad emocional y gestión del estrés, en la prueba y en el oficio.", "4: ControlPrep, Última Hora, Avsaf, aprobada 2025"],
+            ["Querer de verdad la profesión.", "4: ControlPrep, Última Hora, NATS, aprobada 2025"],
             ["Test de personalidad: no se prepara con trucos; sé coherente y honesto.", "2: ControlPrep, Enclavepsi"],
-            ["Prepara ejemplos de presión, equipo y errores propios para la entrevista.", "2: Avsaf, Superaoposiciones"],
-            ["Fase 3: colaborar, no competir ni dominar; participar sin acaparar.", "1: Superaoposiciones"],
+            ["Prepara ejemplos de presión, equipo y errores propios para la entrevista.", "3: Avsaf, Superaoposiciones, aprobada 2025"],
+            ["Fase 3: colaborar, no competir ni dominar; participar sin acaparar.", "2: Superaoposiciones, aprobada 2025"],
             ["No competir contra otros, sino contra uno mismo.", "1: ControlPrep"],
             ["Simulacros de dinámica de grupo y de FEAST/PDEA; Eurocontrol desaconseja el software comercial y ofrece práctica oficial gratuita.", "Academias; Eurocontrol (oficial)"],
             ["FEAST: descansar bien y no obsesionarse con no terminar todo.", "1: EUROCONTROL (oficial)"],
@@ -58,12 +81,12 @@ export default function Page() {
           source={F.superaoposiciones}
           verified={false}
         />
-        <Nota>Ningún consejo supera 4 fuentes y casi todas son de ControlPrep o MasterD (sesgo comercial). Tómalos como orientación, no como hecho; solo lo de EUROCONTROL es oficial.</Nota>
+        <Nota>Ningún consejo supera 4 fuentes y casi todas, salvo el relato de la aprobada de 2025, son de ControlPrep o MasterD (sesgo comercial). Tómalos como orientación, no como hecho; solo lo de EUROCONTROL es oficial.</Nota>
       </Bloque>
       <Bloque title="Huecos">
         <Hechos
           items={[
-            { nivel: "verificar", titulo: "Pendiente", texto: "Falta un relato de primera mano de la dinámica con criterios reales y de suspensos concretos. Hay que leer las tres páginas «Mi camino a ENAIRE» de ControlPrep desde el navegador y buscar en Reddit y Forocoches." },
+            { nivel: "verificar", titulo: "Pendiente", texto: "Ya hay un relato de primera mano de las tres fases (convocatoria 2025), pero faltan más para contrastarlo, con criterios reales de la dinámica y suspensos concretos. Hay que leer las tres páginas «Mi camino a ENAIRE» de ControlPrep desde el navegador y buscar en Reddit y Forocoches." },
           ]}
         />
       </Bloque>
