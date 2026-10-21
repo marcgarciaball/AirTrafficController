@@ -55,6 +55,22 @@ export default function Page() {
           ]}
         />
       </Bloque>
+      {/* Origen: web de preparación comercial (superaoposiciones.es, consultada 2026-10-21); el usuario no quiere que se nombre. */}
+      <Bloque title="Detalles del formato que no constan en las bases">
+        <Nota>Lo cuentan aspirantes y preparadores, no ENAIRE. Las bases mandan: si una convocatoria dice otra cosa, vale la convocatoria.</Nota>
+        <Hechos
+          items={[
+            { nivel: "verificar", titulo: "Penalización en la Fase 1", texto: "Cada fallo resta 0,33 en conocimientos, inglés escrito y aptitudes; en blanco no resta. Lo repiten una aprobada de 2025 y un preparador. Las bases no lo dicen: confírmalo en las instrucciones del examen." },
+            { nivel: "verificar", titulo: "Test de aptitudes", texto: "75 preguntas en 3 bloques de 25, con 20 minutos por bloque (60 en total). Miden razonamiento espacial y abstracto y resolución de problemas." },
+            { nivel: "verificar", titulo: "Test de personalidad", texto: "Unas 200 afirmaciones que se puntúan del 1 (totalmente en desacuerdo) al 5 (totalmente de acuerdo). Resultado apto o no apto." },
+            { nivel: "verificar", titulo: "Inglés oral (Fase 3)", texto: "Tres partes. Listening: un audio de unos 5 minutos que se oye dos veces, con preguntas orales. Reading: leer en voz alta un texto de 10 a 12 líneas y responder preguntas. Speaking: conversación libre sobre cultura general y temas variados. Practica los tiempos verbales: preguntan en pasado, futuro y condicional." },
+            { nivel: "verificar", titulo: "Entrevista clínica", texto: "Va sobre tu vida social, cómo resuelves problemas y gestionas el estrés, y tu opinión sobre temas delicados (alcohol, drogas, mentiras, suicidio). Apto o no apto." },
+            { nivel: "verificar", titulo: "Dinámica de grupo", texto: "El tribunal plantea un problema, a menudo de temática aérea o espacial, que el grupo debe resolver siguiendo sus instrucciones. Observan decisiones, comunicación, organización, empatía y resolución de problemas." },
+            { nivel: "verificar", titulo: "Entrevista conductual y técnica", texto: "La conductual repasa tu trayectoria académica y laboral y las competencias del modelo con ejemplos muy concretos: la precisión de los ejemplos marca la diferencia. La técnica la hacen un psicólogo y un controlador en activo, y pregunta por ENAIRE y la profesión: infórmate bien de ambas." },
+            { nivel: "verificar", titulo: "Horario de la Fase 3", texto: "Las pruebas clínicas y conductuales, por la mañana (de 9:00 a 14:00 aproximadamente) en Madrid." },
+          ]}
+        />
+      </Bloque>
       <Bloque title="Errores que causan suspensos">
         <Hechos
           items={[
