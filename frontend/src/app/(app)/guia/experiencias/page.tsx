@@ -21,6 +21,26 @@ const ALBA: [string, string][] = [
   ["Perfiles que aprueban", "No hay un perfil único: aprueban tímidos y extrovertidos, jóvenes y mayores, con mucha o poca formación académica. Buscan a la persona, no un molde. Piden adaptabilidad al cambio: las pruebas cambian a menudo de una convocatoria a otra."],
 ]
 
+const VIDEO_JOAQUIN = f20("https://www.superaoposiciones.es/blog/aprobados-controlador-aereo-enaire", "Entrevista en vídeo a un aprobado de la convocatoria 2024-2025 (web de preparación comercial)")
+
+/** Entrevista a un aprobado de la convocatoria de diciembre de 2024, resuelta en julio de 2025. */
+const JOAQUIN: [string, string][] = [
+  ["Perfil y punto de partida", "32 años, militar del Ejército del Aire y del Espacio, con el mundo aeronáutico cerca por familia y profesión. Fue su primer proceso selectivo civil. Empezó el mismo día de la convocatoria (13 de diciembre de 2024): el viernes salió, el lunes habló con la academia y el martes ya estudiaba. Primer examen a principios de febrero de 2025 y lista final el 2 de julio de 2025."],
+  ["Cómo se organizó", "Trabajando a jornada completa. Trabajó con calendario e hitos cerrados (temario, psicotécnicos, gramática inglesa) y dedicó al proceso todo el tiempo libre que le dejaban el trabajo y la familia. Atribuye más peso a la disciplina de estudiar cansado que a su currículum aeronáutico."],
+  ["Fase 1: temario", "Nueve temas, examen convencional: hay que estudiar, pero lo describe como lo más llevadero de todo el proceso. Con material, clases y simulacros llegó sobrado y sacó buena nota."],
+  ["Fase 1: inglés", "Lo veía asequible y acorde al C1 que se pide, por debajo del nivel exigido en convocatorias anteriores. Aun dominándolo, repasó gramática. Advierte de que, con nivel bajo de partida, es la parte que más tiempo lleva."],
+  ["Fase 1: personalidad", "Ese año pusieron dos escalas tipo Likert en lugar de una, algo nuevo respecto a convocatorias anteriores; por lo demás, lo esperado."],
+  ["Fase 1: psicotécnicos", "Partía de cero. En su edición los ejercicios fueron todo seguido, no en tres bloques como la convocatoria anterior, y la dificultad real fue la gestión del tiempo: contestó pocas preguntas y se quedó con un margen de error mínimo. Avisa de que el corte es relativo: aun con más de un 5 te puede dejar fuera el desplazamiento de la campana si el resto lo ha hecho muy bien. La plantilla oficial de respuestas permite adelantar el resultado semanas antes de la nota."],
+  ["Fase 2: lo conocido y lo nuevo", "Daba por hecho el FEAST (entra siempre por normativa europea) y lo preparó de forma metódica con simulador; lo recuerda como la fase más entretenida, «como un videojuego». La sorpresa fue que no hubo FEAST 1: solo FEAST 2 y después la PDA, una prueba que nadie conocía y a la que se iba completamente a ciegas. Su impresión es que quien tenía aptitudes para el FEAST las tenía también para la PDA."],
+  ["Para qué sirve cada fase", "Su lectura del proceso: la Fase 1 criba, la Fase 2 mide aptitudes (si puedes llegar a ser controlador) y la Fase 3 elige a la persona, no al perfil: alguien trabajador, coherente con sus valores y buen compañero."],
+  ["Fase 3: qué evalúan", "Se evalúa contra las siete competencias de la convocatoria. El currículum se envía por adelantado, pero percibió mucho más peso en la persona que en el perfil profesional. Ambiente cómodo en todo momento, sin frialdad ni muro con el evaluador."],
+  ["Fase 3: dinámica de grupo", "La prueba que más le costó: varias pruebas dentro de la misma, grupo heterogéneo en edad y profesión con el que nunca has trabajado, y un diseño que tiende al caos. Lo que valoró fue calmar la situación, recordar el objetivo y dar pasos lógicos, asumiendo que puede que el objetivo no sea alcanzable. Orientación a resultados y trabajo en equipo se ven aquí sin filtro: es la prueba donde menos se puede fingir, porque el estrés y la duración sacan la cara real."],
+  ["Fase 3: entrevistas y ENAIRE", "En la conductual y la técnica estás a solas con los entrevistadores: es más fácil lucir cualidades individuales, pero también fingir, y son profesionales que lo detectan. Recomienda empaparse de ENAIRE (valores, organización, futuro) porque eso es lo que demuestra la competencia de compromiso organizacional: no solo querer ser controlador, sino querer entrar en esa casa."],
+  ["Fase 3: autoconocimiento", "Lo que más le sirvió no fue aprender respuestas, sino un trabajo de introspección: que alguien le pusiera un espejo y le preguntara por sus tres mayores miedos y por sus defectos. Nadie le dijo nunca «a esta pregunta responde esto». Salió satisfecho porque sintió que le habían llegado a conocer en una mañana."],
+  ["Rumores y perfiles", "Antes de la Fase 3 circulan rumores sobre qué perfil quiere ENAIRE (demasiado joven, demasiado mayor, demasiado aeronáutico, nada aeronáutico) y gestionarlos mal baja el rendimiento. Su conclusión: tendemos a ver el nuestro como el peor perfil posible y no hay perfil vetado. Prepararse en grupo, pero rendir individualmente, fase a fase."],
+  ["Después de aprobar", "El proceso no acaba con la lista: toca sacarse la licencia en una escuela, pasar el reconocimiento médico, esperar los listados definitivos y elegir destino, además de decidir cuándo dejar el trabajo. Para muchos aprobados supone un cambio de vida y una mudanza."],
+]
+
 export default function Page() {
   return (
     <GuiaPage
@@ -33,6 +53,11 @@ export default function Page() {
       <Bloque title="Relato completo: enfermera aprobada en la convocatoria 2025" open>
         <Hechos
           items={ALBA.map(([titulo, texto]) => ({ nivel: "testimonio" as const, tipo: "aspirante" as const, pais: ES, titulo, texto, fuente: VIDEO_ALBA }))}
+        />
+      </Bloque>
+      <Bloque title="Relato completo: militar aprobado en la convocatoria 2024-2025">
+        <Hechos
+          items={JOAQUIN.map(([titulo, texto]) => ({ nivel: "testimonio" as const, tipo: "aspirante" as const, pais: ES, titulo, texto, fuente: VIDEO_JOAQUIN }))}
         />
       </Bloque>
       <Bloque title="Testimonios">
@@ -86,9 +111,9 @@ export default function Page() {
             ["Constancia: no rendirse tras un suspenso; es habitual necesitar varios intentos.", "4: ControlPrep (2), MasterD (Judith), NATS"],
             ["Estabilidad emocional y gestión del estrés, en la prueba y en el oficio.", "4: ControlPrep, Última Hora, Avsaf, aprobada 2025"],
             ["Querer de verdad la profesión.", "4: ControlPrep, Última Hora, NATS, aprobada 2025"],
-            ["Test de personalidad: no se prepara con trucos; sé coherente y honesto.", "2: ControlPrep, Enclavepsi"],
-            ["Prepara ejemplos de presión, equipo y errores propios para la entrevista.", "3: Avsaf, Superaoposiciones, aprobada 2025"],
-            ["Fase 3: colaborar, no competir ni dominar; participar sin acaparar.", "2: Superaoposiciones, aprobada 2025"],
+            ["Test de personalidad: no se prepara con trucos; sé coherente y honesto.", "3: ControlPrep, Enclavepsi, aprobado 2025"],
+            ["Prepara ejemplos de presión, equipo y errores propios para la entrevista.", "4: Avsaf, Superaoposiciones, aprobada 2025, aprobado 2025"],
+            ["Fase 3: colaborar, no competir ni dominar; participar sin acaparar.", "3: Superaoposiciones, aprobada 2025, aprobado 2025"],
             ["No competir contra otros, sino contra uno mismo.", "1: ControlPrep"],
             ["Simulacros de dinámica de grupo y de FEAST/PDEA; Eurocontrol desaconseja el software comercial y ofrece práctica oficial gratuita.", "Academias; Eurocontrol (oficial)"],
             ["FEAST: descansar bien y no obsesionarse con no terminar todo.", "1: EUROCONTROL (oficial)"],
@@ -102,7 +127,7 @@ export default function Page() {
       <Bloque title="Huecos">
         <Hechos
           items={[
-            { nivel: "verificar", titulo: "Pendiente", texto: "Ya hay un relato de primera mano de las tres fases (convocatoria 2025), pero faltan más para contrastarlo, con criterios reales de la dinámica y suspensos concretos. Hay que leer las tres páginas «Mi camino a ENAIRE» de ControlPrep desde el navegador y buscar en Reddit y Forocoches." },
+            { nivel: "verificar", titulo: "Pendiente", texto: "Ya hay dos relatos de primera mano de las tres fases (convocatorias 2024-2025 y 2025) y coinciden en lo esencial, pero faltan más para contrastarlos, con criterios reales de la dinámica y suspensos concretos. Ninguno de los dos explica cómo se puntúa la PDA ni qué peso tiene cada competencia. Hay que leer las tres páginas «Mi camino a ENAIRE» de ControlPrep desde el navegador y buscar en Reddit y Forocoches." },
           ]}
         />
       </Bloque>
