@@ -16,6 +16,23 @@ import { finishAttempt, startAttempt } from "../actions"
 type Phase = "intro" | "running" | "finishing" | "done"
 const LETTERS = ["A", "B", "C", "D"]
 
+// La penalización por fallo no consta en las bases oficiales: se ofrece porque los
+// testimonios de convocatorias anteriores la dan por hecha. Por defecto, 1/3 (cuatro opciones).
+const PENALTIES = [
+  { id: "3", label: "1/3 por fallo", value: 1 / 3 },
+  { id: "4", label: "1/4 por fallo", value: 1 / 4 },
+  { id: "0", label: "Sin penalización", value: 0 },
+] as const
+
+function score(correct: number, wrong: number, total: number, penalty: number) {
+  const net = correct - wrong * penalty
+  return { net, nota: total === 0 ? 0 : (Math.max(net, 0) * 10) / total }
+}
+
+function dec(n: number, digits = 2) {
+  return n.toFixed(digits).replace(/[.,]?0+$/, "").replace(".", ",") || "0"
+}
+
 function fmt(sec: number) {
   const m = Math.floor(sec / 60)
   const s = sec % 60
@@ -43,6 +60,7 @@ export function QuizRunner({
   const [chosen, setChosen] = useState<Record<string, number | null>>({})
   const [error, setError] = useState<string | null>(null)
   const [minutes, setMinutes] = useState("")
+  const [penaltyId, setPenaltyId] = useState<(typeof PENALTIES)[number]["id"]>("3")
   const [remaining, setRemaining] = useState<number | null>(null)
   const [outcome, setOutcome] = useState<{ result: AttemptResult; review: ReviewItem[] } | null>(null)
   const chosenRef = useRef(chosen)
@@ -149,12 +167,35 @@ export function QuizRunner({
             Puedes dejar preguntas en blanco y volver atrás. Elige con el ratón o con las teclas 1 a 4 (o A a D). La corrección llega al final.
           </p>
         </div>
+        <fieldset className="space-y-3">
+          <legend className="font-bold">Penalización por fallo</legend>
+          <p className="flex items-start gap-3 leading-relaxed text-muted-foreground">
+            <StatusChip tone="warning" className="mt-0.5">nota</StatusChip>
+            No consta en las bases oficiales: se aplica según los testimonios de convocatorias anteriores.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {PENALTIES.map((p) => (
+              <label
+                key={p.id}
+                className={cn(
+                  "cursor-pointer rounded-md border bg-card px-4 py-2.5 text-base shadow-sm transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary",
+                  penaltyId === p.id ? "border-primary ring-1 ring-primary" : "hover:border-muted-foreground/50 hover:bg-subtle"
+                )}
+              >
+                <input
+                  type="radio"
+                  name="penalty"
+                  className="sr-only"
+                  checked={penaltyId === p.id}
+                  onChange={() => setPenaltyId(p.id)}
+                />
+                {p.label}
+              </label>
+            ))}
+          </div>
+        </fieldset>
         {mode === "simulacro" ? (
           <>
-            <p className="flex items-start gap-3 leading-relaxed text-muted-foreground">
-              <StatusChip tone="warning" className="mt-0.5">nota</StatusChip>
-              La penalización por fallo no consta en las bases oficiales; aquí no se aplica.
-            </p>
             <div className="w-56 space-y-2">
               <Label htmlFor="minutes">Cronómetro en minutos</Label>
               <Input
@@ -185,10 +226,13 @@ export function QuizRunner({
       if (r.correct) t.correct++
       byTopic.set(r.topic_id, t)
     }
-    const counts: [string, number, string][] = [
-      ["aciertos", result.correct, "text-success"],
-      ["fallos", result.wrong, result.wrong > 0 ? "text-danger" : "text-foreground"],
-      ["en blanco", result.blank, "text-foreground"],
+    const penalty = PENALTIES.find((p) => p.id === penaltyId) ?? PENALTIES[0]
+    const { net, nota } = score(result.correct, result.wrong, result.total, penalty.value)
+    const counts: [string, string, string][] = [
+      ["aciertos", String(result.correct), "text-success"],
+      ["fallos", String(result.wrong), result.wrong > 0 ? "text-danger" : "text-foreground"],
+      ["en blanco", String(result.blank), "text-foreground"],
+      ["puntos netos", dec(net), net < result.correct ? "text-warning" : "text-foreground"],
     ]
     return (
       <div className="space-y-12">
@@ -196,13 +240,23 @@ export function QuizRunner({
           <h2 className="sr-only">Resultado</h2>
           <div className="space-y-1">
             <p className="text-4xl font-bold">
-              {result.pct}
-              <span className="ml-1 text-xl font-normal text-muted-foreground">% de acierto</span>
+              {dec(nota)}
+              <span className="ml-1 text-xl font-normal text-muted-foreground">/ 10</span>
             </p>
-            <p className="text-muted-foreground">{result.correct} de {result.total} preguntas bien</p>
+            <p className="text-muted-foreground">
+              {result.correct} de {result.total} preguntas bien · {result.pct}% de acierto
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {penalty.value === 0
+                ? "Sin penalización por fallo."
+                : `Nota con penalización de ${penalty.label.replace(" por fallo", "")} por fallo: ${dec(net)} puntos netos de ${result.total}.`}
+            </p>
           </div>
-          <ProgressBar value={result.pct} label="Acierto" tone={result.pct >= 50 ? "success" : "warning"} />
-          <dl className="grid grid-cols-3 gap-4 border-t pt-5">
+          <ProgressBar value={nota * 10} label="Nota" tone={nota >= 5 ? "success" : "warning"} />
+          <p className={cn("font-bold", nota >= 5 ? "text-success" : "text-danger")}>
+            {nota >= 5 ? "Aprobado (5 o más)" : "Suspenso (menos de 5)"}
+          </p>
+          <dl className="grid grid-cols-2 gap-4 border-t pt-5 sm:grid-cols-4">
             {counts.map(([k, v, c]) => (
               <div key={k} className="space-y-0.5">
                 <dd className={cn("text-2xl font-bold", c)}>{v}</dd>
@@ -213,7 +267,7 @@ export function QuizRunner({
           <Button size="lg" onClick={repeat} disabled={pending}>Repetir</Button>
         </Card>
         {mode === "simulacro" ? (
-          <Section title="Por tema" description="La penalización por fallo no consta en las bases oficiales; aquí no se aplica." flush>
+          <Section title="Por tema" description="Aciertos por tema, sin aplicar la penalización." flush>
             <ul className="divide-y divide-line">
               {[...byTopic.entries()].map(([tid, t]) => (
                 <li key={tid} className="flex items-baseline justify-between gap-4 px-5 py-3.5 sm:px-6">
